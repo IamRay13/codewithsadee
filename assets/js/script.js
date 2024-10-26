@@ -50,7 +50,7 @@ const musicData = [
     album: "Coldplay Songs Playlist",
     year: 2014-2024,
     artist: "Coldplay Songs",
-    musicPath: "./assets/music/Coldplay Full Album Greatest Hits - Coldplay Songs Playlist.mp3",
+    musicPath: "./assets/music/Best of Coldplay.mp3",
   },
     {
     backgroundImage: "./assets/images/CODE.jpg",
