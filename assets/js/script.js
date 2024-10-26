@@ -44,6 +44,15 @@ const musicData = [
     musicPath: "./assets/music/d4vd  Here With Me Official Music Video.mp3",
   },
     {
+    backgroundImage: "./assets/images/d4vid-herewithme.jpg",
+    posterUrl: "./assets/images/d4vid-herewithme.jpg",
+    title: "Hayd Healer",
+    album: "Hayd Healer",
+    year: 2022,
+    artist: "D4vid",
+    musicPath: "./assets/music/Hayd Healer.mp3",
+  },
+    {
     backgroundImage: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     posterUrl: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     title: "Coldplay Hymn For The Weekend Official Video",
