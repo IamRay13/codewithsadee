@@ -52,33 +52,6 @@ const musicData = [
     artist: "Coldplay Songs",
     musicPath: "./assets/music/Best of Coldplay.mp3",
   },
-    {
-    backgroundImage: "./assets/images/CODE.jpg",
-    posterUrl: "./assets/images/CODE.jpg",
-    title: "CODE",
-    album: "CODE",
-    year: CODE,
-    artist: "CODE",
-    musicPath: "./assets/music/CODE.mp3",
-  },
-    {
-    backgroundImage: "./assets/images/CODE.jpg",
-    posterUrl: "./assets/images/CODE.jpg",
-    title: "CODE",
-    album: "CODE",
-    year: CODE,
-    artist: "CODE",
-    musicPath: "./assets/music/CODE.mp3",
-  },
-    {
-    backgroundImage: "./assets/images/CODE.jpg",
-    posterUrl: "./assets/images/CODE.jpg",
-    title: "CODE",
-    album: "CODE",
-    year: CODE,
-    artist: "CODE",
-    musicPath: "./assets/music/CODE.mp3",
-  },
 ];
 
 
