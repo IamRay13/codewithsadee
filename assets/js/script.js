@@ -48,7 +48,7 @@ const musicData = [
     posterUrl: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     title: "Coldplay Hymn For The Weekend Official Video",
     album: "Coldplay Songs Playlist",
-    year: 2014,
+    year: 2015,
     artist: "Coldplay Songs",
     musicPath: "./assets/music/Coldplay Hymn For The Weekend Official Video.mp3",
   },
