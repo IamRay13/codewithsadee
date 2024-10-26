@@ -35,8 +35,8 @@ const musicData = [
     musicPath: "./assets/music/music-3.mp3",
   },
   {
-    backgroundImage: "./assets/images/poster-4.jpg",
-    posterUrl: "./assets/images/poster-4.jpg",
+    backgroundImage: "./assets/images/d4vid-herewithme.jpg",
+    posterUrl: "./assets/images/d4vid-herewithme.jpg",
     title: "Here With Me",
     album: "Here With Me",
     year: 2022,
