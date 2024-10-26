@@ -46,11 +46,11 @@ const musicData = [
   {
     backgroundImage: "./assets/images/Coldplay.jpg",
     posterUrl: "./assets/images/Coldplay.jpg",
-    title: "Coldplay Songs Playlist",
+    title: "Coldplay Hymn For The Weekend Official Video",
     album: "Coldplay Songs Playlist",
     year: 2014,
     artist: "Coldplay Songs",
-    musicPath: "./assets/music/Best of Coldplay.mp3",
+    musicPath: "./assets/music/Coldplay Hymn For The Weekend Official Video.mp3",
   },
 ];
 
