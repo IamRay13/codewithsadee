@@ -37,11 +37,11 @@ const musicData = [
   {
     backgroundImage: "./assets/images/poster-4.jpg",
     posterUrl: "./assets/images/poster-4.jpg",
-    title: "From Where We Started",
-    album: "No Spirit",
+    title: "Here With Me",
+    album: "Here With Me",
     year: 2022,
-    artist: "No Spirit",
-    musicPath: "./assets/music/music-4.mp3",
+    artist: "D4vid",
+    musicPath: "./assets/music/d4vd  Here With Me Official Music Video.mp3",
   },
   {
     backgroundImage: "./assets/images/poster-5.jpg",
