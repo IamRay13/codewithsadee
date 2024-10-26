@@ -44,12 +44,12 @@ const musicData = [
     musicPath: "./assets/music/d4vd  Here With Me Official Music Video.mp3",
   },
     {
-    backgroundImage: "./assets/images/d4vid-herewithme.jpg",
-    posterUrl: "./assets/images/d4vid-herewithme.jpg",
-    title: "Hayd Healer",
-    album: "Hayd Healer",
-    year: 2022,
-    artist: "D4vid",
+    backgroundImage: "./assets/images/Healer.jpg",
+    posterUrl: "./assets/images/Healer.jpg",
+    title: "Healer",
+    album: "Changes",
+    year: 2024,
+    artist: "Hayd",
     musicPath: "./assets/music/Hayd Healer.mp3",
   },
   {
