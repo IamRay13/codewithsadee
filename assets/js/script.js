@@ -10,10 +10,10 @@ const musicData = [
   {
     backgroundImage: "./assets/images/poster-1.jpg",
     posterUrl: "./assets/images/poster-1.jpg",
-    title: "Happy Moments (Master)",
-    album: "No Spirit",
-    year: 2022,
-    artist: "No Spirit x Tonion",
+    title: "Cradles",
+    album: "Cradles",
+    year: 2019,
+    artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
   {
