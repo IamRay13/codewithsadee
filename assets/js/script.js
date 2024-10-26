@@ -23,7 +23,7 @@ const musicData = [
     album: "All Falls Down",
     year: 2017,
     artist: "Alan Walker x Noah Cyrus x Digital Farm Animals",
-    musicPath: "./assets/music/music-2.mp3",
+    musicPath: "./assets/music/Allfallsdown.mp3",
   },
   {
     backgroundImage: "./assets/images/Faded.jpg",
