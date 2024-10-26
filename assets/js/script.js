@@ -50,7 +50,7 @@ const musicData = [
     album: "Coldplay Songs Playlist",
     year: 2015,
     artist: "Coldplay Songs",
-    musicPath: "./assets/music/Coldplay Hymn For The Weekend Official Video.mp3",
+    musicPath: "./assets/music/Hymn For The Weekend.mp3",
   },
 ];
 
