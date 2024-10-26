@@ -23,7 +23,7 @@ const musicData = [
     album: "All Falls Down",
     year: 2017,
     artist: "Alan Walker x Noah Cyrus x Digital Farm Animals",
-    musicPath: "./assets/music/Allfallsdown.mp3",
+    musicPath: "./assets/music/Alan Walker - All Falls Down feat. Noah Cyrus with Digital Farm Animals.mp3",
   },
   {
     backgroundImage: "./assets/images/Faded.jpg",
@@ -32,7 +32,7 @@ const musicData = [
     album: "Different World",
     year: 2022,
     artist: "Alan Walker",
-    musicPath: "./assets/music/Faded.mp3",
+    musicPath: "./assets/music/Alan Walker - Faded.mp3",
   },
   {
     backgroundImage: "./assets/images/d4vid-herewithme.jpg",
