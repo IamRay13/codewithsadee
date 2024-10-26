@@ -48,7 +48,7 @@ const musicData = [
     posterUrl: "./assets/images/Coldplay.jpg",
     title: "Coldplay Songs Playlist",
     album: "Coldplay Songs Playlist",
-    year: 2014-2024,
+    year: 2014,
     artist: "Coldplay Songs",
     musicPath: "./assets/music/Best of Coldplay.mp3",
   },
