@@ -89,8 +89,8 @@ const musicData = [
     musicPath: "./assets/music/David Kushner Skin and Bones.mp3",
   },
      {
-    backgroundImage: "./assets/images/Lost Frequencies x Tom Odell - Black Friday.jpg",
-    posterUrl: "./assets/images/Lost Frequencies x Tom Odell - Black Friday.jpg",
+    backgroundImage: "./assets/images/Lost Frequencies x Tom Odell Black Friday.jpg",
+    posterUrl: "./assets/images/Lost Frequencies x Tom Odell Black Friday.jpg",
     title: "Black Friday",
     album: "The End",
     year: 2024,
@@ -117,7 +117,7 @@ const musicData = [
   },
   {
     backgroundImage: "./assets/images/I Took A Pill In Ibiza.jpg",
-    posterUrl: "./assets/images/Took A Pill In Ibiza.jpg",
+    posterUrl: "./assets/images/I Took A Pill In Ibiza.jpg",
     title: "I Took A Pill In Ibiza",
     album: "At Night, Alone",
     year: 2015,
@@ -132,15 +132,6 @@ const musicData = [
     year: 2019,
     artist: "New West",
     musicPath: "./assets/music/New West - Those Eyes.mp3",
-  },
-     {
-    backgroundImage: "./assets/images/CODE.jpg",
-    posterUrl: "./assets/images/CODE.jpg",
-    title: "CODE",
-    album: "CODE",
-    year: 2017,
-    artist: "CODE",
-    musicPath: "./assets/music/CODE.mp3",
   },
      {
     backgroundImage: "./assets/images/Oceans (Where Feet May Fail).jpg",
