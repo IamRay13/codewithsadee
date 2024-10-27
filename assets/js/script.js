@@ -89,8 +89,8 @@ const musicData = [
     musicPath: "./assets/music/David Kushner Skin and Bones.mp3",
   },
      {
-    backgroundImage: "./assets/images/Lost Frequencies x Tom Odell Black Friday.jpg",
-    posterUrl: "./assets/images/Lost Frequencies x Tom Odell Black Friday.jpg",
+    backgroundImage: "./assets/images/Black Friday.jpg",
+    posterUrl: "./assets/images/Black Friday.jpg",
     title: "Black Friday",
     album: "The End",
     year: 2024,
