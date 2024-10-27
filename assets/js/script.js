@@ -358,6 +358,15 @@ const musicData = [
     artist: "Floravee",
     musicPath: "./assets/music/Kumapit Ka Lang - Floravee.mp3",
   },
+      {
+    backgroundImage: "./assets/images/JericMaeChen.jpg",
+    posterUrl: "./assets/images/JericMaeChen.jpg",
+    title: "Fly Me To The Moon",
+    album: "Fly Me To The Moon",
+    year: 2024,
+    artist: "Jeric Mae Chen",
+    musicPath: "./assets/music/JericMaeChen.mp3",
+  },
     {
     backgroundImage: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     posterUrl: "./assets/images/Coldplay Hymn For The Weekend.jpg",
