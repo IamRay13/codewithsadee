@@ -80,8 +80,8 @@ const musicData = [
     musicPath: "./assets/music/Labrinth The Feels.mp3",
   },
      {
-    backgroundImage: "./assets/images/David Kushner Skin and Bones.jpg",
-    posterUrl: "./assets/images/David Kushner Skin and Bones.jpg",
+    backgroundImage: "./assets/images/Skin and bones.jpg",
+    posterUrl: "./assets/images/Skin and bones.jpg",
     title: "Skin and Bones",
     album: "Skin and Bones",
     year: 2024,
