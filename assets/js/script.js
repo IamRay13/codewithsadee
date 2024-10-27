@@ -350,6 +350,15 @@ const musicData = [
     musicPath: "./assets/music/Megan Thee Stallion - Mamushi.mp3",
   },
     {
+    backgroundImage: "./assets/images/Vee.jpg",
+    posterUrl: "./assets/images/Vee.jpg",
+    title: "Kumapit Ka Lang",
+    album: "Floravee",
+    year: 2024,
+    artist: "Floravee",
+    musicPath: "./assets/music/Kumapit Ka Lang - Floravee.mp3",
+  },
+    {
     backgroundImage: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     posterUrl: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     title: "Coldplay Hymn For The Weekend Official Video",
