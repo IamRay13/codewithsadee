@@ -62,8 +62,8 @@ const musicData = [
     musicPath: "./assets/music/Galantis Runaway U I.mp3",
   },
    {
-    backgroundImage: "./assets/images/CODE.jpg",
-    posterUrl: "./assets/images/CODE.jpg",
+    backgroundImage: "./assets/images/Mary On A Cross.jpg",
+    posterUrl: "./assets/images/Mary On A Cross.jpg",
     title: "Mary On A Cross",
     album: "Mary On A Cross (slowed + reverb)",
     year: 2019,
