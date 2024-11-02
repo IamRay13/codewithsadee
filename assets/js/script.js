@@ -1,13 +1,11 @@
 'use strict';
 
-
-
 /**
  * all music information
  */
 
 const musicData = [
-  {
+ {
     backgroundImage: "./assets/images/poster-1.jpg",
     posterUrl: "./assets/images/poster-1.jpg",
     title: "Cradles",
@@ -89,8 +87,8 @@ const musicData = [
     musicPath: "./assets/music/David Kushner Skin and Bones.mp3",
   },
      {
-    backgroundImage: "./assets/images/Black Friday.jpg",
-    posterUrl: "./assets/images/Black Friday.jpg",
+    backgroundImage: "./assets/images/Lost Frequencies x Tom Odell - Black Friday.jpg",
+    posterUrl: "./assets/images/Lost Frequencies x Tom Odell - Black Friday.jpg",
     title: "Black Friday",
     album: "The End",
     year: 2024,
@@ -117,7 +115,7 @@ const musicData = [
   },
   {
     backgroundImage: "./assets/images/I Took A Pill In Ibiza.jpg",
-    posterUrl: "./assets/images/I Took A Pill In Ibiza.jpg",
+    posterUrl: "./assets/images/Took A Pill In Ibiza.jpg",
     title: "I Took A Pill In Ibiza",
     album: "At Night, Alone",
     year: 2015,
@@ -132,6 +130,15 @@ const musicData = [
     year: 2019,
     artist: "New West",
     musicPath: "./assets/music/New West - Those Eyes.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/CODE.jpg",
+    posterUrl: "./assets/images/CODE.jpg",
+    title: "CODE",
+    album: "CODE",
+    year: 2017,
+    artist: "CODE",
+    musicPath: "./assets/music/CODE.mp3",
   },
      {
     backgroundImage: "./assets/images/Oceans (Where Feet May Fail).jpg",
@@ -323,51 +330,6 @@ const musicData = [
     musicPath: "./assets/music/Aaron Hibell, Felsmann and  Tiley Levitation.mp3",
   },
     {
-    backgroundImage: "./assets/images/We Need A Miracle.jpg",
-    posterUrl: "./assets/images/We Need A Miracle.jpg",
-    title: "We Need A Miracle",
-    album: "We Need a Miracle",
-    year: 2021,
-    artist: "Charity Gayle",
-    musicPath: "./assets/music/Charity Gayle - We Need A Miracle.mp3",
-  },
-    {
-    backgroundImage: "./assets/images/Palagi.jpg",
-    posterUrl: "./assets/images/Palagi.jpg",
-    title: "Palagi",
-    album: "Palagi",
-    year: 2023,
-    artist: "TJ Monterde",
-    musicPath: "./assets/music/Palagi Live at The Cozy Cove  TJ Monterde.mp3",
-  },
-      {
-    backgroundImage: "./assets/images/Mamushi.jpg",
-    posterUrl: "./assets/images/Mamushi.jpg",
-    title: "Mamushi",
-    album: "MEGAN: ACT II",
-    year: 2024,
-    artist: "Megan Thee Stallion",
-    musicPath: "./assets/music/Megan Thee Stallion - Mamushi.mp3",
-  },
-    {
-    backgroundImage: "./assets/images/Vee.jpg",
-    posterUrl: "./assets/images/Vee.jpg",
-    title: "Kumapit Ka Lang",
-    album: "Floravee",
-    year: 2024,
-    artist: "Floravee",
-    musicPath: "./assets/music/Kumapit Ka Lang - Floravee.mp3",
-  },
-      {
-    backgroundImage: "./assets/images/JericMaeChen.jpg",
-    posterUrl: "./assets/images/JericMaeChen.jpg",
-    title: "Fly Me To The Moon",
-    album: "Fly Me To The Moon",
-    year: 2024,
-    artist: "Jeric Mae Chen",
-    musicPath: "./assets/music/JericMaeChen.mp3",
-  },
-    {
     backgroundImage: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     posterUrl: "./assets/images/Coldplay Hymn For The Weekend.jpg",
     title: "Coldplay Hymn For The Weekend Official Video",
@@ -376,9 +338,7 @@ const musicData = [
     artist: "No Spirit",
     musicPath: "./assets/music/Hymn For The Weekend.mp3",
   },
- 
 ];
-
 
 /**
  * add eventListnere on all elements that are passed
@@ -389,8 +349,6 @@ const addEventOnElements = function (elements, eventType, callback) {
     elements[i].addEventListener(eventType, callback);
   }
 }
-
-
 
 /**
  * PLAYLIST
@@ -415,8 +373,6 @@ for (let i = 0, len = musicData.length; i < len; i++) {
   `;
 }
 
-
-
 /**
  * PLAYLIST MODAL SIDEBAR TOGGLE
  * 
@@ -435,8 +391,6 @@ const togglePlaylist = function () {
 }
 
 addEventOnElements(playlistTogglers, "click", togglePlaylist);
-
-
 
 /**
  * PLAYLIST ITEM
@@ -459,9 +413,8 @@ addEventOnElements(playlistItems, "click", function () {
   lastPlayedMusic = currentMusic;
   currentMusic = Number(this.dataset.playlistItem);
   changePlaylistItem();
+  changePlayerInfo();
 });
-
-
 
 /**
  * PLAYER
@@ -513,8 +466,6 @@ const updateDuration = function () {
 
 audioSource.addEventListener("loadeddata", updateDuration);
 
-
-
 /**
  * PLAY MUSIC
  * 
@@ -539,10 +490,9 @@ const playMusic = function () {
 
 playBtn.addEventListener("click", playMusic);
 
-
 /** update running time while playing music */
 
-const playerRunningTime = document.querySelector("[data-running-time");
+const playerRunningTime = document.querySelector("[data-running-time]");
 
 const updateRunningTime = function () {
   playerSeekRange.value = audioSource.currentTime;
@@ -551,8 +501,6 @@ const updateRunningTime = function () {
   updateRangeFill();
   isMusicEnd();
 }
-
-
 
 /**
  * RANGE FILL WIDTH
@@ -572,8 +520,6 @@ const updateRangeFill = function () {
 
 addEventOnElements(ranges, "input", updateRangeFill);
 
-
-
 /**
  * SEEK MUSIC
  * 
@@ -587,8 +533,6 @@ const seek = function () {
 
 playerSeekRange.addEventListener("input", seek);
 
-
-
 /**
  * END MUSIC
  */
@@ -600,10 +544,9 @@ const isMusicEnd = function () {
     playerSeekRange.value = audioSource.currentTime;
     playerRunningTime.textContent = getTimecode(audioSource.currentTime);
     updateRangeFill();
+    skipNext(); // Automatically skip to the next music
   }
 }
-
-
 
 /**
  * SKIP TO NEXT MUSIC
@@ -626,8 +569,6 @@ const skipNext = function () {
 
 playerSkipNextBtn.addEventListener("click", skipNext);
 
-
-
 /**
  * SKIP TO PREVIOUS MUSIC
  */
@@ -646,10 +587,6 @@ const skipPrev = function () {
   changePlayerInfo();
   changePlaylistItem();
 }
-
-playerSkipPrevBtn.addEventListener("click", skipPrev);
-
-
 
 /**
  * SHUFFLE MUSIC
@@ -671,8 +608,6 @@ const shuffle = function () {
 
 playerShuffleBtn.addEventListener("click", shuffle);
 
-
-
 /**
  * REPEAT MUSIC
  */
@@ -690,8 +625,6 @@ const repeat = function () {
 }
 
 playerRepeatBtn.addEventListener("click", repeat);
-
-
 
 /**
  * MUSIC VOLUME
@@ -716,19 +649,3 @@ const changeVolume = function () {
 }
 
 playerVolumeRange.addEventListener("input", changeVolume);
-
-
-/**
- * MUTE MUSIC
- */
-
-const muteVolume = function () {
-  if (!audioSource.muted) {
-    audioSource.muted = true;
-    playerVolumeBtn.children[0].textContent = "volume_off";
-  } else {
-    changeVolume();
-  }
-}
-
-playerVolumeBtn.addEventListener("click", muteVolume);
