@@ -15,15 +15,6 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
   {
-    backgroundImage: "./assets/images/poster-1.jpg",
-    posterUrl: "./assets/images/poster-1.jpg",
-    title: "Cradles",
-    album: "Cradles",
-    year: 2019,
-    artist: "Sub urban",
-    musicPath: "./assets/music/music-1.mp3",
-  },
-  {
     backgroundImage: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
     posterUrl: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
     title: "Arcade",
