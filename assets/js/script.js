@@ -15,6 +15,15 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
   {
+    backgroundImage: "./assets/images/Ghost.jpg",
+    posterUrl: "./assets/images/Ghost.jpg",
+    title: "Ghost",
+    album: "Ghost",
+    year: 2023,
+    artist: "Justin Bieber",
+    musicPath: "./assets/music/Ghost.mp3",
+  },
+   {
     backgroundImage: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
     posterUrl: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
     title: "Arcade",
