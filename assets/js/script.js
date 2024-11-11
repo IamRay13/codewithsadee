@@ -14,6 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+   {
+    backgroundImage: "./assets/images/The climb.jpg",
+    posterUrl: "./assets/images/The climb.jpg",
+    title: "The climb",
+    album: "The climb",
+    year: 2024,
+    artist: "Sky",
+    musicPath: "./assets/music/The climb.mp3",
+  },
   {
     backgroundImage: "./assets/images/Ghost.jpg",
     posterUrl: "./assets/images/Ghost.jpg",
