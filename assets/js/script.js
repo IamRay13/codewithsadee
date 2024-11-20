@@ -15,6 +15,15 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
    {
+    backgroundImage: "./assets/images/One last breath.jpg",
+    posterUrl: "./assets/images/One last breath.jpg",
+    title: "One Last Breath",
+    album: "Weathered",
+    year: 2021,
+    artist: "Creed",
+    musicPath: "./assets/music/One Last Breath.mp3",
+  },
+    {
     backgroundImage: "./assets/images/The climb.jpg",
     posterUrl: "./assets/images/The climb.jpg",
     title: "The climb",
