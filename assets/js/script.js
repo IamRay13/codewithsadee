@@ -24,6 +24,15 @@ const musicData = [
     musicPath: "./assets/music/One Last Breath.mp3",
   },
     {
+    backgroundImage: "./assets/images/Stay.jpg",
+    posterUrl: "./assets/images/Stay.jpg",
+    title: "Stay",
+    album: "Stay",
+    year: 2021,
+    artist: "Justin Bieber",
+    musicPath: "./assets/music/Stay Justin.mp3",
+  },
+    {
     backgroundImage: "./assets/images/The climb.jpg",
     posterUrl: "./assets/images/The climb.jpg",
     title: "The climb",
