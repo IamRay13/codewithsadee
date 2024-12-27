@@ -419,7 +419,34 @@ const musicData = [
     artist: "Megan Thee Stallion",
     musicPath: "./assets/music/Megan Thee Stallion - Mamushi.mp3",
   },
-    {
+ {
+    backgroundImage": "./assets/images/JericMaeChen.jpg",
+    posterUrl": "./assets/images/JericMaeChen.jpg",
+    title": "Fly Me To The Moon",
+    album": "Fly Me To The Moon",
+    year": 2024,
+    artist": "Jeric Mae Chen",
+    musicPath": "./assets/music/JericMaeChen.mp3"
+},
+{
+    backgroundImage": "./assets/images/Coldplay Hymn For The Weekend.jpg",
+    posterUrl": "./assets/images/Coldplay Hymn For The Weekend.jpg",
+    title": "Coldplay Hymn For The Weekend Official Video",
+    album": "Coldplay Songs Playlist",
+    year": 2015,
+    artist": "No Spirit",
+    musicPath": "./assets/music/Hymn For The Weekend.mp3"
+},
+       {
+    backgroundImage: "./assets/images/Mamushi.jpg",
+    posterUrl: "./assets/images/Mamushi.jpg",
+    title: "Mamushi",
+    album: "MEGAN: ACT II",
+    year: 2024,
+    artist: "Megan Thee Stallion",
+    musicPath: "./assets/music/Megan Thee Stallion - Mamushi.mp3",
+  },
+{
     backgroundImage: "./assets/images/Vee.jpg",
     posterUrl: "./assets/images/Vee.jpg",
     title: "Kumapit Ka Lang",
@@ -428,6 +455,33 @@ const musicData = [
     artist: "Floravee",
     musicPath: "./assets/music/Kumapit Ka Lang - Floravee.mp3",
   },
+  {
+    backgroundImage": "./assets/images/Stay.jpg",
+    posterUrl": "./assets/images/Stay.jpg",
+    title: "Stay",
+    album: "Stay",
+    year: 2024,
+    artist": "The Kid LAROI x Justin Bieber",
+    musicPath": "./assets/music/Stay Justin.mp3"
+},
+   {
+    backgroundImage": "./assets/images/Stay.jpg",
+    posterUrl": "./assets/images/Stay.jpg",
+    title: "Stay",
+    album: "Stay",
+    year: 2024,
+    artist": "The Kid LAROI x Justin Bieber",
+    musicPath": "./assets/music/Stay Justin.mp3"
+},
+ {
+    backgroundImage": "./assets/images/Coldplay Hymn For The Weekend.jpg",
+    posterUrl": "./assets/images/Coldplay Hymn For The Weekend.jpg",
+    title: "Coldplay Hymn For The Weekend Official Video",
+    album: "Coldplay Songs Playlist",
+    year: 2015,
+    artist: "No Spirit",
+    musicPath": "./assets/music/Hymn For The Weekend.mp3"
+},
 ]; 
 
 /**
