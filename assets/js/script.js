@@ -24,6 +24,15 @@ const musicData = [
     musicPath: "./assets/music/One Last Breath.mp3",
   },
     {
+    backgroundImage: "./assets/images/Angelbaby.jpg",
+    posterUrl: "./assets/images/Angelbaby.jpg",
+    title: "Angel Baby",
+    album: "Angel Baby",
+    year: 2021,
+    artist: "Troye Sivan Song",
+    musicPath: "./assets/music/spotifydown.com - Angel Baby.mp3",
+  },
+    {
     backgroundImage: "./assets/images/Stay.jpg",
     posterUrl: "./assets/images/Stay.jpg",
     title: "Stay",
