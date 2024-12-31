@@ -24,8 +24,8 @@ const musicData = [
     musicPath: "./assets/music/One Last Breath.mp3",
   },
      {
-    backgroundImage: "./assets/images/Iris",
-    posterUrl: "./assets/images/Iris",
+    backgroundImage: "./assets/images/Iris.jpg",
+    posterUrl: "./assets/images/Iris.jpg",
     title: "Iris",
     album: "Iris",
     year: 1998,
@@ -33,8 +33,8 @@ const musicData = [
     musicPath: "./assets/music/SpotifyMate.com - Iris - The Goo Goo Dolls.mp3",
   },
     {
-    backgroundImage: "./assets/images/Her",
-    posterUrl: "./assets/images/Her",
+    backgroundImage: "./assets/images/Her.jpg",
+    posterUrl: "./assets/images/Her.jpg",
     title: "Her",
     album: "Her",
     year: 2021,
@@ -42,8 +42,8 @@ const musicData = [
     musicPath: "./assets/music/SpotifyMate.com - her - JVKE.mp3",
   },
      {
-    backgroundImage: "./assets/images/Radio",
-    posterUrl: "./assets/images/Radio",
+    backgroundImage: "./assets/images/Radio.jpg",
+    posterUrl: "./assets/images/Radio.jpg",
     title: "Radio",
     album: "Radio",
     year: 2012,
