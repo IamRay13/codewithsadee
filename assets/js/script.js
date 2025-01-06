@@ -39,7 +39,7 @@ const musicData = [
     album: "Favorite lesson",
     year: 2023,
     artist: "Yaeow x Keenan Te",
-    musicPath: "./assets/music/assets/music/spotifydown.com - favorite lesson.mp3",
+    musicPath: "./assets/music/assets/music/Favorite lesson.mp3",
   },
      {
     backgroundImage: "./assets/images/Iris.jpg",
