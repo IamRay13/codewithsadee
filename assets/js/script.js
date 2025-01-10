@@ -26,6 +26,16 @@ const musicData = [
     {
     backgroundImage: "./assets/images/CODE.jpg",
     posterUrl: "./assets/images/CODE.jpg",
+    title: "Middle",
+    album: "Middle",
+    year: 2000,
+    artist: "CODE",
+    musicPath: "./assets/music/Middle.mp3",
+  },
+
+    {
+    backgroundImage: "./assets/images/CODE.jpg",
+    posterUrl: "./assets/images/CODE.jpg",
     title: "Passenger Seat",
     album: "Passenger Seat",
     year: 2000,
