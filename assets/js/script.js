@@ -6,6 +6,132 @@
 
 const musicData = [
  {
+  {
+  backgroundImage: "./assets/images/TheDayYouSaidGoodnight.jpg",
+  posterUrl: "./assets/images/TheDayYouSaidGoodnight.jpg",
+  title: "The Day You Said Goodnight",
+  album: "Twilight",
+  year: 2005,
+  artist: "Hale",
+  musicPath: "./assets/music/TheDayYouSaidGoodnight.mp3"
+},
+{
+  backgroundImage: "./assets/images/SaNgalanNgPagIbig.jpg",
+  posterUrl: "./assets/images/SaNgalanNgPagIbig.jpg",
+  title: "Sa Ngalan Ng Pag-Ibig",
+  album: "Langit Mong Bughaw",
+  year: 2017,
+  artist: "December Avenue",
+  musicPath: "./assets/music/SaNgalanNgPagIbig.mp3"
+},
+{
+  backgroundImage: "./assets/images/YoullBeSafeHere.jpg",
+  posterUrl: "./assets/images/YoullBeSafeHere.jpg",
+  title: "You'll Be Safe Here",
+  album: "You'll Be Safe Here",
+  year: 2005,
+  artist: "Rivermaya",
+  musicPath: "./assets/music/YoullBeSafeHere.mp3"
+},
+{
+  backgroundImage: "./assets/images/HanggangKailan.jpg",
+  posterUrl: "./assets/images/HanggangKailan.jpg",
+  title: "Hanggang Kailan (Umuwi Ka Na Baby)",
+  album: "Strike Whilst The Iron Is Hot",
+  year: 2005,
+  artist: "Orange & Lemons",
+  musicPath: "./assets/music/HanggangKailan.mp3"
+},
+{
+  backgroundImage: "./assets/images/PassengerSeat.jpg",
+  posterUrl: "./assets/images/PassengerSeat.jpg",
+  title: "Passenger Seat",
+  album: "No More Doubt",
+  year: 1999,
+  artist: "Stephen Speaks",
+  musicPath: "./assets/music/PassengerSeat.mp3"
+},
+{
+  backgroundImage: "./assets/images/NeverNot.jpg",
+  posterUrl: "./assets/images/NeverNot.jpg",
+  title: "Never Not",
+  album: "I Met You When I Was 18",
+  year: 2018,
+  artist: "Lauv",
+  musicPath: "./assets/music/NeverNot.mp3"
+},
+{
+  backgroundImage: "./assets/images/DriversLicense.jpg",
+  posterUrl: "./assets/images/DriversLicense.jpg",
+  title: "drivers license",
+  album: "SOUR",
+  year: 2021,
+  artist: "Olivia Rodrigo",
+  musicPath: "./assets/music/DriversLicense.mp3"
+},
+{
+  backgroundImage: "./assets/images/APT.jpg",
+  posterUrl: "./assets/images/APT.jpg",
+  title: "APT.",
+  album: "rosie",
+  year: 2024,
+  artist: "ROSÉ & Bruno Mars",
+  musicPath: "./assets/music/APT.mp3"
+},
+{
+  backgroundImage: "./assets/images/BeAlright.jpg",
+  posterUrl: "./assets/images/BeAlright.jpg",
+  title: "Be Alright",
+  album: "130 Mood: TRBL",
+  year: 2016,
+  artist: "DEAN",
+  musicPath: "./assets/music/BeAlright.mp3"
+},
+{
+  backgroundImage: "./assets/images/HereWithMe.jpg",
+  posterUrl: "./assets/images/HereWithMe.jpg",
+  title: "Here With Me",
+  album: "Here With Me",
+  year: 2019,
+  artist: "Marshmello ft. CHVRCHES",
+  musicPath: "./assets/music/HereWithMe.mp3"
+},
+{
+  backgroundImage: "./assets/images/Comethru.jpg",
+  posterUrl: "./assets/images/Comethru.jpg",
+  title: "comethru",
+  album: "comethru",
+  year: 2018,
+  artist: "Jeremy Zucker",
+  musicPath: "./assets/music/Comethru.mp3"
+},
+{
+  backgroundImage: "./assets/images/AtMyWorst.jpg",
+  posterUrl: "./assets/images/AtMyWorst.jpg",
+  title: "At My Worst",
+  album: "The Prelude",
+  year: 2020,
+  artist: "Pink Sweat$",
+  musicPath: "./assets/music/AtMyWorst.mp3"
+},
+{
+  backgroundImage: "./assets/images/TooGoodAtGoodbyes.jpg",
+  posterUrl: "./assets/images/TooGoodAtGoodbyes.jpg",
+  title: "Too Good at Goodbyes",
+  album: "The Thrill of It All",
+  year: 2017,
+  artist: "Sam Smith",
+  musicPath: "./assets/music/TooGoodAtGoodbyes.mp3"
+},
+{
+  backgroundImage: "./assets/images/SNAP.jpg",
+  posterUrl: "./assets/images/SNAP.jpg",
+  title: "SNAP",
+  album: "SNAP",
+  year: 2022,
+  artist: "Rosa Linn",
+  musicPath: "./assets/music/SNAP.mp3"
+}
     backgroundImage: "./assets/images/poster-1.jpg",
     posterUrl: "./assets/images/poster-1.jpg",
     title: "Cradles",
