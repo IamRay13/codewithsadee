@@ -13,7 +13,7 @@ const musicData = [
   album: "Twilight",
   year: 2005,
   artist: "Hale",
-  musicPath: "./assets/music/TheDayYouSaidGoodnight.mp3"
+  musicPath: "./assets/music/The Day You Said Goodnight.mp3"
 },
 {
   backgroundImage: "./assets/images/SaNgalanNgPagIbig.jpg",
@@ -22,7 +22,7 @@ const musicData = [
   album: "Langit Mong Bughaw",
   year: 2017,
   artist: "December Avenue",
-  musicPath: "./assets/music/SaNgalanNgPagIbig.mp3"
+  musicPath: "./assets/music/Sa Ngalan Ng Pag Ibig.mp3"
 },
 {
   backgroundImage: "./assets/images/YoullBeSafeHere.jpg",
@@ -31,7 +31,7 @@ const musicData = [
   album: "You'll Be Safe Here",
   year: 2005,
   artist: "Rivermaya",
-  musicPath: "./assets/music/YoullBeSafeHere.mp3"
+  musicPath: "./assets/music/Youll Be Safe Here.mp3"
 },
 {
   backgroundImage: "./assets/images/HanggangKailan.jpg",
@@ -40,7 +40,7 @@ const musicData = [
   album: "Strike Whilst The Iron Is Hot",
   year: 2005,
   artist: "Orange & Lemons",
-  musicPath: "./assets/music/HanggangKailan.mp3"
+  musicPath: "./assets/music/Hanggang Kailan.mp3"
 },
 {
   backgroundImage: "./assets/images/PassengerSeat.jpg",
@@ -49,7 +49,7 @@ const musicData = [
   album: "No More Doubt",
   year: 1999,
   artist: "Stephen Speaks",
-  musicPath: "./assets/music/PassengerSeat.mp3"
+  musicPath: "./assets/music/Passenger Seat.mp3"
 },
 {
   backgroundImage: "./assets/images/NeverNot.jpg",
@@ -58,7 +58,7 @@ const musicData = [
   album: "I Met You When I Was 18",
   year: 2018,
   artist: "Lauv",
-  musicPath: "./assets/music/NeverNot.mp3"
+  musicPath: "./assets/music/Never Not.mp3"
 },
 {
   backgroundImage: "./assets/images/DriversLicense.jpg",
@@ -67,7 +67,7 @@ const musicData = [
   album: "SOUR",
   year: 2021,
   artist: "Olivia Rodrigo",
-  musicPath: "./assets/music/DriversLicense.mp3"
+  musicPath: "./assets/music/Drivers License.mp3"
 },
 {
   backgroundImage: "./assets/images/APT.jpg",
@@ -85,7 +85,7 @@ const musicData = [
   album: "130 Mood: TRBL",
   year: 2016,
   artist: "DEAN",
-  musicPath: "./assets/music/BeAlright.mp3"
+  musicPath: "./assets/music/Be Alright.mp3"
 },
 {
   backgroundImage: "./assets/images/HereWithMe.jpg",
@@ -94,7 +94,7 @@ const musicData = [
   album: "Here With Me",
   year: 2019,
   artist: "Marshmello ft. CHVRCHES",
-  musicPath: "./assets/music/HereWithMe.mp3"
+  musicPath: "./assets/music/Here With Me.mp3"
 },
 {
   backgroundImage: "./assets/images/Comethru.jpg",
@@ -112,7 +112,7 @@ const musicData = [
   album: "The Prelude",
   year: 2020,
   artist: "Pink Sweat$",
-  musicPath: "./assets/music/AtMyWorst.mp3"
+  musicPath: "./assets/music/At My Worst.mp3"
 },
 {
   backgroundImage: "./assets/images/TooGoodAtGoodbyes.jpg",
@@ -121,7 +121,7 @@ const musicData = [
   album: "The Thrill of It All",
   year: 2017,
   artist: "Sam Smith",
-  musicPath: "./assets/music/TooGoodAtGoodbyes.mp3"
+  musicPath: "./assets/music/Too Good At Goodbyes.mp3"
 },
 {
   backgroundImage: "./assets/images/SNAP.jpg",
