@@ -14,6 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+    {
+    backgroundImage: "./assets/images/CODE.jpg",
+    posterUrl: "./assets/images/CODE.jpg",
+    title: "Nevet Not",
+    album: "Never Not",
+    year: 2000,
+    artist: "Lauv",
+    musicPath: "./assets/music/Never Not.mp3",
+  },
    {
     backgroundImage: "./assets/images/One last breath.jpg",
     posterUrl: "./assets/images/One last breath.jpg",
