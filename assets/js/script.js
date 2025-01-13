@@ -24,10 +24,10 @@ const musicData = [
     musicPath: "./assets/music/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video).mp3",
   },
     {
-    backgroundImage: "./assets/images/Favorite lesson.jpg",
+    backgroundImage: ".assets/images/Favorite lesson.jpg",
     posterUrl: "./assets/images/Favorite lesson.jpg",
-    title: "favorite lesson",
-    album: "favorite lesson",
+    title: "Favorite lesson",
+    album: "Favorite lesson",
     year: 2000,
     artist: "favorite lesson",
     musicPath: "./assets/music/spotifydown.com - favorite lesson (1).mp3",
