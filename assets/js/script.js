@@ -14,6 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+     {
+    backgroundImage: "./assets/images/Die With A Smile.jpg",
+    posterUrl: "./assets/images/Die With A Smile.jpg",
+    title: "Die With A Smile",
+    album: "Die With A Smile",
+    year: 2024,
+    artist: "Lady Gaga x Bruno Mars",
+    musicPath: "./assets/music/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video).mp3",
+  },
     {
     backgroundImage: "./assets/images/favorite lesson.jpg",
     posterUrl: "./assets/images/favorite lesson.jpg",
