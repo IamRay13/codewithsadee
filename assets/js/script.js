@@ -609,6 +609,15 @@ const musicData = [
     artist: "TJ Monterde",
     musicPath: "./assets/music/Palagi Live at The Cozy Cove  TJ Monterde.mp3",
   },
+   {
+    backgroundImage: "./assets/images/JericMaeChen.jpg",
+    posterUrl: "./assets/images/JericMaeChen.jpg",
+    title: "Fly me to the moon",
+    album: "Jeric Mae Chen",
+    year: 2024,
+    artist: "Jeric Mae Chen",
+    musicPath: "./assets/music/JericMaeChen.mp3",
+  },
       {
     backgroundImage: "./assets/images/Mamushi.jpg",
     posterUrl: "./assets/images/Mamushi.jpg",
