@@ -634,7 +634,7 @@ const musicData = [
     album: "Better",
     year: 2000,
     artist: "Better",
-    musicPath: "./assets/music/spotifydown.com - Better.mp3",
+    musicPath: "./assets/music/Khalid Better Official Video.mp3",
   },
     {
     backgroundImage: "./assets/images/Vee.jpg",
