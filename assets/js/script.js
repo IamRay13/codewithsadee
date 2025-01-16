@@ -14,6 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+      {
+    backgroundImage: "./assets/images/Marilag.jpg",
+    posterUrl: "./assets/images/Marilag.jpg",
+    title: "Marilag ",
+    album: "Langit Mong Bughaw",
+    year: 2024,
+    artist: "Dionela",
+    musicPath: "./assets/music/spotifydown.com - Marilag - Dionela.mp3",
+  },
      {
     backgroundImage: "./assets/images/Eroplanong Papel.jpg",
     posterUrl: "./assets/images/Eroplanong Papel.jpg",
