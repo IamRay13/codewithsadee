@@ -15,6 +15,42 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
  {
+  backgroundImage: "./assets/images/Tom Odell - Another Love.jpg",
+  posterUrl: "./assets/images/Tom Odell - Another Love.jpg",
+  title: "Another Love",
+  album: "Long Way Down",
+  year: 2013,
+  artist: "Tom Odell",
+  musicPath: "./assets/music/Tom Odell - Another Love.mp3",
+}
+ {
+  backgroundImage: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
+  posterUrl: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
+  title: "What If I Told You That I Love You",
+  album: "WHO HURT YOU?",
+  year: 2020,
+  artist: "Ali Gatie",
+  musicPath: "./assets/music/Ali Gatie - What If I Told You That I Love You.mp3",
+}
+ {
+  backgroundImage: "./assets/images/sapientdream - Pastlives.jpg",
+  posterUrl: "./assets/images/sapientdream - Pastlives.jpg",
+  title: "Pastlives",
+  album: "Drowning EP",
+  year: 2018,
+  artist: "sapientdream",
+  musicPath: "./assets/music/sapientdream - Pastlives.mp3",
+}
+ {
+  backgroundImage: "./assets/images/Benson Boone - Beautiful Things.jpg",
+  posterUrl: "./assets/images/Benson Boone - Beautiful Things.jpg",
+  title: "Beautiful Things",
+  album: "Fireworks & Rollerblades",
+  year: 2024,
+  artist: "Benson Boone",
+  musicPath: "./assets/music/Benson Boone - Beautiful Things.mp3",
+}
+ {
   backgroundImage: "./assets/images/Myles Smith - Stargazing.jpg",
   posterUrl: "./assets/images/Myles Smith - Stargazing.jpg",
   title: "Stargazing",
