@@ -14,7 +14,7 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
- {
+    {
   backgroundImage: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
   posterUrl: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
   title: "Stay",
@@ -22,8 +22,8 @@ const musicData = [
   year: 2024,
   artist: "Lavrans Svendsen",
   musicPath: "./assets/music/Lavrans Svendsen Stay The Voice Norway 2024.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Tom Odell - Another Love.jpg",
   posterUrl: "./assets/images/Tom Odell - Another Love.jpg",
   title: "Another Love",
@@ -31,8 +31,8 @@ const musicData = [
   year: 2013,
   artist: "Tom Odell",
   musicPath: "./assets/music/Tom Odell - Another Love.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
   posterUrl: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
   title: "What If I Told You That I Love You",
@@ -40,8 +40,8 @@ const musicData = [
   year: 2020,
   artist: "Ali Gatie",
   musicPath: "./assets/music/Ali Gatie - What If I Told You That I Love You.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/sapientdream - Pastlives.jpg",
   posterUrl: "./assets/images/sapientdream - Pastlives.jpg",
   title: "Pastlives",
@@ -49,8 +49,8 @@ const musicData = [
   year: 2018,
   artist: "sapientdream",
   musicPath: "./assets/music/sapientdream - Pastlives.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Benson Boone - Beautiful Things.jpg",
   posterUrl: "./assets/images/Benson Boone - Beautiful Things.jpg",
   title: "Beautiful Things",
@@ -58,8 +58,8 @@ const musicData = [
   year: 2024,
   artist: "Benson Boone",
   musicPath: "./assets/music/Benson Boone - Beautiful Things.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Myles Smith - Stargazing.jpg",
   posterUrl: "./assets/images/Myles Smith - Stargazing.jpg",
   title: "Stargazing",
@@ -67,8 +67,8 @@ const musicData = [
   year: 2024,
   artist: "Myles Smith",
   musicPath: "./assets/music/Myles Smith - Stargazing.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Myles Smith - Wait For You.jpg",
   posterUrl: "./assets/images/Myles Smith - Wait For You.jpg",
   title: "Wait For You",
@@ -76,8 +76,8 @@ const musicData = [
   year: 2024,
   artist: "Myles Smith",
   musicPath: "./assets/music/Myles Smith - Wait For You.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Alex Warren - Carry You Home.jpg",
   posterUrl: "./assets/images/Alex Warren - Carry You Home.jpg",
   title: "Carry You Home",
@@ -85,8 +85,8 @@ const musicData = [
   year: 2024,
   artist: "Alex Warren",
   musicPath: "./assets/music/Alex Warren - Carry You Home.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
   posterUrl: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
   title: "Ocean Eyes",
@@ -94,8 +94,8 @@ const musicData = [
   year: 2016,
   artist: "Billie Eilish",
   musicPath: "./assets/music/Billie Eilish - Ocean Eyes.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
   posterUrl: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
   title: "Lovely",
@@ -103,8 +103,8 @@ const musicData = [
   year: 2018,
   artist: "Billie Eilish, Khalid",
   musicPath: "./assets/music/Billie Eilish, Khalid - Lovely.mp3",
-},
- {
+  },
+    {
   backgroundImage: "./assets/images/Why Don't We - 8 Letters.jpg",
   posterUrl: "./assets/images/Why Don't We - 8 Letters.jpg",
   title: "8 Letters",
@@ -112,7 +112,8 @@ const musicData = [
   year: 2018,
   artist: "Why Don't We",
   musicPath: "./assets/music/Why Don't We - 8 Letters.mp3",
- {,
+  },
+    {
   backgroundImage: "./assets/images/LANY - Malibu Nights.jpg",
   posterUrl: "./assets/images/LANY - Malibu Nights.jpg",
   title: "Malibu Nights",
@@ -120,7 +121,8 @@ const musicData = [
   year: 2018,
   artist: "LANY",
   musicPath: "./assets/music/LANY - Malibu Nights.mp3",
- {,
+  },
+    {
   backgroundImage: "./assets/images/Powfu - Death Bed.jpg",
   posterUrl: "./assets/images/DeathBed.jpg",
   title: "Death Bed (Coffee for Your Head)",
@@ -128,7 +130,8 @@ const musicData = [
   year: 2019,
   artist: "Powfu",
   musicPath: "./assets/music/Powfu - Death Bed.mp3",
- {,
+  },
+    {
   backgroundImage: "./assets/images/The Chainsmokers - All We Know ft. Phoebe Ryan.jpg",
   posterUrl: "./assets/images/The Chainsmokers - All We Know ft. Phoebe Ryan.jpg",
   title: "All We Know",
@@ -136,7 +139,8 @@ const musicData = [
   year: 2016,
   artist: "The Chainsmokers ft. Phoebe Ryan",
   musicPath: "./assets/music/The Chainsmokers - All We Know ft. Phoebe Ryan.mp3",
- {,
+  },
+    {
   backgroundImage: "./assets/images/Shawn Mendes - Treat You Better.jpg",
   posterUrl: "./assets/images/Shawn Mendes - Treat You Better.jpg",
   title: "Treat You Better",
@@ -144,7 +148,8 @@ const musicData = [
   year: 2016,
   artist: "Shawn Mendes",
   musicPath: "./assets/music/Shawn Mendes - Treat You Better.mp3",
-{,
+  },
+    {
   backgroundImage: "./assets/images/So Sick - Ne-Yo.jpg",
   posterUrl: "./assets/images/So Sick - Ne-Yo.jpg",
   title: "So Sick",
@@ -152,7 +157,8 @@ const musicData = [
   year: 2006,
   artist: "Ne-Yo",
   musicPath: "./assets/music/So Sick - Ne-Yo.mp3",
- {,
+  },
+    {
   backgroundImage: "./assets/images/Troye Sivan - Youth.jpg",
   posterUrl: "./assets/images/Troye Sivan - Youth.jpg",
   title: "Youth",
@@ -160,8 +166,8 @@ const musicData = [
   year: 2015,
   artist: "Troye Sivan",
   musicPath: "./assets/music/Troye Sivan - Youth.mp3",
-},
-{
+  },
+    {
   backgroundImage: "./assets/images/The Chainsmokers - Paris.jpg",
   posterUrl: "./assets/images/The Chainsmokers - Paris.jpg",
   title: "Paris",
@@ -169,8 +175,8 @@ const musicData = [
   year: 2017,
   artist: "The Chainsmokers",
   musicPath: "./assets/music/The Chainsmokers - Paris.mp3",
-},
-{
+  },
+    {
   backgroundImage: "./assets/images/The Chainsmokers - Don't Let Me Down ft. Daya.jpg",
   posterUrl: "./assets/images/The Chainsmokers - Don't Let Me Down ft. Daya.jpg",
   title: "Don't Let Me Down",
@@ -178,8 +184,8 @@ const musicData = [
   year: 2016,
   artist: "The Chainsmokers ft. Daya",
   musicPath: "./assets/music/The Chainsmokers - Don't Let Me Down ft. Daya.mp3",
-},
-{
+  },
+    {
   backgroundImage: "./assets/images/Alessia Cara - Scars To Your Beautiful.jpg",
   posterUrl: "./assets/images/Alessia Cara - Scars To Your Beautiful.jpg",
   title: "Scars To Your Beautiful",
@@ -187,8 +193,8 @@ const musicData = [
   year: 2015,
   artist: "Alessia Cara",
   musicPath: "./assets/music/Alessia Cara - Scars To Your Beautiful.mp3",
-},
-{
+  },
+    {
     backgroundImage: "./assets/images/Marilag.jpg",
     posterUrl: "./assets/images/Marilag.jpg",
     title: "Marilag ",
