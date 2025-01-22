@@ -15,6 +15,67 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
  {
+  backgroundImage: "./assets/images/Myles Smith - Stargazing.jpg",
+  posterUrl: "./assets/images/Myles Smith - Stargazing.jpg",
+  title: "Stargazing",
+  album: "You Promised A Lifetime",
+  year: 2024,
+  artist: "Myles Smith",
+  musicPath: "./assets/music/Myles Smith - Stargazing.mp3",
+}
+ {
+  backgroundImage: "./assets/images/Myles Smith - Wait For You.jpg",
+  posterUrl: "./assets/images/Myles Smith - Wait For You.jpg",
+  title: "Wait For You",
+  album: "A Minute…",
+  year: 2024,
+  artist: "Myles Smith",
+  musicPath: "./assets/music/Myles Smith - Wait For You.mp3",
+}
+ {
+  backgroundImage: "./assets/images/Alex Warren - Carry You Home.jpg",
+  posterUrl: "./assets/images/Alex Warren - Carry You Home.jpg",
+  title: "Carry You Home",
+  album: "You'll Be Alright, Kid (Chapter 1)",
+  year: 2024,
+  artist: "Alex Warren",
+  musicPath: "./assets/music/Alex Warren - Carry You Home.mp3",
+}
+ {
+  backgroundImage: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
+  posterUrl: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
+  title: "Ocean Eyes",
+  album: "Ocean Eyes",
+  year: 2016,
+  artist: "Billie Eilish",
+  musicPath: "./assets/music/Billie Eilish - Ocean Eyes.mp3",
+}
+ {
+  backgroundImage: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
+  posterUrl: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
+  title: "Lovely",
+  album: "13 Reasons Why: Season 2 (Music from the Original TV Series)",
+  year: 2018,
+  artist: "Billie Eilish, Khalid",
+  musicPath: "./assets/music/Billie Eilish, Khalid - Lovely.mp3",
+}
+ {
+  backgroundImage: "./assets/images/Why Don't We - 8 Letters.jpg",
+  posterUrl: "./assets/images/Why Don't We - 8 Letters.jpg",
+  title: "8 Letters",
+  album: "8 Letters",
+  year: 2018,
+  artist: "Why Don't We",
+  musicPath: "./assets/music/Why Don't We - 8 Letters.mp3",
+ {
+  backgroundImage: "./assets/images/LANY - Malibu Nights.jpg",
+  posterUrl: "./assets/images/LANY - Malibu Nights.jpg",
+  title: "Malibu Nights",
+  album: "Malibu Nights",
+  year: 2018,
+  artist: "LANY",
+  musicPath: "./assets/music/LANY - Malibu Nights.mp3",
+ {
   backgroundImage: "./assets/images/Powfu - Death Bed.jpg",
   posterUrl: "./assets/images/DeathBed.jpg",
   title: "Death Bed (Coffee for Your Head)",
