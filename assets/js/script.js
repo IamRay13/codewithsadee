@@ -15,6 +15,15 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
  {
+  backgroundImage: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
+  posterUrl: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
+  title: "Stay",
+  album: "The Voice Norway 2024 Knockout",
+  year: 2024,
+  artist: "Lavrans Svendsen",
+  musicPath: "./assets/music/Lavrans Svendsen Stay The Voice Norway 2024.mp3",
+},
+ {
   backgroundImage: "./assets/images/Tom Odell - Another Love.jpg",
   posterUrl: "./assets/images/Tom Odell - Another Love.jpg",
   title: "Another Love",
