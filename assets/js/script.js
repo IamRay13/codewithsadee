@@ -14,6 +14,37 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+
+    {
+  backgroundImage: "./assets/images/GALIT KABA.jpg",
+  posterUrl: "./assets/images/GALIT KABA.jpg",
+  title: "GALIT KABA",
+  album: "MEME",
+  year: 2024,
+  artist: "GALIT KABA",
+  musicPath: "./assets/music/Galit kaba_.mp3",
+  },
+
+    {
+  backgroundImage: "./assets/images/Kinawat ko.jpg",
+  posterUrl: "./assets/images/Kinawat ko.jpg",
+  title: "Kinawat ko",
+  album: "MEME",
+  year: 2024,
+  artist: "Kinawat ko",
+  musicPath: "./assets/music/Kinawat ko.mp3",
+  },
+
+    {
+  backgroundImage: "./assets/images/CALM DOWN.jpg",
+  posterUrl: "./assets/images/CALM DOWN.jpg",
+  title: "CALM DOWN",
+  album: "MEME",
+  year: 2024,
+  artist: "CALM DOWN",
+  musicPath: "./assets/music/Please come down.mp3",
+  },
+
     {
   backgroundImage: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
   posterUrl: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
