@@ -15,6 +15,26 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
 
+{
+    backgroundImage: "./assets/images/Bazzi.jpg",
+    posterUrl: "./assets/images/Bazzi.jpg",
+    title: "Paradise",
+    album: "Paradise",
+    year: 2019,
+    artist: "Bazzi",
+    musicPath: "./assets/music/Bazzi - Paradise [Official Music Video].mp3",
+},
+
+{
+    backgroundImage: "./assets/images/Bazzi_Featuring_Camila.jpg",
+    posterUrl: "./assets/images/Bazzi_Featuring_Camila.jpg",
+    title: "Beautiful",
+    album: "Beautiful",
+    year: 2018,
+    artist: "Bazzi feat. Camila Cabello",
+    musicPath: "./assets/music/Bazzi feat. Camila Cabello - Beautiful [Official Music Video].mp3",
+},
+
     {
   backgroundImage: "./assets/images/GALIT KABA.jpg",
   posterUrl: "./assets/images/GALIT KABA.jpg",
