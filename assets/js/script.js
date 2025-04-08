@@ -16,6 +16,16 @@ const musicData = [
   },
 
 {
+    backgroundImage: "./assets/images/Avicii - The Nights.jpg",
+    posterUrl: "./assets/images/Avicii - The Nights.jpg",
+    title: "The Nights",
+    album: "The Nights",
+    year: 2014,
+    artist: "Bazzi",
+    musicPath: "./assets/music/Avicii - The Nights.mp3",
+},
+
+{
     backgroundImage: "./assets/images/Bazzi.jpg",
     posterUrl: "./assets/images/Bazzi.jpg",
     title: "Paradise",
