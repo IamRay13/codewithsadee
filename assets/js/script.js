@@ -15,6 +15,26 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
 
+
+  {
+    backgroundImage: "./assets/images/joji - worldstar money.jpg",
+    posterUrl: "./assets/images/joji - worldstar money.jpg",
+    title: "worldstar money",
+    album: "worldstar money", // Change if the track belongs to an album
+    year: 2021,               // Modify according to the actual release year
+    artist: "Joji",
+    musicPath: "./assets/music/joji - worldstar money (Lyrics).mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Avicii - The Nights.jpg",
+    posterUrl: "./assets/images/Avicii - The Nights.jpg",
+    title: "The Nights",
+    album: "The Nights",
+    year: 2014,
+    artist: "Bazzi",
+    musicPath: "./assets/music/Avicii - The Nights.mp3",
+  },
+
 {
     backgroundImage: "./assets/images/Avicii - The Nights.jpg",
     posterUrl: "./assets/images/Avicii - The Nights.jpg",
