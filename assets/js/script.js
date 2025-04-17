@@ -15,8 +15,18 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
 
+{
+  backgroundImage: "./assets/images/SPOTIFY.jpg",
+  posterUrl: "./assets/images/SPOTIFY.jpg",
+  title: "SPOTIFY",
+  album: "SPOTIFY", // Change if the track belongs to an album
+  year: 2025,               // Modify according to the actual release year
+  artist: "SPOTIFY",
+  musicPath: "./assets/music/joji - worldstar money (Lyrics).mp3",
+  spotifyLink: "https://open.spotify.com/playlist/37i9dQZF1E370rZw9TMmur?si=ZMt4FEvJQxG7tFN1P34gCg"
+},
 
-  {
+   {
     backgroundImage: "./assets/images/joji - worldstar money.jpg",
     posterUrl: "./assets/images/joji - worldstar money.jpg",
     title: "worldstar money",
@@ -25,6 +35,7 @@ const musicData = [
     artist: "Joji",
     musicPath: "./assets/music/joji - worldstar money (Lyrics).mp3",
   },
+
   {
     backgroundImage: "./assets/images/Avicii - The Nights.jpg",
     posterUrl: "./assets/images/Avicii - The Nights.jpg",
