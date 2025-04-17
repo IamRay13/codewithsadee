@@ -22,7 +22,7 @@ const musicData = [
   album: "SPOTIFY", // Change if the track belongs to an album
   year: 2025,               // Modify according to the actual release year
   artist: "SPOTIFY",
-  spotifyLink: "https://open.spotify.com/playlist/37i9dQZF1E370rZw9TMmur?si=ZMt4FEvJQxG7tFN1P34gCg"
+ musicPath: "https://open.spotify.com/playlist/37i9dQZF1E370rZw9TMmur?si=ZMt4FEvJQxG7tFN1P34gCg",
 },
 
    {
