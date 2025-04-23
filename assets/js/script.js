@@ -35,6 +35,17 @@ const musicData = [
     musicPath: "./assets/music/joji - worldstar money (Lyrics).mp3",
   },
 
+ {
+  backgroundImage: "./assets/images/CODE.jpg",
+  posterUrl: "./assets/images/CODE.jpg",
+  title: "CODE",
+  album: "CODE", // Change if the track belongs to an album
+  year: 2023,    // Modify according to the actual release year
+  artist: "CODE",
+  spotifyEmbed: "https://open.spotify.com/embed/track/2gRKq9rIC5i1zuxp06zJWH",
+  spotifyLink: "https://open.spotify.com/track/2gRKq9rIC5i1zuxp06zJWH?si=ZIpoHkT4SWenE9z4gINiLw"
+},
+
   {
     backgroundImage: "./assets/images/Avicii - The Nights.jpg",
     posterUrl: "./assets/images/Avicii - The Nights.jpg",
