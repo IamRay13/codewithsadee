@@ -14,17 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
-
-{
-  backgroundImage: "./assets/images/SPOTIFY.jpg",
-  posterUrl: "./assets/images/SPOTIFY.jpg",
-  title: "SPOTIFY",
-  album: "SPOTIFY", // Change if the track belongs to an album
-  year: 2025,               // Modify according to the actual release year
-  artist: "SPOTIFY",
- musicPath: "https://open.spotify.com/playlist/37i9dQZF1E370rZw9TMmur?si=ZMt4FEvJQxG7tFN1P34gCg",
-},
-
+   {
+    backgroundImage: "./assets/images/joji - worldstar money.jpg",
+    posterUrl: "./assets/images/joji - worldstar money.jpg",
+    title: "Shallow",
+    album: "Shallow", // Change if the track belongs to an album
+    year: 2023,               // Modify according to the actual release year
+    artist: "Fleurie",
+    musicPath: "./assets/music/Shallow (Emotional Piano Cover) feat. Fleurie - Tommee Profitt.mp3",
+  },
    {
     backgroundImage: "./assets/images/joji - worldstar money.jpg",
     posterUrl: "./assets/images/joji - worldstar money.jpg",
