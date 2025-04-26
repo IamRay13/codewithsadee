@@ -23,6 +23,15 @@ const musicData = [
     artist: "Fleurie",
     musicPath: "./assets/music/Shallow (Emotional Piano Cover) feat. Fleurie - Tommee Profitt.mp3",
   },
+ {
+    backgroundImage: "./assets/images/joji - worldstar money.jpg",
+    posterUrl: "./assets/images/joji - worldstar money.jpg",
+    title: "Chasing Cars",
+    album: "Chasing Cars", // Change if the track belongs to an album
+    year: 2023,               // Modify according to the actual release year
+    artist: "Fleurie",
+    musicPath: "./assets/music/Chasing Cars - Tommee Profitt & Fleurie.mp3",
+  },
    {
     backgroundImage: "./assets/images/joji - worldstar money.jpg",
     posterUrl: "./assets/images/joji - worldstar money.jpg",
