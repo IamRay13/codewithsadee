@@ -14,6 +14,43 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+ 
+    {
+    backgroundImage: "./assets/images/Passenger Seat.jpg",
+    posterUrl: "./assets/images/Passenger Seat.jpg",
+    title: "Passenger Seat",
+    album: "No More Doubt",
+    year: 1999,
+    artist: "Stephen Speaks",
+    musicPath: "./assets/music/Passenger Seat.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/The Day You Said Goodnight.jpg",
+    posterUrl: "./assets/images/The Day You Said Goodnight.jpg",
+    title: "The Day You Said Goodnight",
+    album: "Hale",
+    year: 2005,
+    artist: "Hale",
+    musicPath: "./assets/music/The Day You Said Goodnight.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/You'll Be Safe Here.jpg",
+    posterUrl: "./assets/images/You'll Be Safe Here.jpg",
+    title: "You'll Be Safe Here",
+    album: "Rivermaya",
+    year: 2005,
+    artist: "Rico Blanco",
+    musicPath: "./assets/music/You'll Be Safe Here.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/One last breath.jpg",
+    posterUrl: "./assets/images/One last breath.jpg",
+    title: "One Last Breath",
+    album: "Weathered",
+    year: 2021,
+    artist: "Creed",
+    musicPath: "./assets/music/One Last Breath.mp3",
+  },
   {
     backgroundImage: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
     posterUrl: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
@@ -86,27 +123,7 @@ const musicData = [
     artist: "Fleurie",
     musicPath: "./assets/music/Chasing Cars - Tommee Profitt & Fleurie.mp3",
   },
-   {
-    backgroundImage: "./assets/images/joji - worldstar money.jpg",
-    posterUrl: "./assets/images/joji - worldstar money.jpg",
-    title: "worldstar money",
-    album: "worldstar money", // Change if the track belongs to an album
-    year: 2021,               // Modify according to the actual release year
-    artist: "Joji",
-    musicPath: "./assets/music/joji - worldstar money (Lyrics).mp3",
-  },
-
- {
-  backgroundImage: "./assets/images/CODE.jpg",
-  posterUrl: "./assets/images/CODE.jpg",
-  title: "CODE",
-  album: "CODE", // Change if the track belongs to an album
-  year: 2023,    // Modify according to the actual release year
-  artist: "CODE",
-  spotifyEmbed: "https://open.spotify.com/embed/track/2gRKq9rIC5i1zuxp06zJWH",
-  spotifyLink: "https://open.spotify.com/track/2gRKq9rIC5i1zuxp06zJWH?si=ZIpoHkT4SWenE9z4gINiLw"
-},
-
+ 
   {
     backgroundImage: "./assets/images/Avicii - The Nights.jpg",
     posterUrl: "./assets/images/Avicii - The Nights.jpg",
@@ -116,16 +133,6 @@ const musicData = [
     artist: "Bazzi",
     musicPath: "./assets/music/Avicii - The Nights.mp3",
   },
-
-{
-    backgroundImage: "./assets/images/Avicii - The Nights.jpg",
-    posterUrl: "./assets/images/Avicii - The Nights.jpg",
-    title: "The Nights",
-    album: "The Nights",
-    year: 2014,
-    artist: "Bazzi",
-    musicPath: "./assets/music/Avicii - The Nights.mp3",
-},
 
 {
     backgroundImage: "./assets/images/Bazzi.jpg",
@@ -494,15 +501,6 @@ const musicData = [
   },
 
     {
-    backgroundImage: "./assets/images/Passenger Seat.jpg",
-    posterUrl: "./assets/images/Passenger Seat.jpg",
-    title: "Passenger Seat",
-    album: "No More Doubt",
-    year: 1999,
-    artist: "Stephen Speaks",
-    musicPath: "./assets/music/Passenger Seat.mp3",
-  },
-    {
     backgroundImage: "./assets/images/drivers license.jpg",
     posterUrl: "./assets/images/drivers license.jpg",
     title: "Drivers license",
@@ -530,24 +528,6 @@ const musicData = [
     musicPath: "./assets/music/Be Alright.mp3",
   },
     {
-    backgroundImage: "./assets/images/The Day You Said Goodnight.jpg",
-    posterUrl: "./assets/images/The Day You Said Goodnight.jpg",
-    title: "The Day You Said Goodnight",
-    album: "Hale",
-    year: 2005,
-    artist: "Hale",
-    musicPath: "./assets/music/The Day You Said Goodnight.mp3",
-  },
-    {
-    backgroundImage: "./assets/images/You'll Be Safe Here.jpg",
-    posterUrl: "./assets/images/You'll Be Safe Here.jpg",
-    title: "You'll Be Safe Here",
-    album: "Rivermaya",
-    year: 2005,
-    artist: "Rico Blanco",
-    musicPath: "./assets/music/You'll Be Safe Here.mp3",
-  },
-    {
     backgroundImage: "./assets/images/Hanggang Kailan - Umuwi Ka Na Baby.jpg",
     posterUrl: "./assets/images/Hanggang Kailan - Umuwi Ka Na Baby.jpg",
     title: "Hanggang Kailan - Umuwi Ka Na Baby",
@@ -556,15 +536,7 @@ const musicData = [
     artist: "Hale",
     musicPath: "./assets/music/Hanggang Kailan - Umuwi Ka Na Baby.mp3",
   },
-   {
-    backgroundImage: "./assets/images/One last breath.jpg",
-    posterUrl: "./assets/images/One last breath.jpg",
-    title: "One Last Breath",
-    album: "Weathered",
-    year: 2021,
-    artist: "Creed",
-    musicPath: "./assets/music/One Last Breath.mp3",
-  },
+
     {
     backgroundImage: "./assets/images/Snowman.jpg",
     posterUrl: "./assets/images/Snowman.jpg",
