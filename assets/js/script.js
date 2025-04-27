@@ -14,6 +14,24 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+  {
+    backgroundImage: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
+    posterUrl: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
+    title: "Can We Kiss Forever (Official Video)",
+    album: "Single", // Update as needed
+    year: 2025,      // Change according to the actual launch year
+    artist: "Kina ft. Adriana Proenza",
+    musicPath: "./assets/music/Kina - Can We Kiss Forever_ (Official Video) ft. Adriana Proenza.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/joker-in-this-shirt.jpg",
+    posterUrl: "./assets/images/joker-in-this-shirt.jpg",
+    title: "In This Shirt (Music Video Edit)",
+    album: "Single", // Modify if the track comes from an album
+    year: 2025,      // Update the release year accordingly
+    artist: "Joker",
+    musicPath: "./assets/music/Joker - In This Shirt  music video edit.mp3",
+  },
  {
   backgroundImage: "./assets/images/kina-get-you-the-moon.jpg",
   posterUrl: "./assets/images/kina-get-you-the-moon.jpg",
