@@ -14,24 +14,6 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
-   {
-    backgroundImage: "./assets/images/ben-and-ben-leaves.jpg",
-    posterUrl: "./assets/images/ben-and-ben-leaves.jpg",
-    title: "Leaves (Lyrics)",
-    album: "Single",
-    year: 2025,
-    artist: "Ben & Ben",
-    musicPath: "./assets/music/Ben & Ben - Leaves (Lyrics).mp3",
-  },
-  {
-    backgroundImage: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
-    posterUrl: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
-    title: "Sam Concepcion, Tippy Dos Santos and Quest (Lyrics)",
-    album: "Single",
-    year: 2025,
-    artist: "Dati",
-    musicPath: "./assets/music/Dati - Sam Concepcion, Tippy Dos Santos and Quest (Lyrics).mp3",
-  },
     {
     backgroundImage: "./assets/images/Passenger Seat.jpg",
     posterUrl: "./assets/images/Passenger Seat.jpg",
@@ -67,6 +49,33 @@ const musicData = [
     year: 2021,
     artist: "Creed",
     musicPath: "./assets/music/One Last Breath.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/ben-and-ben-leaves.jpg",
+    posterUrl: "./assets/images/ben-and-ben-leaves.jpg",
+    title: "Leaves (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Ben & Ben",
+    musicPath: "./assets/music/Ben & Ben - Leaves (Lyrics).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/sana-i-belong-to-the-zoo.jpg",
+    posterUrl: "./assets/images/sana-i-belong-to-the-zoo.jpg",
+    title: "I Belong to the Zoo (Lyrics) HD",
+    album: "Single", // Modify according to any album details if applicable
+    year: 2025,      // Update the release year as needed
+    artist: "Sana",
+    musicPath: "./assets/music/Sana   I Belong to the Zoo Lyrics HD.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    posterUrl: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    title: "Sam Concepcion, Tippy Dos Santos and Quest (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Dati",
+    musicPath: "./assets/music/Dati - Sam Concepcion, Tippy Dos Santos and Quest (Lyrics).mp3",
   },
   {
     backgroundImage: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
