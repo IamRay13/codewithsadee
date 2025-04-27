@@ -14,6 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+   {
+    backgroundImage: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
+    posterUrl: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
+    title: "Kahit Ayaw Mo Na (Lyrics)",
+    album: "Single", // Update if the track is part of an album
+    year: 2025,      // Modify to the actual release year
+    artist: "This Band",
+    musicPath: "./assets/music/This Band - Kahit Ayaw Mo Na (Lyrics).mp3",
+  },
     {
     backgroundImage: "./assets/images/Passenger Seat.jpg",
     posterUrl: "./assets/images/Passenger Seat.jpg",
