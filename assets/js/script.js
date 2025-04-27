@@ -106,8 +106,8 @@ const musicData = [
   musicPath: "./assets/music/Breathe (feat. Fleurie) - Tommee Profitt.mp3",
 },
    {
-    backgroundImage: "./assets/images/joji - worldstar money.jpg",
-    posterUrl: "./assets/images/joji - worldstar money.jpg",
+    backgroundImage: "./assets/images/Fleurie.jpg",
+    posterUrl: "./assets/images/Fleurie.jpg",
     title: "Shallow",
     album: "Shallow", // Change if the track belongs to an album
     year: 2023,               // Modify according to the actual release year
