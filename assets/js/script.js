@@ -14,6 +14,34 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+
+ {
+  backgroundImage: "./assets/images/sapientdream-pastlives.jpg",
+  posterUrl: "./assets/images/sapientdream-pastlives.jpg",
+  title: "Pastlives (lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,      // Modify according to the actual release year
+  artist: "sapientdream",
+  musicPath: "./assets/music/sapientdream - Pastlives (lyrics).mp3",
+},
+{
+  backgroundImage: "./assets/images/yung-kai-blue.jpg",
+  posterUrl: "./assets/images/yung-kai-blue.jpg",
+  title: "Blue (Lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,      // Modify according to the actual release year
+  artist: "yung kai",
+  musicPath: "./assets/music/yung kai - blue (Lyrics).mp3",
+},
+{
+  backgroundImage: "./assets/images/breathe-tommee-profitt.jpg",
+  posterUrl: "./assets/images/breathe-tommee-profitt.jpg",
+  title: "Breathe (feat. Fleurie)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,      // Modify according to the actual release year
+  artist: "Tommee Profitt",
+  musicPath: "./assets/music/Breathe (feat. Fleurie) - Tommee Profitt.mp3",
+},
    {
     backgroundImage: "./assets/images/joji - worldstar money.jpg",
     posterUrl: "./assets/images/joji - worldstar money.jpg",
