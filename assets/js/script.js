@@ -14,7 +14,24 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
- 
+   {
+    backgroundImage: "./assets/images/ben-and-ben-leaves.jpg",
+    posterUrl: "./assets/images/ben-and-ben-leaves.jpg",
+    title: "Leaves (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Ben & Ben",
+    musicPath: "./assets/music/Ben & Ben - Leaves (Lyrics).mp3",
+  },
+  {
+    backgroundImage: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    posterUrl: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    title: "Sam Concepcion, Tippy Dos Santos and Quest (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Dati",
+    musicPath: "./assets/music/Dati - Sam Concepcion, Tippy Dos Santos and Quest (Lyrics).mp3",
+  },
     {
     backgroundImage: "./assets/images/Passenger Seat.jpg",
     posterUrl: "./assets/images/Passenger Seat.jpg",
