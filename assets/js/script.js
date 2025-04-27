@@ -14,7 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
-
+ {
+  backgroundImage: "./assets/images/kina-get-you-the-moon.jpg",
+  posterUrl: "./assets/images/kina-get-you-the-moon.jpg",
+  title: "get you the moon (Lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,      // Modify according to the actual release year
+  artist: "Kina ft. Snow",
+  musicPath: "./assets/music/Kina - get you the moon (Lyrics) ft. Snow.mp3",
+},
  {
   backgroundImage: "./assets/images/sapientdream-pastlives.jpg",
   posterUrl: "./assets/images/sapientdream-pastlives.jpg",
