@@ -14,6 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+    {
+    backgroundImage: "./assets/images/ayaw ana lay.jpg",
+    posterUrl: "./assets/images/ayaw ana lay.jpg",
+    title: "AYAW ANA LAY",
+    album: "Ayaw ana lay", // Update if the track is part of an album
+    year: 2025,      // Modify to the actual release year
+    artist: "Ayaw ana Lay",
+    musicPath: "./assets/music/Ayaw ana lay oy.mp3",
+  },
    {
     backgroundImage: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
     posterUrl: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
