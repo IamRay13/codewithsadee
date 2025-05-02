@@ -14,6 +14,15 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+     {
+    backgroundImage: "./assets/images/Passion.jpg",
+    posterUrl: "./assets/images/Passion.jpg",
+    title: "The Lord Will Provide",
+    album: "Passion", // Update if the track is part of an album
+    year: 2025,      // Modify to the actual release year
+    artist: "Anna Golden x Landon Wolfe",
+    musicPath: "./assets/music/Passion, Anna Golden, Landon Wolfe - The Lord Will Provide (Live From Passion 2025).mp3",
+  },
     {
     backgroundImage: "./assets/images/ayaw ana lay.jpg",
     posterUrl: "./assets/images/ayaw ana lay.jpg",
