@@ -14,6 +14,56 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+ {
+  backgroundImage: "./assets/images/6cyclemind-upside-down.jpg",
+  posterUrl: "./assets/images/6cyclemind-upside-down.jpg",
+  title: "Upside Down",
+  album: "Single", // Update if the track is part of an album
+  year: 2004,      // Modify to the actual release year
+  artist: "6cyclemind",
+  musicPath: "./assets/music/6cyclemind - Upside Down (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/adie-paraluman.jpg",
+  posterUrl: "./assets/images/adie-paraluman.jpg",
+  title: "Paraluman",
+  album: "Single", // Update if the track is part of an album
+  year: 2005,      // Modify to the actual release year
+  artist: "Adie",
+  musicPath: "./assets/music/Adie - Paraluman (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/callalily-magbalik.jpg",
+  posterUrl: "./assets/images/callalily-magbalik.jpg",
+  title: "Magbalik",
+  album: "Fisheye", // Update if the track is part of an album
+  year: 2006,       // Modify to the actual release year
+  artist: "Callalily",
+  musicPath: "./assets/music/Callalily - Magbalik (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/ruth-b-dandelions.jpg",
+  posterUrl: "./assets/images/ruth-b-dandelions.jpg",
+  title: "Dandelions (Slowed & Reverb)",
+  album: "Single", // Update if the track is part of an album
+  year: 2017,      // Modify to the actual release year
+  artist: "Ruth B.",
+  musicPath: "./assets/music/SpotiMate.io - Dandelions - slowed _ reverb - Ruth B..mp3",
+},
+
+{
+  backgroundImage: "./assets/images/fm-static-tonight.jpg",
+  posterUrl: "./assets/images/fm-static-tonight.jpg",
+  title: "Tonight",
+  album: "Single", // Update if the track is part of an album
+  year: 2009,      // Modify to the actual release year
+  artist: "FM Static",
+  musicPath: "./assets/music/Tonight - FM Static (Lyrics).mp3",
+},
+
      {
     backgroundImage: "./assets/images/Passion.jpg",
     posterUrl: "./assets/images/Passion.jpg",
