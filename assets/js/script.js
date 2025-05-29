@@ -15,6 +15,33 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
  {
+  backgroundImage: "./assets/images/vsc-middle-of-nowhere.jpg",
+  posterUrl: "./assets/images/vsc-middle-of-nowhere.jpg",
+  title: "Middle Of Nowhere",
+  album: "Single", // Update if the track is part of an album
+  year: 2020,      // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiDownloader.com - Middle Of Nowhere - Vancouver Sleep Clinic.mp3",
+},
+{
+  backgroundImage: "./assets/images/hollowcoves-coastline.jpg",
+  posterUrl: "./assets/images/hollowcoves-coastline.jpg",
+  title: "Coastline (Vancouver Sleep Clinic Remix)",
+  album: "Reimagined, Vol. 1", // This track remix is part of an album
+  year: 2023,      // Release year as per remix release
+  artist: "Hollow Coves",
+  musicPath: "./assets/music/SpotiMate.io - Coastline - Vancouver Sleep Clinic Remix - Hollow Coves.mp3",
+},
+{
+  backgroundImage: "./assets/images/vsc-someone-to-stay-acoustic.jpg",
+  posterUrl: "./assets/images/vsc-someone-to-stay-acoustic.jpg",
+  title: "Someone To Stay (Acoustic)",
+  album: "Someone To Stay (Acoustic)", // Album name same as track title, if applicable
+  year: 2023,      // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiMate.io - Someone To Stay _Acoustic_ - Vancouver Sleep Clinic (1).mp3",
+},
+ {
   backgroundImage: "./assets/images/6cyclemind-upside-down.jpg",
   posterUrl: "./assets/images/6cyclemind-upside-down.jpg",
   title: "Upside Down",
