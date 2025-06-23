@@ -14,10 +14,6 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
- const tracks = [
-
-
-
   {
     backgroundImage: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
     posterUrl: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
