@@ -14,6 +14,114 @@ const musicData = [
     artist: "Sub urban",
     musicPath: "./assets/music/music-1.mp3",
   },
+ {
+  backgroundImage: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
+  title: "I Miss You, I'm Sorry",
+  album: "Minor", // Update if the track is part of an album
+  year: 2020,      // Modify to the actual release year
+  artist: "Gracie Abrams",
+  musicPath: "./assets/music/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Briston - Sydney Rose.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Briston - Sydney Rose.jpg",
+  title: "Briston",
+  album: "Briston", // Update if the track is part of an album
+  year: 2024,      // Modify to the actual release year
+  artist: "Sydney Rose",
+  musicPath: "./assets/music/SpotiDownloader.com - Briston - Sydney Rose.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Little Bit Better - Caleb Hearn.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Little Bit Better - Caleb Hearn.jpg",
+  title: "Little Bit Better",
+  album: "Little Bit Better", // Update if the track is part of an album
+  year: 2024,      // Modify to the actual release year
+  artist: "Caleb Hearn & ROSIE",
+  musicPath: "./assets/music/SpotiDownloader.com - Little Bit Better - Caleb Hearn.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Lonely Dirt Road - Dax.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Lonely Dirt Road - Dax.jpg",
+  title: "Lonely Dirt Road",
+  album: "From A Man’s Perspective", // Update if the track is part of an album
+  year: 2021,      // Modify to the actual release year
+  artist: "Dax",
+  musicPath: "./assets/music/SpotiDownloader.com - Lonely Dirt Road - Dax.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Sparks - Coldplay.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Sparks - Coldplay.jpg",
+  title: "Sparks",
+  album: "Parachutes", // Update if the track is part of an album
+  year: 2000,      // Modify to the actual release year
+  artist: "Coldplay",
+  musicPath: "./assets/music/SpotiDownloader.com - Sparks - Coldplay.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - ceilings - Lizzy McAlpine.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - ceilings - Lizzy McAlpine.jpg",
+  title: "ceilings",
+  album: "Five Seconds Flat", // Update if the track is part of an album
+  year: 2022,      // Modify to the actual release year
+  artist: "Lizzy McAlpine",
+  musicPath: "./assets/music/SpotiDownloader.com - ceilings - Lizzy McAlpine.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - something to remember - Matt Hansen.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - something to remember - Matt Hansen.jpg",
+  title: "something to remember",
+  album: "something to remember", // Update if the track is part of an album
+  year: 2023,      // Modify to the actual release year
+  artist: "Matt Hansen",
+  musicPath: "./assets/music/SpotiDownloader.com - something to remember - Matt Hansen.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - would've been you - sombr.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - would've been you - sombr.jpg",
+  title: "would've been you",
+  album: "In Another Life", // Update if the track is part of an album
+  year: 2023,      // Modify to the actual release year
+  artist: "Sombr",
+  musicPath: "./assets/music/SpotiDownloader.com - would've been you - sombr.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - you were good to me - Jeremy Zucker.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - you were good to me - Jeremy Zucker.jpg",
+  title: "You Were Good to Me",
+  album: "Brent", // Update if the track is part of an album
+  year: 2019,      // Modify to the actual release year
+  artist: "Jeremy Zucker & Chelsea Cutler",
+  musicPath: "./assets/music/SpotiDownloader.com - you were good to me - Jeremy Zucker.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Middle Of Nowhere - Vancouver Sleep Clinic.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Middle Of Nowhere - Vancouver Sleep Clinic.jpg",
+  title: "Middle Of Nowhere",
+  album: "Middle Of Nowhere", // Update if the track is part of an album
+  year: 2020,      // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiDownloader.com - Middle Of Nowhere - Vancouver Sleep Clinic.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.jpg",
+  title: "Good life",
+  album: "Good life", // Update if the track is part of an album
+  year: 2025,  // Modify to the actual release year
+  artist: "Chelsea Cutler",
+  musicPath: "./assets/music/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.mp3",
+},
+{
+  backgroundImage: "./assets/images/vsc-middle-of-nowhere.jpg",
+  posterUrl: "./assets/images/vsc-middle-of-nowhere.jpg",
+  title: "Middle Of Nowhere",
+  album: "Single", // Update if the track is part of an album
+  year: 2020, // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiDownloader.com - Middle Of Nowhere - Vancouver Sleep Clinic.mp3",
+},
 {
   backgroundImage: "./assets/images/vsc-someone-to-stay-acoustic.jpg",
   posterUrl: "./assets/images/vsc-someone-to-stay-acoustic.jpg",
