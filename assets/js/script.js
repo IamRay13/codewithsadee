@@ -21,7 +21,7 @@ const musicData = [
   album: "As it was", // Update if the track is part of an album
   year: 2025,      // Modify to the actual release year
   artist: "Harry Styles",
-  musicPath: "./assets/music/As it was.mp3",
+  musicPath: "./assets/music/SpotiDownloader.com - As It Was - Pop Goes Ambient.mp3",
 },
  {
   backgroundImage: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
