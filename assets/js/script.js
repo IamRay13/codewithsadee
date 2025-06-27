@@ -15,6 +15,15 @@ const musicData = [
     musicPath: "./assets/music/music-1.mp3",
   },
  {
+  backgroundImage: "./assets/images/As it was.jpg",
+  posterUrl: "./assets/images/As it was.jpg",
+  title: "As it was",
+  album: "As it was", // Update if the track is part of an album
+  year: 2025,      // Modify to the actual release year
+  artist: "Harry Styles",
+  musicPath: "./assets/music/As it was.mp3",
+},
+ {
   backgroundImage: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
   posterUrl: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
   title: "I Miss You, I'm Sorry",
