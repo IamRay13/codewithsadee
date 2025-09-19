@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Music Player</title>
+
+  <!-- Inline SVG favicon -->
+  <link
+    rel="icon"
+    type="image/svg+xml"
+    href='data:image/svg+xml,<?xml version="1.0" encoding="UTF-8"?>\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">\
+  <defs>\
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">\
+      <stop offset="0%" stop-color="%2300D1FF"/>\
+      <stop offset="100%" stop-color="%237B61FF"/>\
+    </linearGradient>\
+    <filter id="s" x="-50%" y="-50%" width="200%" height="200%">\
+      <feGaussianBlur stdDeviation="1.2" />\
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -5"/>\
+    </filter>\
+  </defs>\
+  <rect width="64" height="64" rx="12" fill="%23121319"/>\
+  <g transform="translate(10,9)">\
+    <circle cx="40" cy="40" r="6" fill="url(%23g)" filter="url(%23s)"/>\
+    <path d="M14 4h4c6 0 11 4 11 10v17.5a10 10 0 1 1-4-8V14c0-3-3-6-7-6h-4z" fill="url(%23g)"/>\
+    <circle cx="15" cy="43" r="7" fill="url(%23g)"/>\
+  </g>\
+</svg>'
+  />
+
+  <style>
+    :root {
+      --bg: #0e0f14;
+      --panel: rgba(18, 19, 25, 0.55);
+      --panel-strong: rgba(18, 19, 25, 0.75);
+      --text: #e8eaf0;
+      --muted: #a3a8b8;
+      --accent: #7b61ff;
+      --accent-2: #00d1ff;
+      --card-w: min(92vw, 980px);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --blur: 28px;
+      --shadow: 0 20px 50px rgba(0,0,0,0.35);
+      --gap: 16px;
+    }
+
+    * { box-sizing: border-box }
+    html, body { height: 100% }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      overflow: hidden;
+    }
+
+    /* Background layer with blur */
+    .bg {
+      position: fixed;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      filter: blur(var(--blur)) saturate(1.2);
+      transform: scale(1.06);
+      transition: background-image 300ms ease-out;
+    }
+    .bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(1200px 600px at 70% 20%, rgba(123,97,255,0.20), transparent 50%),
+                  radial-gradient(900px 600px at 10% 90%, rgba(0,209,255,0.18), transparent 50%),
+                  linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.65));
+      pointer-events: none;
+    }
+
+    /* App shell */
+    .app {
+      position: relative;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: var(--card-w);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 22px;
+      background: var(--panel);
+      backdrop-filter: blur(22px) saturate(1.1);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      min-height: 540px;
+    }
+
+    /* Left: now playing */
+    .now-playing {
+      position: relative;
+      background: var(--panel-strong);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      overflow: hidden;
+    }
+
+    .poster-wrap {
+      display: grid;
+      place-items: center;
+      position: relative;
+      aspect-ratio: 1 / 1;
+      border-radius: calc(var(--radius) - 6px);
+      overflow: hidden;
+      background: #0b0c10;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: translateZ(0);
+      transition: transform 220ms ease, filter 220ms ease, opacity 220ms ease;
+      opacity: 0.95;
+    }
+    .poster.focused {
+      filter: none;
+      opacity: 1;
+      transform: scale(1.02);
+    }
+
+    .meta {
+      display: grid;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .title {
+      font-weight: 700;
+      font-size: clamp(18px, 2.2vw, 26px);
+      letter-spacing: 0.2px;
+    }
+    .subline {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Controls */
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      outline: none;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+    .btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.14) }
+    .btn:active { transform: scale(0.96) }
+
+    .btn-lg {
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border: none;
+      color: #0b0c10;
+      font-weight: 700;
+      box-shadow: 0 10px 20px rgba(123,97,255,0.35), 0 6px 16px rgba(0,209,255,0.25);
+    }
+    .btn-lg svg { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35)); }
+
+    .time {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    .seek-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .range {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 999px;
+      outline: none;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+    .range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 4px rgba(123,97,255,0.25);
+      border: none;
+    }
+    .range::-moz-range-thumb {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      border: none;
+    }
+
+    .range.progress {
+      background: linear-gradient(90deg, var(--accent) var(--progress, 0%), rgba(255,255,255,0.12) 0%);
+    }
+
+    .vol-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .vol-row svg { opacity: 0.8 }
+
+    /* Right: queue */
+    .queue {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .queue .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 6px;
+    }
+    .queue .title {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .list {
+      background: var(--panel-strong);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      overflow: auto;
+      padding: 6px;
+    }
+
+    .track {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+      border: 1px solid transparent;
+    }
+    .track:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.08) }
+    .track.active {
+      background: linear-gradient(180deg, rgba(123,97,255,0.16), rgba(0,0,0,0.08));
+      border-color: rgba(123,97,255,0.30);
+    }
+
+    .thumb {
+      width: 56px; height: 56px; border-radius: 10px; object-fit: cover;
+    }
+
+    .tmeta {
+      display: grid; gap: 2px;
+    }
+    .t-title { font-weight: 600; }
+    .t-sub { color: var(--muted); font-size: 12px; }
+    .t-year { color: var(--muted); font-size: 12px; }
+
+    /* Empty/intro hint */
+    .hint {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .hint .bubble {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(6px);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .card {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        height: 88vh;
+        overflow: hidden;
+      }
+      .now-playing { min-height: 56vh }
+      .list { max-height: 38vh }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" id="bg"></div>
+
+  <div class="app">
+    <div class="card">
+      <!-- Left: Now Playing -->
+      <section class="now-playing">
+        <div class="poster-wrap">
+          <img id="poster" class="poster" alt="Poster" />
+          <div id="hint" class="hint">
+            <div class="bubble">Click a track from the queue to begin. The artwork will pop to the center with details.</div>
+          </div>
+        </div>
+
+        <div class="meta">
+          <div class="title" id="np-title">—</div>
+          <div class="subline" id="np-sub">—</div>
+        </div>
+
+        <div class="controls">
+          <div class="seek-wrap">
+            <input id="seek" class="range progress" type="range" min="0" max="1000" value="0" step="1" />
+            <div class="time">
+              <span id="curr">0:00</span>
+              <span id="dur">0:00</span>
+            </div>
+          </div>
+
+          <div class="buttons">
+            <button class="btn" id="prev" aria-label="Previous">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12l9.5 6V6z"/></svg>
+            </button>
+
+            <button class="btn btn-lg" id="play" aria-label="Play/Pause">
+              <svg id="playIcon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              <svg id="pauseIcon" width="26" height="26" viewBox="0 0 24 24" fill="#0b0c10" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+            </button>
+
+            <button class="btn" id="next" aria-label="Next">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM14.5 12L5 6v12z"/></svg>
+            </button>
+          </div>
+
+          <div class="vol-row">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3z"/></svg>
+            <input id="vol" class="range" type="range" min="0" max="1" step="0.01" value="0.9" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Queue -->
+      <section class="queue">
+        <div class="header">
+          <div class="title">Queue</div>
+        </div>
+        <div id="list" class="list"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Audio element -->
+  <audio id="audio" preload="metadata"></audio>
+
+  <script>
+    // Your data
+    const musicData = [
+       {
+    backgroundImage: "./assets/images/poster-1.jpg",
+    posterUrl: "./assets/images/poster-1.jpg",
+    title: "Cradles",
+    album: "Cradles",
+    year: 2019,
+    artist: "Sub urban",
+    musicPath: "./assets/music/music-1.mp3",
+  },
+  {
+  backgroundImage: "./assets/images/This is what sadness feels like.jpg",
+  posterUrl: "./assets/images/This is what sadness feels like.jpg",
+  title: "This is what sadness feels like",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - This is what sadness feels like.mp3",
+},
+{
+  backgroundImage: "./assets/images/This is what space feels like.jpg",
+  posterUrl: "./assets/images/This is what space feels like.jpg", // fixed key name
+  title: "This is what space feels like",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - This is what space feels like.mp3",
+},
+{
+  backgroundImage: "./assets/images/This is what winter feels like.jpg",
+  posterUrl: "./assets/images/This is what winter feels like.jpg",
+  title: "This is what winter feels like",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - This is what winter feels like.mp3",
+},
+{
+  backgroundImage: "./assets/images/Golden hour.jpg",
+  posterUrl: "./assets/images/Golden hour.jpg",
+  title: "Golden hour",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - Golden hour.mp3",
+},
+{
+  backgroundImage: "./assets/images/Fast Car.jpg",
+  posterUrl: "./assets/images/Fast Car.jpg",
+  title: "Fast Car",
+  album: "Gettin’ Old",
+  year: 2023,
+  artist: "Luke Combs",
+  musicPath: "./assets/music/Luke Combs - Fast Car.mp3",
+},
+{
+  backgroundImage: "./assets/images/Idea 22.jpg",
+  posterUrl: "./assets/images/Idea 22.jpg",
+  title: "Idea 22",
+  album: "Idea 22 (single)",
+  year: 2022,
+  artist: "Gibran Alcocer",
+  musicPath: "./assets/music/Idea 22.mp3",
+},
+
+         {
+    backgroundImage: "./assets/images/My Type.jpg",
+    posterUrl: "./assets/images/My Type.jpg",
+    title: "My Type",
+    album: "Memories...Do Not Open",
+    year: 2017,
+    artist: "The Chainsmokers, featuring Emily Warren",
+    musicPath: "./assets/music/The Chainsmokers - My Type (Audio) ft. Emily Warren.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Better.jpg",
+    posterUrl: "./assets/images/Better.jpg",
+    title: "Better",
+    album: "Free Spirit",
+    year: 2018,
+    artist: "Khalid",
+    musicPath: "./assets/music/Khalid - Better (Official Video) 4.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Lovely.jpg",
+    posterUrl: "./assets/images/Lovely.jpg",
+    title: "Lovely",
+    album: "Free Spirit",
+    year: 2018,
+    artist: "Khalid",
+    musicPath: "./assets/music/Billie Eilish, Khalid - lovely 4.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/runaway1.jpg",
+    posterUrl: "./assets/images/runaway1.jpg",
+    title: "Runaway",
+    album: "All My Demons Greeting Me as a Friend",
+    year: 2015,
+    artist: "AURORA ",
+    musicPath: "./assets/music/AURORA - Runaway.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/MAPA.jpg",
+    posterUrl: "./assets/images/MAPA.jpg",
+    title: "MAPA",
+    album: "Pagsibol",
+    year: 2021,
+    artist: "SB19",
+    musicPath: "./assets/music/SB19 MAPA.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/DUNGKA.jpg",
+    posterUrl: "./assets/images/DUNGKA.jpg",
+    title: "DUNGKA",
+    album: "Simula at Wakas",
+    year: 2025,
+    artist: "SB19",
+    musicPath: "./assets/music/SB19 DUNGKA.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Go Up.jpg",
+    posterUrl: "./assets/images/Go Up.jpg",
+    title: "Go Up",
+    album: "Get in the Zone",
+    year: 2019,
+    artist: "SB19",
+    musicPath: "./assets/music/SB19 Go Up.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Multo.jpg",
+    posterUrl: "./assets/images/Multo.jpg",
+    title: "Multo",
+    album: "Silakbo",
+    year: 2024,
+    artist: "Cup of Joe",
+    musicPath: "./assets/music/Multo - Cup of Joe.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Saan.jpg",
+    posterUrl: "./assets/images/Saan.jpg",
+    title: "Saan",
+    album: "Saan? - Single",
+    year: 2023,
+    artist: "Maki",
+    musicPath: "./assets/music/Maki - Saan.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Dilaw.jpg",
+    posterUrl: "./assets/images/Dilaw.jpg",
+    title: "Dilaw",
+    album: "Kolorcoaster",
+    year: 2024,
+    artist: "Maki ",
+    musicPath: "./assets/music/Maki - Dilaw.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/FreeSpirit.jpg",
+    posterUrl: "./assets/images/FreeSpirit.jpg",
+    title: "Better",
+    album: "Free Spirit",
+    year: 2018,
+    artist: "Khalid",
+    musicPath: "./assets/music/Khalid - Free Spirit (Official Video).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Golden.jpg",
+    posterUrl: "./assets/images/Golden.jpg",
+    title: "Huntrix",
+    album: "KPop Demon Hunters",
+    year: 2025,
+    artist: "Huntrix",
+    musicPath: "./assets/music/Huntrix - Golden (Lyrics) KPop Demon Hunters.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/Ava.jpg",
+    posterUrl: "./assets/images/Ava.jpg",
+    title: "Ava",
+    album: "We Fam Econo",
+    year: 2014,
+    artist: "Arisael Guzman",
+    musicPath: "./assets/music/Famy - Ava.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Stressed Out.jpg",
+    posterUrl: "./assets/images/Stressed Out.jpg",
+    title: "Stressed Out",
+    album: "Blurryface",
+    year: 2015,
+    artist: "Twenty One Pilots",
+    musicPath: "./assets/music/twenty one pilots_ Stressed Out.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/Ride.jpg",
+    posterUrl: "./assets/images/Ride.jpg",
+    title: "Ride",
+    album: "Blurryface",
+    year: 2015,
+    artist: "Twenty One Pilots",
+    musicPath: "./assets/music/twenty one pilots - Ride.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/Mad Hatter.jpg",
+    posterUrl: "./assets/images/Mad Hatter.jpg",
+    title: "Mad Hatter",
+    album: "Cry Baby",
+    year: 2015,
+    artist: "Melanie Martinez",
+    musicPath: "./assets/music/Melanie Martinez - Mad Hatter.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Heathens.jpg",
+    posterUrl: "./assets/images/Heathens.jpg",
+    title: "Heathens",
+    album: "Suicide Squad",
+    year: 2016,
+    artist: "Twenty One Pilots",
+    musicPath: "./assets/music/SpotiDownloader.com - Heathens - Twenty One Pilots.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/SailorSong.jpg",
+    posterUrl: "./assets/images/SailorSong.jpg",
+    title: "Sailor Song",
+    album: "At the Beach, in Every Life",
+    year: 2024,
+    artist: "Gigi Perez",
+    musicPath: "./assets/music/Gigi Perez - Sailor Song [Official Music Video].mp3",
+  },
+
+       {
+    backgroundImage: "./assets/images/ordinary.jpg",
+    posterUrl: "./assets/images/ordinary.jpg",
+    title: "Ordinary",
+    album: "You'll Be Alright, Kid",
+    year: 2025,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/SpotiDownloader.com - Ordinary - Wedding Version - Alex Warren.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Older.jpg",
+    posterUrl: "./assets/images/Older.jpg",
+    title: "Older",
+    album: "Loser (EP)",
+    year: 2018,
+    artist: "Sasha Alex Sloan",
+    musicPath: "./assets/music/Sasha Alex Sloan - Older.mp3",
+  },
+
+     {
+    backgroundImage: "./assets/images/All I Want.jpg",
+    posterUrl: "./assets/images/All I Want.jpg",
+    title: "All I Want",
+    album: "High School Musical: The Musical: The Series: The Soundtrack",
+    year: 2023,
+    artist: "Olivia Rodrigo",
+    musicPath: "./assets/music/Olivia Rodrigo - All I Want.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/vampire.jpg",
+    posterUrl: "./assets/images/vampire.jpg",
+    title: "vampire",
+    album: "Guts",
+    year: 2023,
+    artist: "Olivia Rodrigo",
+    musicPath: "./assets/music/Olivia Rodrigo - vampire.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Here's to Never Growing Up.jpg",
+    posterUrl: "./assets/images/Here's to Never Growing Up.jpg",
+    title: "Here's to Never Growing Up",
+    album: "Avril Lavigne",
+    year: 2023,
+    artist: "Avril Lavigne",
+    musicPath: "./assets/music/Avril Lavigne - Here's to Never Growing Up.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Leave me in the dark.jpg",
+    posterUrl: "./assets/images/Leave me in the dark.jpg",
+    title: "Leave me in the dark",
+    album: "Leave me in the dark",
+    year: 2023,
+    artist: "Alexander Stewart",
+    musicPath: "./assets/music/Alexander Stewart  Leave Me in the Dark.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/How Could You.jpg",
+    posterUrl: "./assets/images/How Could You.jpg",
+    title: "How Could You",
+    album: "How Could You",
+    year: 2023,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - How Could You (Be OK).mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Memories.jpg",
+    posterUrl: "./assets/images/Memories.jpg",
+    title: "Memories",
+    album: "The Epilogue",
+    year: 2024,
+    artist: "Dean Lewis",
+    musicPath: "./assets/music/Dean Lewis - Memories.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Save You a Seat.jpg",
+    posterUrl: "./assets/images/Save You a Seat.jpg",
+    title: "Save You a Seat",
+    album: "Save You a Seat",
+    year: 2024,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - Save You A Seat.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Chasing Shadows.jpg",
+    posterUrl: "./assets/images/Chasing Shadows.jpg",
+    title: "Chasing Shadows",
+    album: "You'll Be Alright, Kid",
+    year: 2022,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - Chasing Shadows.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Before You Leave Me.jpg",
+    posterUrl: "./assets/images/Before You Leave Me.jpg",
+    title: "Before You Leave Me",
+    album: "Before You Leave Me",
+    year: 2024,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - Before You Leave Me.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/BOAF.jpg",
+    posterUrl: "./assets/images/BOAF.jpg",
+    title: "BIRDS OF A FEATHER",
+    album: "Hit Me Hard and Soft",
+    year: 2024,
+    artist: "Billie Eilish",
+    musicPath: "./assets/music/Billie Eilish - BIRDS OF A FEATHER.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Marilag.jpg",
+    posterUrl: "./assets/images/Marilag.jpg",
+    title: "Marilag ",
+    album: "Langit Mong Bughaw",
+    year: 2024,
+    artist: "Dionela",
+    musicPath: "./assets/music/spotifydown.com - Marilag - Dionela.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/better off without me.jpg",
+    posterUrl: "./assets/images/better off without me.jpg",
+    title: "Better off without me",
+    album: "better off without me",
+    year: 2022,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - better off without me (Acoustic).mp3",
+  },
+      {
+    backgroundImage: "./assets/images/GRAVITY.jpg",
+    posterUrl: "./assets/images/GRAVITY.jpg",
+    title: "GRAVITY",
+    album: "GRAVITY",
+    year: 2024,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - GRAVITY (Visualizer).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Without You With Me.jpg",
+    posterUrl: "./assets/images/Without You With Me.jpg",
+    title: "Without You With Me",
+    album: "Without You With M",
+    year: 2021,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - Without You With Me (Lyrics).mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Love Me Now or Lose Me Later.jpg",
+    posterUrl: "./assets/images/Love Me Now or Lose Me Later.jpg",
+    title: "Love Me Now or Lose Me Later",
+    album: "KYGO",
+    year: 2024,
+    artist: "Kygo & Matt Hansen",
+    musicPath: "./assets/music/Kygo, Matt Hansen - Love Me Now or Lose Me Later (Lyric video) _ Live from The Troll's Tongue.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/LET EM GO.jpg",
+    posterUrl: "./assets/images/LET EM GO.jpg",
+    title: "LET EM GO",
+    album: "LET EM GO",
+    year: 2023,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - LET EM GO (Official Visualizer).mp3",
+  },
+
+      {
+    backgroundImage: "./assets/images/Andamnako.jpg",
+    posterUrl: "./assets/images/Andamnako.jpg",
+    title: "Andam Na Ko",
+    album: "Bagani",
+    year: 2021,
+    artist: "Oh! Caraga",
+    musicPath: "./assets/music/Oh! Caraga - Andam Na Ko.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Ipanumpako.jpg",
+    posterUrl: "./assets/images/Ipanumpako.jpg",
+    title: "Ipanumpa Ko",
+    album: "Bagani",
+    year: 2019,
+    artist: "Oh! Caraga",
+    musicPath: "./assets/music/Oh! Caraga - Ipanumpa Ko (Official Music Video).mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Vee.jpg",
+    posterUrl: "./assets/images/Vee.jpg",
+    title: "Kumapit Ka Lang",
+    album: "Floravee",
+    year: 2024,
+    artist: "Floravee",
+    musicPath: "./assets/music/Kumapit Ka Lang - Floravee.mp3",
+  },
+     {
+  backgroundImage: "./assets/images/Roses.jpg",
+  posterUrl: "./assets/images/Roses.jpg",
+  title: "Roses",
+  album: "Bouquet", // Update if the track is part of an album
+  year: 2015,       // Modify to the actual release year
+  artist: "The Chainsmokers",
+  musicPath: "./assets/music/The Chainsmokers - Roses (Lyric Video) ft. ROZES.mp3",
+},
+       {
+  backgroundImage: "./assets/images/Let me love you.jpg",
+  posterUrl: "./assets/images/Let me love you.jpg",
+  title: "Let Me Love You (ft. Justin Bieber)",
+  album: "Encore", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "DJ Snake",
+  musicPath: "./assets/music/DJ Snake - Let Me Love You ft. Justin Bieber.mp3",
+},
+       {
+  backgroundImage: "./assets/images/Perfect Strangers.jpg",
+  posterUrl: "./assets/images/Perfect Strangers.jpg",
+  title: "Perfect Strangers (ft. JP Cooper)",
+  album: "Blue", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "Jonas Blue",
+  musicPath: "./assets/music/Jonas Blue - Perfect Strangers ft. JP Cooper.mp3",
+},
+     {
+  backgroundImage: "./assets/images/Beautiful scars.jpg",
+  posterUrl: "./assets/images/Beautiful scars.jpg",
+  title: "Beautiful Scars",
+  album: "Still Alive (Deluxe Edition)", // Update if the track is part of an album
+  year: 2020,       // Modify to the actual release year
+  artist: "Maximillian",
+  musicPath: "./assets/music/Maximillian - Beautiful Scars.mp3",
+},
+     {
+  backgroundImage: "./assets/images/Cold water.jpg",
+  posterUrl: "./assets/images/Cold water.jpg",
+  title: "Cold Water",
+  album: "Major Lazer Essentials", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "Major Lazer",
+  musicPath: "./assets/music/Major Lazer - Cold Water (feat. Justin Bieber & MO).mp3",
+},
+     {
+  backgroundImage: "./assets/images/Closer.jpg",
+  posterUrl: "./assets/images/Closer.jpg",
+  title: "Closer (Lyric) ft. Halsey",
+  album: "Collage", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "The Chainsmokers",
+  musicPath: "./assets/music/The Chainsmokers - Closer (Lyric) ft. Halsey.mp3",
+},
+ {
+  backgroundImage: "./assets/images/As it was.jpg",
+  posterUrl: "./assets/images/As it was.jpg",
+  title: "As it was",
+  album: "As it was", // Update if the track is part of an album
+  year: 2025,       // Modify to the actual release year
+  artist: "Harry Styles",
+  musicPath: "./assets/music/SpotiDownloader.com - As It Was - Pop Goes Ambient.mp3",
+},
+ {
+  backgroundImage: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
+  title: "I Miss You, I'm Sorry",
+  album: "Minor", // Update if the track is part of an album
+  year: 2020,       // Modify to the actual release year
+  artist: "Gracie Abrams",
+  musicPath: "./assets/music/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Briston - Sydney Rose.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Briston - Sydney Rose.jpg",
+  title: "Briston",
+  album: "Briston", // Update if the track is part of an album
+  year: 2024,       // Modify to the actual release year
+  artist: "Sydney Rose",
+  musicPath: "./assets/music/SpotiDownloader.com - Briston - Sydney Rose.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Little Bit Better - Caleb Hearn.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Little Bit Better - Caleb Hearn.jpg",
+  title: "Little Bit Better",
+  album: "Little Bit Better", // Update if the track is part of an album
+  year: 2024,       // Modify to the actual release year
+  artist: "Caleb Hearn & ROSIE",
+  musicPath: "./assets/music/SpotiDownloader.com - Little Bit Better - Caleb Hearn.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Lonely Dirt Road - Dax.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Lonely Dirt Road - Dax.jpg",
+  title: "Lonely Dirt Road",
+  album: "From A Man’s Perspective", // Update if the track is part of an album
+  year: 2021,       // Modify to the actual release year
+  artist: "Dax",
+  musicPath: "./assets/music/SpotiDownloader.com - Lonely Dirt Road - Dax.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Sparks - Coldplay.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Sparks - Coldplay.jpg",
+  title: "Sparks",
+  album: "Parachutes", // Update if the track is part of an album
+  year: 2000,       // Modify to the actual release year
+  artist: "Coldplay",
+  musicPath: "./assets/music/SpotiDownloader.com - Sparks - Coldplay.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - ceilings - Lizzy McAlpine.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - ceilings - Lizzy McAlpine.jpg",
+  title: "ceilings",
+  album: "Five Seconds Flat", // Update if the track is part of an album
+  year: 2022,       // Modify to the actual release year
+  artist: "Lizzy McAlpine",
+  musicPath: "./assets/music/SpotiDownloader.com - ceilings - Lizzy McAlpine.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - something to remember - Matt Hansen.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - something to remember - Matt Hansen.jpg",
+  title: "something to remember",
+  album: "something to remember", // Update if the track is part of an album
+  year: 2023,       // Modify to the actual release year
+  artist: "Matt Hansen",
+  musicPath: "./assets/music/SpotiDownloader.com - something to remember - Matt Hansen.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - would've been you - sombr.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - would've been you - sombr.jpg",
+  title: "would've been you",
+  album: "In Another Life", // Update if the track is part of an album
+  year: 2023,       // Modify to the actual release year
+  artist: "Sombr",
+  musicPath: "./assets/music/SpotiDownloader.com - would've been you - sombr.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - you were good to me - Jeremy Zucker.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - you were good to me - Jeremy Zucker.jpg",
+  title: "You Were Good to Me",
+  album: "Brent", // Update if the track is part of an album
+  year: 2019,       // Modify to the actual release year
+  artist: "Jeremy Zucker & Chelsea Cutler",
+  musicPath: "./assets/music/SpotiDownloader.com - you were good to me - Jeremy Zucker.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.jpg",
+  title: "Good life",
+  album: "Good life", // Update if the track is part of an album
+  year: 2025,  // Modify to the actual release year
+  artist: "Chelsea Cutler",
+  musicPath: "./assets/music/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.mp3",
+},
+{
+  backgroundImage: "./assets/images/vsc-middle-of-nowhere.jpg",
+  posterUrl: "./assets/images/vsc-middle-of-nowhere.jpg",
+  title: "Middle Of Nowhere",
+  album: "Single", // Update if the track is part of an album
+  year: 2020, // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiDownloader.com - Middle Of Nowhere - Vancouver Sleep Clinic.mp3",
+},
+{
+  backgroundImage: "./assets/images/Someone To Stay.jpg",
+  posterUrl: "./assets/images/Someone To Stay.jpg",
+  title: "Someone To Stay (Acoustic)",
+  album: "Someone To Stay (Acoustic)", // Album name same as track title, if applicable
+  year: 2023,       // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiMate.io - Someone To Stay _Acoustic_ - Vancouver Sleep Clinic (1).mp3",
+},
+ {
+  backgroundImage: "./assets/images/Upside Down.jpg",
+  posterUrl: "./assets/images/Upside Down.jpg",
+  title: "Upside Down",
+  album: "Single", // Update if the track is part of an album
+  year: 2004,       // Modify to the actual release year
+  artist: "6cyclemind",
+  musicPath: "./assets/music/6cyclemind - Upside Down (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Paraluman.jpg",
+  posterUrl: "./assets/images/Paraluman.jpg",
+  title: "Paraluman",
+  album: "Single", // Update if the track is part of an album
+  year: 2005,       // Modify to the actual release year
+  artist: "Adie",
+  musicPath: "./assets/music/Adie - Paraluman (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Magbalik.jpg",
+  posterUrl: "./assets/images/Magbalik.jpg",
+  title: "Magbalik",
+  album: "Fisheye", // Update if the track is part of an album
+  year: 2006,       // Modify to the actual release year
+  artist: "Callalily",
+  musicPath: "./assets/music/Callalily - Magbalik (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Dandelions.jpg",
+  posterUrl: "./assets/images/Dandelions.jpg",
+  title: "Dandelions (Slowed & Reverb)",
+  album: "Single", // Update if the track is part of an album
+  year: 2017,       // Modify to the actual release year
+  artist: "Ruth B.",
+  musicPath: "./assets/music/SpotiMate.io - Dandelions - slowed _ reverb - Ruth B..mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Tonight.jpg",
+  posterUrl: "./assets/images/Tonight.jpg",
+  title: "Tonight",
+  album: "Single", // Update if the track is part of an album
+  year: 2009,       // Modify to the actual release year
+  artist: "FM Static",
+  musicPath: "./assets/music/Tonight - FM Static (Lyrics).mp3",
+},
+
+     {
+    backgroundImage: "./assets/images/The Lord Will Provide.jpg",
+    posterUrl: "./assets/images/The Lord Will Provide.jpg",
+    title: "The Lord Will Provide",
+    album: "Passion", // Update if the track is part of an album
+    year: 2025,       // Modify to the actual release year
+    artist: "Anna Golden x Landon Wolfe",
+    musicPath: "./assets/music/Passion, Anna Golden, Landon Wolfe - The Lord Will Provide (Live From Passion 2025).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
+    posterUrl: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
+    title: "Kahit Ayaw Mo Na (Lyrics)",
+    album: "Single", // Update if the track is part of an album
+    year: 2025,       // Modify to the actual release year
+    artist: "This Band",
+    musicPath: "./assets/music/This Band - Kahit Ayaw Mo Na (Lyrics).mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Passenger Seat.jpg",
+    posterUrl: "./assets/images/Passenger Seat.jpg",
+    title: "Passenger Seat",
+    album: "No More Doubt",
+    year: 1999,
+    artist: "Stephen Speaks",
+    musicPath: "./assets/music/Passenger Seat.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/The Day You Said Goodnight.jpg",
+    posterUrl: "./assets/images/The Day You Said Goodnight.jpg",
+    title: "The Day You Said Goodnight",
+    album: "Hale",
+    year: 2005,
+    artist: "Hale",
+    musicPath: "./assets/music/The Day You Said Goodnight.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/You'll Be Safe Here.jpg",
+    posterUrl: "./assets/images/You'll Be Safe Here.jpg",
+    title: "You'll Be Safe Here",
+    album: "Rivermaya",
+    year: 2005,
+    artist: "Rico Blanco",
+    musicPath: "./assets/music/You'll Be Safe Here.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/One last breath.jpg",
+    posterUrl: "./assets/images/One last breath.jpg",
+    title: "One Last Breath",
+    album: "Weathered",
+    year: 2021,
+    artist: "Creed",
+    musicPath: "./assets/music/One Last Breath.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/ben-and-ben-leaves.jpg",
+    posterUrl: "./assets/images/ben-and-ben-leaves.jpg",
+    title: "Leaves (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Ben & Ben",
+    musicPath: "./assets/music/Ben & Ben - Leaves (Lyrics).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/sana-i-belong-to-the-zoo.jpg",
+    posterUrl: "./assets/images/sana-i-belong-to-the-zoo.jpg",
+    title: "I Belong to the Zoo (Lyrics) HD",
+    album: "Single", // Modify according to any album details if applicable
+    year: 2025,       // Update the release year as needed
+    artist: "Sana",
+    musicPath: "./assets/music/Sana   I Belong to the Zoo Lyrics HD.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    posterUrl: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    title: "Sam Concepcion, Tippy Dos Santos and Quest (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Dati",
+    musicPath: "./assets/music/Dati - Sam Concepcion, Tippy Dos Santos and Quest (Lyrics).mp3",
+  },
+ {
+  backgroundImage: "./assets/images/kina-get-you-the-moon.jpg",
+  posterUrl: "./assets/images/kina-get-you-the-moon.jpg",
+  title: "get you the moon (Lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "Kina ft. Snow",
+  musicPath: "./assets/music/Kina - get you the moon (Lyrics) ft. Snow.mp3",
+},
+ {
+  backgroundImage: "./assets/images/sapientdream-pastlives.jpg",
+  posterUrl: "./assets/images/sapientdream-pastlives.jpg",
+  title: "Pastlives (lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "sapientdream",
+  musicPath: "./assets/music/sapientdream - Pastlives (lyrics).mp3",
+},
+{
+  backgroundImage: "./assets/images/yung-kai-blue.jpg",
+  posterUrl: "./assets/images/yung-kai-blue.jpg",
+  title: "Blue (Lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "yung kai",
+  musicPath: "./assets/music/yung kai - blue (Lyrics).mp3",
+},
+{
+  backgroundImage: "./assets/images/breathe-tommee-profitt.jpg",
+  posterUrl: "./assets/images/breathe-tommee-profitt.jpg",
+  title: "Breathe (feat. Fleurie)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "Tommee Profitt",
+  musicPath: "./assets/music/Breathe (feat. Fleurie) - Tommee Profitt.mp3",
+},
+   {
+    backgroundImage: "./assets/images/Fleurie.jpg",
+    posterUrl: "./assets/images/Fleurie.jpg",
+    title: "Shallow",
+    album: "Shallow", // Change if the track belongs to an album
+    year: 2023,               // Modify according to the actual release year
+    artist: "Fleurie",
+    musicPath: "./assets/music/Shallow (Emotional Piano Cover) feat. Fleurie - Tommee Profitt.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/joji - worldstar money.jpg",
+    posterUrl: "./assets/images/joji - worldstar money.jpg",
+    title: "Chasing Cars",
+    album: "Chasing Cars", // Change if the track belongs to an album
+    year: 2023,               // Modify according to the actual release year
+    artist: "Fleurie",
+    musicPath: "./assets/music/Chasing Cars - Tommee Profitt & Fleurie.mp3",
+  },
+ 
+  {
+    backgroundImage: "./assets/images/Avicii - The Nights.jpg",
+    posterUrl: "./assets/images/Avicii - The Nights.jpg",
+    title: "The Nights",
+    album: "The Nights",
+    year: 2014,
+    artist: "Bazzi",
+    musicPath: "./assets/music/Avicii - The Nights.mp3",
+  },
+
+{
+    backgroundImage: "./assets/images/Bazzi.jpg",
+    posterUrl: "./assets/images/Bazzi.jpg",
+    title: "Paradise",
+    album: "Paradise",
+    year: 2019,
+    artist: "Bazzi",
+    musicPath: "./assets/music/Bazzi - Paradise [Official Music Video].mp3",
+},
+
+{
+    backgroundImage: "./assets/images/Bazzi_Featuring_Camila.jpg",
+    posterUrl: "./assets/images/Bazzi_Featuring_Camila.jpg",
+    title: "Beautiful",
+    album: "Beautiful",
+    year: 2018,
+    artist: "Bazzi feat. Camila Cabello",
+    musicPath: "./assets/music/Bazzi feat. Camila Cabello - Beautiful [Official Music Video].mp3",
+},
+    {
+  backgroundImage: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
+  posterUrl: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
+  title: "Stay",
+  album: "The Voice Norway 2024 Knockout",
+  year: 2024,
+  artist: "Lavrans Svendsen",
+  musicPath: "./assets/music/Lavrans Svendsen Stay The Voice Norway 2024.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Tom Odell - Another Love.jpg",
+  posterUrl: "./assets/images/Tom Odell - Another Love.jpg",
+  title: "Another Love",
+  album: "Long Way Down",
+  year: 2013,
+  artist: "Tom Odell",
+  musicPath: "./assets/music/Tom Odell - Another Love.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
+  posterUrl: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
+  title: "What If I Told You That I Love You",
+  album: "WHO HURT YOU?",
+  year: 2020,
+  artist: "Ali Gatie",
+  musicPath: "./assets/music/Ali Gatie - What If I Told You That I Love You.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/sapientdream - Pastlives.jpg",
+  posterUrl: "./assets/images/sapientdream - Pastlives.jpg",
+  title: "Pastlives",
+  album: "Drowning EP",
+  year: 2018,
+  artist: "sapientdream",
+  musicPath: "./assets/music/sapientdream - Pastlives.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Benson Boone - Beautiful Things.jpg",
+  posterUrl: "./assets/images/Benson Boone - Beautiful Things.jpg",
+  title: "Beautiful Things",
+  album: "Fireworks & Rollerblades",
+  year: 2024,
+  artist: "Benson Boone",
+  musicPath: "./assets/music/Benson Boone - Beautiful Things.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Myles Smith - Stargazing.jpg",
+  posterUrl: "./assets/images/Myles Smith - Stargazing.jpg",
+  title: "Stargazing",
+  album: "You Promised A Lifetime",
+  year: 2024,
+  artist: "Myles Smith",
+  musicPath: "./assets/music/Myles Smith - Stargazing.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Myles Smith - Wait For You.jpg",
+  posterUrl: "./assets/images/Myles Smith - Wait For You.jpg",
+  title: "Wait For You",
+  album: "A Minute…",
+  year: 2024,
+  artist: "Myles Smith",
+  musicPath: "./assets/music/Myles Smith - Wait For You.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Alex Warren - Carry You Home.jpg",
+  posterUrl: "./assets/images/Alex Warren - Carry You Home.jpg",
+  title: "Carry You Home",
+  album: "You'll Be Alright, Kid (Chapter 1)",
+  year: 2024,
+  artist: "Alex Warren",
+  musicPath: "./assets/music/Alex Warren - Carry You Home.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
+  posterUrl: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
+  title: "Ocean Eyes",
+  album: "Ocean Eyes",
+  year: 2016,
+  artist: "Billie Eilish",
+  musicPath: "./assets/music/Billie Eilish - Ocean Eyes.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
+  posterUrl: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
+  title: "Lovely",
+  album: "13 Reasons Why: Season 2 (Music from the Original TV Series)",
+  year: 2018,
+  artist: "Billie Eilish, Khalid",
+  musicPath: "./assets/music/Billie Eilish, Khalid - Lovely.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Why Don't We - 8 Letters.jpg",
+  posterUrl: "./assets/images/Why Don't We - 8 Letters.jpg",
+  title: "8 Letters",
+  album: "8 Letters",
+  year: 2018,
+  artist: "Why Don't We",
+  musicPath: "./assets/music/Why Don't We - 8 Letters.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/LANY - Malibu Nights.jpg",
+  posterUrl: "./assets/images/LANY - Malibu Nights.jpg",
+  title: "Malibu Nights",
+  album: "Malibu Nights",
+  year: 2018,
+  artist: "LANY",
+  musicPath: "./assets/music/LANY - Malibu Nights.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Death Bed.jpg",
+  posterUrl: "./assets/images/Death Bed.jpg",
+  title: "Death Bed (Coffee for Your Head)",
+  album: "Some Boring Love Stories, Pt. 2",
+  year: 2019,
+  artist: "Powfu",
+  musicPath: "./assets/music/Powfu - Death Bed.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/The Chainsmokers - All We Know ft. Phoebe Ryan.jpg",
+  posterUrl: "./assets/images/The Chainsmokers - All We Know ft. Phoebe Ryan.jpg",
+  title: "All We Know",
+  album: "Collage",
+  year: 2016,
+  artist: "The Chainsmokers ft. Phoebe Ryan",
+  musicPath: "./assets/music/The Chainsmokers - All We Know ft. Phoebe Ryan.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Shawn Mendes - Treat You Better.jpg",
+  posterUrl: "./assets/images/Shawn Mendes - Treat You Better.jpg",
+  title: "Treat You Better",
+  album: "Illuminate",
+  year: 2016,
+  artist: "Shawn Mendes",
+  musicPath: "./assets/music/Shawn Mendes - Treat You Better.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/So Sick - Ne-Yo.jpg",
+  posterUrl: "./assets/images/So Sick - Ne-Yo.jpg",
+  title: "So Sick",
+  album: "In My Own Words",
+  year: 2006,
+  artist: "Ne-Yo",
+  musicPath: "./assets/music/So Sick - Ne-Yo.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Troye Sivan - Youth.jpg",
+  posterUrl: "./assets/images/Troye Sivan - Youth.jpg",
+  title: "Youth",
+  album: "Blue Neighbourhood",
+  year: 2015,
+  artist: "Troye Sivan",
+  musicPath: "./assets/music/Troye Sivan - Youth.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/The Chainsmokers - Paris.jpg",
+  posterUrl: "./assets/images/The Chainsmokers - Paris.jpg",
+  title: "Paris",
+  album: "Memories...Do Not Open",
+  year: 2017,
+  artist: "The Chainsmokers",
+  musicPath: "./assets/music/The Chainsmokers - Paris.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/The Chainsmokers - Don't Let Me Down ft. Daya.jpg",
+  posterUrl: "./assets/images/The Chainsmokers - Don't Let Me Down ft. Daya.jpg",
+  title: "Don't Let Me Down",
+  album: "Collage",
+  year: 2016,
+  artist: "The Chainsmokers ft. Daya",
+  musicPath: "./assets/music/The Chainsmokers - Don't Let Me Down ft. Daya.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Alessia Cara - Scars To Your Beautiful.jpg",
+  posterUrl: "./assets/images/Alessia Cara - Scars To Your Beautiful.jpg",
+  title: "Scars To Your Beautiful",
+  album: "Know-It-All",
+  year: 2015,
+  artist: "Alessia Cara",
+  musicPath: "./assets/music/Alessia Cara - Scars To Your Beautiful.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Eroplanong Papel.jpg",
+    posterUrl: "./assets/images/Eroplanong Papel.jpg",
+    title: "Eroplanong Papel",
+    album: "Langit Mong Bughaw",
+    year: 2016,
+    artist: "December Avenue",
+    musicPath: "./assets/music/Eroplanong Papel - December Avenue.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Heaven Knows.jpg",
+    posterUrl: "./assets/images/Heaven Knows.jpg",
+    title: "Heaven Knows",
+    album: "Strike Whilst The Iron Is Hot",
+    year: 2005,
+    artist: "Orange & Lemons",
+    musicPath: "./assets/music/Heaven Knows - This Angel Has Flown - Orange & Lemons.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Roses.jpg",
+    posterUrl: "./assets/images/Roses.jpg",
+    title: "Roses",
+    album: "Bouquet",
+    year: 2000,
+    artist: "The Chainsmokers",
+    musicPath: "./assets/music/Roses - The Chainsmokers.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Hanggang Kailan.jpg",
+    posterUrl: "./assets/images/Hanggang Kailan.jpg",
+    title: "Hanggang Kailan",
+    album: "Strike Whilst The Iron Is Hot",
+    year: 2005,
+    artist: "Orange & Lemons",
+    musicPath: "./assets/music/Hanggang Kailan_Umuwi Ka Na Baby.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    posterUrl: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    title: "Sa Ngalan Ng Pag-Ibig",
+    album: "Langit Mong Bughaw",
+    year: 2017,
+    artist: "December Avenue",
+    musicPath: "./assets/music/Sa Ngalan Ng Pag-Ibig_.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Die With A Smile.jpg",
+    posterUrl: "./assets/images/Die With A Smile.jpg",
+    title: "Die With A Smile",
+    album: "Die With A Smile",
+    year: 2024,
+    artist: "Lady Gaga x Bruno Mars",
+    musicPath: "./assets/music/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video).mp3",
+  },
+    {
+    backgroundImage: ".assets/images/Favorite lesson.jpg",
+    posterUrl: "./assets/images/Favorite lesson.jpg",
+    title: "Favorite lesson",
+    album: "Favorite lesson",
+    year: 2000,
+    artist: "favorite lesson",
+    musicPath: "./assets/music/spotifydown.com - favorite lesson (1).mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Never Not.jpg",
+    posterUrl: "./assets/images/Never Not.jpg",
+    title: "Nevet Not",
+    album: "I Met You When I Was 18",
+    year: 2018,
+    artist: "Lauv",
+    musicPath: "./assets/music/Never Not.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Here with me.jpg",
+    posterUrl: "./assets/images/Here with me.jpg",
+    title: "Here with me",
+    album: "No Angel",
+    year: 1999,
+    artist: "Dido",
+    musicPath: "./assets/music/Here with me.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/SNAP.jpg",
+    posterUrl: "./assets/images/SNAP.jpg",
+    title: "SNAP",
+    album: "Lay Your Hands Upon My Heart",
+    year: 2022,
+    artist: "Rosa Linn",
+    musicPath: "./assets/music/SNAP.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Too Good At Goodbyes.jpg",
+    posterUrl: "./assets/images/Too Good At Goodbyes.jpg",
+    title: "Too Good At Goodbyes",
+    album: "The Thrill of It All",
+    year: 2017,
+    artist: "Sam Smith",
+    musicPath: "./assets/music/Too Good At Goodbyes.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/At My Worst.jpg",
+    posterUrl: "./assets/images/At My Worst.jpg",
+    title: "At My Worst",
+    album: "The Prelude",
+    year: 2020,
+    artist: "Pink Sweat$",
+    musicPath: "./assets/music/At My Worst.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Middle.jpg",
+    posterUrl: "./assets/images/Middle.jpg",
+    title: "Middle",
+    album: "Encore",
+    year: 2000,
+    artist: "DJ Snake",
+    musicPath: "./assets/music/Middle.mp3",
+  },
+
+    {
+    backgroundImage: "./assets/images/drivers license.jpg",
+    posterUrl: "./assets/images/drivers license.jpg",
+    title: "Drivers license",
+    album: "Drivers license",
+    year: 2021,
+    artist: "Olivia Rodrigo",
+    musicPath: "./assets/music/drivers license.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/APT..jpg",
+    posterUrl: "./assets/images/APT..jpg",
+    title: "APT",
+    album: "APT",
+    year: 2024,
+    artist: "Rosie",
+    musicPath: "./assets/music/APT..mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Be Alright.jpg",
+    posterUrl: "./assets/images/Be Alright.jpg",
+    title: "Be Alright",
+    album: "A Place We Knew",
+    year: 2019,
+    artist: "Dean Lewis",
+    musicPath: "./assets/music/Be Alright.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Hanggang Kailan - Umuwi Ka Na Baby.jpg",
+    posterUrl: "./assets/images/Hanggang Kailan - Umuwi Ka Na Baby.jpg",
+    title: "Hanggang Kailan - Umuwi Ka Na Baby",
+    album: "Strike Whilst The Iron Is Hot",
+    year: 2005,
+    artist: "Hale",
+    musicPath: "./assets/music/Hanggang Kailan - Umuwi Ka Na Baby.mp3",
+  },
+
+    {
+    backgroundImage: "./assets/images/Snowman.jpg",
+    posterUrl: "./assets/images/Snowman.jpg",
+    title: "Snowman",
+    album: "Everyday Is Christmas",
+    year: 2017,
+    artist: "Sia",
+    musicPath: "./assets/music/spotifydown.com - Snowman.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Favorite lesson.jpg",
+    posterUrl: "./assets/images/Favorite lesson.jpg",
+    title: "Favorite lesson",
+    album: "Favorite lesson",
+    year: 2023,
+    artist: "Yaeow x Keenan Te",
+    musicPath: "./assets/music/spotifydown.com - favorite lesson.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Iris.jpg",
+    posterUrl: "./assets/images/Iris.jpg",
+    title: "Iris",
+    album: "Iris",
+    year: 1998,
+    artist: "GooGooDolls",
+    musicPath: "./assets/music/SpotifyMate.com - Iris - The Goo Goo Dolls.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Her.jpg",
+    posterUrl: "./assets/images/Her.jpg",
+    title: "Her",
+    album: "Her",
+    year: 2021,
+    artist: "JVKE",
+    musicPath: "./assets/music/SpotifyMate.com - her - JVKE.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Radio.jpg",
+    posterUrl: "./assets/images/Radio.jpg",
+    title: "Radio",
+    album: "Radio",
+    year: 2012,
+    artist: "LanaDelRey",
+    musicPath: "./assets/music/SpotifyMate.com - Radio - Lana Del Rey.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Angelbaby.jpg",
+    posterUrl: "./assets/images/Angelbaby.jpg",
+    title: "Angel Baby",
+    album: "Angel Baby",
+    year: 2021,
+    artist: "Troye Sivan Song",
+    musicPath: "./assets/music/spotifydown.com - Angel Baby.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Stay.jpg",
+    posterUrl: "./assets/images/Stay.jpg",
+    title: "Stay",
+    album: "Stay",
+    year: 2021,
+    artist: "Justin Bieber",
+    musicPath: "./assets/music/Stay Justin.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/The climb.jpg",
+    posterUrl: "./assets/images/The climb.jpg",
+    title: "The climb",
+    album: "The climb",
+    year: 2024,
+    artist: "Sky",
+    musicPath: "./assets/music/The climb.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Ghost.jpg",
+    posterUrl: "./assets/images/Ghost.jpg",
+    title: "Ghost",
+    album: "Justice",
+    year: 2021,
+    artist: "Justin Bieber",
+    musicPath: "./assets/music/Ghost.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
+    posterUrl: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
+    title: "Arcade",
+    album: "Arcade",
+    year: 2023,
+    artist: "Daneliya Tuleshova",
+    musicPath: "./assets/music/Daneliya Tuleshova - Arcade.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Daneliya Tuleshova - Tears of gold.jpg",
+    posterUrl: "./assets/images/Daneliya Tuleshova - Tears of gold.jpg",
+    title: "Tears of Gold",
+    album: "Tears of Gold",
+    year: 2020,
+    artist: "Daneliya Tuleshova",
+    musicPath: "./assets/music/Daneliya Tuleshova - Tears of gold.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Lord Huron - The Night We Met.jpg",
+    posterUrl: "./assets/images/Lord Huron - The Night We Met.jpg",
+    title: "The Night We Met",
+    album: "Strange Trails",
+    year: 2015,
+    artist: "Lord Huron",
+    musicPath: "./assets/music/Lord Huron - The Night We Met.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Maroon 5 - Sugar.jpg",
+    posterUrl: "./assets/images/Maroon 5 - Sugar.jpg",
+    title: "Sugar",
+    album: "V",
+    year: 2014,
+    artist: "Maroon 5",
+    musicPath: "./assets/music/Maroon 5 - Sugar.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Somewhere Only We Know - Keane (cover) _ Renee Dominique.jpg",
+    posterUrl: "./assets/images/Somewhere Only We Know - Keane (cover) _ Renee Dominique.jpg",
+    title: "Somewhere Only We Know",
+    album: "Somewhere Only We Know",
+    year: 2019,
+    artist: "Reneé Dominique",
+    musicPath: "./assets/music/Somewhere Only We Know - Keane (cover) _ Renee Dominique.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/MoraloftheStory.jpg",
+    posterUrl: "./assets/images/MoraloftheStory.jpg",
+    title: "Ashe Moral of the Story",
+    album: "Ashlyn",
+    year: 2021,
+    artist: "Ashe",
+    musicPath: "./assets/music/Ashe Moral of the Story.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Levels.jpg",
+    posterUrl: "./assets/images/Levels.jpg",
+    title: "Levels",
+    album: "Levels",
+    year: 2011,
+    artist: "Avicii",
+    musicPath: "./assets/music/Avicii Levels.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/BeautifulThings.jpg",
+    posterUrl: "./assets/images/BeautifulThings.jpg",
+    title: "Beautiful Things",
+    album: "Fireworks & Rollerblades",
+    year: 2024,
+    artist: "Benson Boone",
+    musicPath: "./assets/music/Benson Boone Beautiful Things.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Hero.jpg",
+    posterUrl: "./assets/images/Hero.jpg",
+    title: "Hero",
+    album: "Hero",
+    year: 2016,
+    artist: "Cash Cash Hero x Christina Perri",
+    musicPath: "./assets/music/Cashcash x Chrsitina Perry Hero.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Runaway.jpg",
+    posterUrl: "./assets/images/Runaway.jpg",
+    title: "Runaway (U & I)",
+    album: "Pharmacy",
+    year: 2014,
+    artist: "Galantis",
+    musicPath: "./assets/music/Galantis Runaway U I.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Mary On A Cross.jpg",
+    posterUrl: "./assets/images/Mary On A Cross.jpg",
+    title: "Mary On A Cross",
+    album: "Mary On A Cross (slowed + reverb)",
+    year: 2019,
+    artist: "Ghost",
+    musicPath: "./assets/music/Ghost Mary On A Cross.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Labrinth The Feels.jpg",
+    posterUrl: "./assets/images/Labrinth The Feels.jpg",
+    title: "The Feels",
+    album: "Ends & Begins",
+    year: 2023,
+    artist: "Labrinth",
+    musicPath: "./assets/music/Labrinth The Feels.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Skin and bones.jpg",
+    posterUrl: "./assets/images/Skin and bones.jpg",
+    title: "Skin and Bones",
+    album: "Skin and Bones",
+    year: 2024,
+    artist: "David Kushner",
+    musicPath: "./assets/music/David Kushner Skin and Bones.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Black Friday.jpg",
+    posterUrl: "./assets/images/Black Friday.jpg",
+    title: "Black Friday",
+    album: "The End",
+    year: 2024,
+    artist: "Lost Frequencies x Tom Odell",
+    musicPath: "./assets/music/Lost Frequencies x Tom Odell - Black Friday.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Alone.jpg",
+    posterUrl: "./assets/images/Alone.jpg",
+    title: "Alone",
+    album: "Alone",
+    year: 2016,
+    artist: "Marshmello",
+    musicPath: "./assets/music/Marshmello - Alone.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Silence.jpg",
+    posterUrl: "./assets/images/Silence.jpg",
+    title: "Silence",
+    album: "Silence",
+    year: 2017,
+    artist: "(feat. Khalid)",
+    musicPath: "./assets/music/Silence (feat. Khalid).mp3",
+  },
+  {
+    backgroundImage: "./assets/images/I Took A Pill In Ibiza.jpg",
+    posterUrl: "./assets/images/I Took A Pill In Ibiza.jpg",
+    title: "I Took A Pill In Ibiza",
+    album: "At Night, Alone",
+    year: 2015,
+    artist: "Mike Posner",
+    musicPath: "./assets/music/Mike Posner - Took A Pill In Ibiza.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Those Eyes.jpg",
+    posterUrl: "./assets/images/Those Eyes.jpg",
+    title: "Those Eyes",
+    album: "Homecoming in my city",
+    year: 2019,
+    artist: "New West",
+    musicPath: "./assets/music/New West - Those Eyes.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Oceans (Where Feet May Fail).jpg",
+    posterUrl: "./assets/images/Oceans (Where Feet May Fail).jpg",
+    title: "Oceans (Where Feet May Fail)",
+    album: "Zion (Deluxe Edition)",
+    year: 2013,
+    artist: "Hillsong UNITED x TAYA",
+    musicPath: "./assets/music/Oceans (Where Feet May Fail).mp3",
+  },
+     {
+    backgroundImage: "./assets/images/To the Bone.jpg",
+    posterUrl: "./assets/images/To the Bone.jpg",
+    title: "To the Bone",
+    album: "The End of Flying Solo Era",
+    year: 2020,
+    artist: "Pamungkas x The PeoplePeople",
+    musicPath: "./assets/music/To the Bone Song by Pamungkas, The PeoplePeople.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Circles.jpg",
+    posterUrl: "./assets/images/Circles.jpg",
+    title: "Circles",
+    album: "Hollywood's Bleeding",
+    year: 2019,
+    artist: "Post Malone",
+    musicPath: "./assets/music/Post Malone - Circles.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/I Fall Apart.jpg",
+    posterUrl: "./assets/images/I Fall Apart.jpg",
+    title: "I Fall Apart",
+    album: "Stoney (Complete Edition)",
+    year: 2016,
+    artist: "Post Malone",
+    musicPath: "./assets/music/Post Malone I Fall Apart.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Present.jpg",
+    posterUrl: "./assets/images/Present.jpg",
+    title: "Present",
+    album: "Lens Flare",
+    year: 2021,
+    artist: "Lloyd Vaan",
+    musicPath: "./assets/music/Lloyd Vaan Present.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Atlantis.jpg",
+    posterUrl: "./assets/images/Atlantis.jpg",
+    title: "Atlantis",
+    album: "Atlantis",
+    year: 2022,
+    artist: "Seafret x Seeb",
+    musicPath: "./assets/music/Seafret - Atlantis.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/To Build a Home.jpg",
+    posterUrl: "./assets/images/To Build a Home.jpg",
+    title: "To Build a Home",
+    album: "Live At the Royal Albert Hall",
+    year: 2008,
+    artist: "The Cinematic Orchestra",
+    musicPath: "./assets/music/The Cinematic Orchestra – To Build a Home.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Someone to Stay.jpg",
+    posterUrl: "./assets/images/Someone to Stay.jpg",
+    title: "Someone to Stay",
+    album: "Revival",
+    year: 2016,
+    artist: "Vancouver Sleep Clinic",
+    musicPath: "./assets/music/Vancouver Sleep Clinic - Someone to Stay.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Dancing On My Own.jpg",
+    posterUrl: "./assets/images/Dancing On My Own.jpg",
+    title: "Dancing On My Own",
+    album: "Only Human (Deluxe)",
+    year: 2016,
+    artist: "Calum Scott",
+    musicPath: "./assets/music/Calum Scott Dancing On My Own.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Falling.jpg",
+    posterUrl: "./assets/images/Falling.jpg",
+    title: "Falling",
+    album: "Fine Line",
+    year: 2019,
+    artist: "Harry Styles",
+    musicPath: "./assets/music/Harry Styles - Falling.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Allfallsdown.jpg",
+    posterUrl: "./assets/images/Allfallsdown.jpg",
+    title: "All Falls Down",
+    album: "All Falls Down",
+    year: 2017,
+    artist: "Alan Walker x Noah Cyrus x Digital Farm Animals",
+    musicPath: "./assets/music/Alan Walker - All Falls Down feat. Noah Cyrus with Digital Farm Animals.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Faded.jpg",
+    posterUrl: "./assets/images/Faded.jpg",
+    title: "Faded",
+    album: "Different World",
+    year: 2022,
+    artist: "Alan Walker",
+    musicPath: "./assets/music/Alan Walker - Faded.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/d4vid-herewithme.jpg",
+    posterUrl: "./assets/images/d4vid-herewithme.jpg",
+    title: "Here With Me",
+    album: "Here With Me",
+    year: 2022,
+    artist: "D4vid",
+    musicPath: "./assets/music/d4vd  Here With Me Official Music Video.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Healer.jpg",
+    posterUrl: "./assets/images/Healer.jpg",
+    title: "Healer",
+    album: "Changes",
+    year: 2024,
+    artist: "Hayd",
+    musicPath: "./assets/music/Hayd Healer.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/ASkyFullOfStars.jpg",
+    posterUrl: "./assets/images/ASkyFullOfStars.jpg",
+    title: "A Sky Full Of Stars",
+    album: "Ghost Stories",
+    year: 2014,
+    artist: "Coldplay",
+    musicPath: "./assets/music/A Sky Full Of Stars.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/MyUniverse.jpg",
+    posterUrl: "./assets/images/MyUniverse.jpg",
+    title: "My Universe",
+    album: "Music of the Spheres",
+    year: 2021,
+    artist: "Coldplay",
+    musicPath: "./assets/music/Coldplay My Universe.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Yellow.jpg",
+    posterUrl: "./assets/images/Yellow.jpg",
+    title: "Yellow",
+    album: "Parachutes",
+    year: 2000,
+    artist: "Coldplay",
+    musicPath: "./assets/music/Coldplay Yellow.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Lonely.jpg",
+    posterUrl: "./assets/images/Lonely.jpg",
+    title: "Lonely",
+    album: "Lonely",
+    year: 2000,
+    artist: "Justin Bieber x Benny Blanco",
+    musicPath: "./assets/music/Lonely by Justin Bieber and Benny Blanco.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/CHIHIRO.jpg",
+    posterUrl: "./assets/images/CHIHIRO.jpg",
+    title: "CHIHIRO",
+    album: "Hit Me Hard and Soft",
+    year: 2024,
+    artist: "Billie Eilish",
+    musicPath: "./assets/music/Billie Eilish CHIHIRO.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Eastside.jpg",
+    posterUrl: "./assets/images/Eastside.jpg",
+    title: "Eastside",
+    album: "Friends Keep Secrets",
+    year: 2018,
+    artist: "Benny Blanco x Halsey Khalid",
+    musicPath: "./assets/music/Benny Blanco and Halsey Khalid Eastside.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Levitation.jpg",
+    posterUrl: "./assets/images/Levitation.jpg",
+    title: "Levitation",
+    album: "Alternate Versions",
+    year: 2024,
+    artist: "Aaron Hibell x Felsmann x Tiley",
+    musicPath: "./assets/music/Aaron Hibell, Felsmann and  Tiley Levitation.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/We Need A Miracle.jpg",
+    posterUrl: "./assets/images/We Need A Miracle.jpg",
+    title: "We Need A Miracle",
+    album: "We Need a Miracle",
+    year: 2021,
+    artist: "Charity Gayle",
+    musicPath: "./assets/music/Charity Gayle - We Need A Miracle.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Palagi.jpg",
+    posterUrl: "./assets/images/Palagi.jpg",
+    title: "Palagi",
+    album: "Palagi",
+    year: 2023,
+    artist: "TJ Monterde",
+    musicPath: "./assets/music/Palagi Live at The Cozy Cove  TJ Monterde.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
+    posterUrl: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
+    title: "Can We Kiss Forever (Official Video)",
+    album: "Single", // Update as needed
+    year: 2025,       // Change according to the actual launch year
+    artist: "Kina ft. Adriana Proenza",
+    musicPath: "./assets/music/Kina - Can We Kiss Forever_ (Official Video) ft. Adriana Proenza.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/joker-in-this-shirt.jpg",
+    posterUrl: "./assets/images/joker-in-this-shirt.jpg",
+    title: "In This Shirt (Music Video Edit)",
+    album: "Single", // Modify if the track comes from an album
+    year: 2025,       // Update the release year accordingly
+    artist: "Joker",
+    musicPath: "./assets/music/Joker - In This Shirt  music video edit.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/JericMaeChen.jpg",
+    posterUrl: "./assets/images/JericMaeChen.jpg",
+    title: "Fly me to the moon",
+    album: "Jeric Mae Chen",
+    year: 2024,
+    artist: "Jeric Mae Chen",
+    musicPath: "./assets/music/JericMaeChen.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Mamushi.jpg",
+    posterUrl: "./assets/images/Mamushi.jpg",
+    title: "Mamushi",
+    album: "MEGAN: ACT II",
+    year: 2024,
+    artist: "Megan Thee Stallion",
+    musicPath: "./assets/music/Megan Thee Stallion - Mamushi.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    posterUrl: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    title: "Sa Ngalan Ng Pag-Ibig",
+    album: "Langit Mong Bughaw",
+    year: 2019,
+    artist: "December Avenue",
+    musicPath: "./assets/music/Sa Ngalan Ng Pag-Ibig.mp3",
+  },
+ 
+      {
+    backgroundImage: "./assets/images/ayaw ana lay.jpg",
+    posterUrl: "./assets/images/ayaw ana lay.jpg",
+    title: "AYAW ANA LAY",
+    album: "Ayaw ana lay", // Update if the track is part of an album
+    year: 2025,       // Modify to the actual release year
+    artist: "Ayaw ana Lay",
+    musicPath: "./assets/music/Ayaw ana lay oy.mp3",
+  },
+      {
+  backgroundImage: "./assets/images/Kinawat ko.jpg",
+  posterUrl: "./assets/images/Kinawat ko.jpg",
+  title: "Kinawat ko",
+  album: "MEME",
+  year: 2024,
+  artist: "Kinawat ko",
+  musicPath: "./assets/music/Kinawat ko.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/GALIT KABA.jpg",
+  posterUrl: "./assets/images/GALIT KABA.jpg",
+  title: "GALIT KABA",
+  album: "MEME",
+  year: 2024,
+  artist: "GALIT KABA",
+  musicPath: "./assets/music/Galit kaba_.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/CALM DOWN.jpg",
+  posterUrl: "./assets/images/CALM DOWN.jpg",
+  title: "CALM DOWN",
+  album: "MEME",
+  year: 2024,
+  artist: "CALM DOWN",
+  musicPath: "./assets/music/Please come down.mp3",
+  },
+
+    ];
+
+    // Elements
+    const bg = document.getElementById("bg");
+    const poster = document.getElementById("poster");
+    const hint = document.getElementById("hint");
+    const npTitle = document.getElementById("np-title");
+    const npSub = document.getElementById("np-sub");
+    const list = document.getElementById("list");
+    const audio = document.getElementById("audio");
+    const playBtn = document.getElementById("play");
+    const playIcon = document.getElementById("playIcon");
+    const pauseIcon = document.getElementById("pauseIcon");
+    const nextBtn = document.getElementById("next");
+    const prevBtn = document.getElementById("prev");
+    const seek = document.getElementById("seek");
+    const vol = document.getElementById("vol");
+    const curr = document.getElementById("curr");
+    const dur = document.getElementById("dur");
+
+    let current = -1;
+    let seeking = false;
+
+    // Helpers
+    const formatTime = (t) => {
+      if (!isFinite(t)) return "0:00";
+      const m = Math.floor(t / 60);
+      const s = Math.floor(t % 60).toString().padStart(2, "0");
+      return `${m}:${s}`;
+    };
+
+    const setProgressStyle = (el, ratio) => {
+      const pct = Math.max(0, Math.min(100, ratio * 100));
+      el.style.setProperty("--progress", pct + "%");
+    };
+
+    // Build queue
+    const buildList = () => {
+      list.innerHTML = "";
+      musicData.forEach((t, i) => {
+        const row = document.createElement("div");
+        row.className = "track";
+        row.dataset.index = i;
+
+        row.innerHTML = `
+          <img class="thumb" src="${t.posterUrl}" alt="">
+          <div class="tmeta">
+            <div class="t-title">${t.title}</div>
+            <div class="t-sub">${t.artist} • ${t.album}</div>
+          </div>
+          <div class="t-year">${t.year}</div>
+        `;
+
+        row.addEventListener("click", () => {
+          loadTrack(i, { autoplay: true, focus: true });
+        });
+
+        list.appendChild(row);
+      });
+    };
+
+    const markActive = () => {
+      [...list.children].forEach((el, i) => {
+        el.classList.toggle("active", i === current);
+      });
+    };
+
+    // Load a track
+    const loadTrack = (index, { autoplay = false, focus = false } = {}) => {
+      if (index < 0 || index >= musicData.length) return;
+      current = index;
+      const t = musicData[index];
+
+      // Background and poster
+      bg.style.backgroundImage = `url("${t.backgroundImage}")`;
+      poster.src = t.posterUrl;
+      poster.classList.toggle("focused", !!focus);
+
+      // Metadata
+      npTitle.textContent = t.title;
+      npSub.textContent = `${t.artist} • ${t.album} • ${t.year}`;
+
+      // Audio
+      audio.src = t.musicPath;
+      audio.currentTime = 0;
+
+      // UI state
+      hint.style.display = "none";
+      setProgressStyle(seek, 0);
+      curr.textContent = "0:00";
+      dur.textContent = "0:00";
+      markActive();
+
+      if (autoplay) audio.play().catch(() => {/* ignore autoplay block */});
+      updatePlayButton();
+    };
+
+    const updatePlayButton = () => {
+      const playing = !audio.paused && !audio.ended;
+      playIcon.style.display = playing ? "none" : "inline";
+      pauseIcon.style.display = playing ? "inline" : "none";
+    };
+
+    // Controls
+    playBtn.addEventListener("click", () => {
+      if (!audio.src) {
+        loadTrack(0, { autoplay: true, focus: true });
+        return;
+      }
+      if (audio.paused) audio.play(); else audio.pause();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (!musicData.length) return;
+      const i = current < 0 ? 0 : (current + 1) % musicData.length;
+      loadTrack(i, { autoplay: true, focus: true });
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (!musicData.length) return;
+      let i;
+      if (audio.currentTime > 3 && current >= 0) {
+        i = current; // restart track if more than 3s in
+      } else {
+        i = current <= 0 ? musicData.length - 1 : current - 1;
+      }
+      loadTrack(i, { autoplay: true, focus: true });
+    });
+
+    // Seek
+    seek.addEventListener("input", () => {
+      seeking = true;
+      const r = seek.value / 1000;
+      setProgressStyle(seek, r);
+      const d = audio.duration || 0;
+      curr.textContent = formatTime(r * d);
+    });
+    seek.addEventListener("change", () => {
+      const r = seek.value / 1000;
+      const d = audio.duration || 0;
+      audio.currentTime = r * d;
+      seeking = false;
+    });
+
+    // Volume
+    vol.addEventListener("input", () => {
+      audio.volume = parseFloat(vol.value);
+    });
+    // initialize
+    audio.volume = parseFloat(vol.value);
+
+    // Audio events
+    audio.addEventListener("play", updatePlayButton);
+    audio.addEventListener("pause", updatePlayButton);
+    audio.addEventListener("ended", () => {
+      // autoplay next
+      const i = (current + 1) % musicData.length;
+      loadTrack(i, { autoplay: true, focus: true });
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      if (!seeking) {
+        const d = audio.duration || 0;
+        const c = audio.currentTime || 0;
+        curr.textContent = formatTime(c);
+        dur.textContent = formatTime(d);
+        const ratio = d ? c / d : 0;
+        seek.value = Math.round(ratio * 1000);
+        setProgressStyle(seek, ratio);
+      }
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      dur.textContent = formatTime(audio.duration || 0);
+    });
+
+    // Keyboard shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+      if (e.code === "Space") { e.preventDefault(); playBtn.click(); }
+      if (e.code === "ArrowRight") audio.currentTime = Math.min((audio.currentTime || 0) + 5, audio.duration || 0);
+      if (e.code === "ArrowLeft") audio.currentTime = Math.max((audio.currentTime || 0) - 5, 0);
+      if (e.code === "ArrowUp") { e.preventDefault(); vol.value = Math.min(1, parseFloat(vol.value) + 0.05); audio.volume = parseFloat(vol.value); }
+      if (e.code === "ArrowDown") { e.preventDefault(); vol.value = Math.max(0, parseFloat(vol.value) - 0.05); audio.volume = parseFloat(vol.value); }
+    });
+
+    // Initial render
+    buildList();
+    // Optional: preload first background for a nice entry
+    if (musicData[0]) {
+      bg.style.backgroundImage = `url("${musicData[0].backgroundImage}")`;
+    }
+  </script>
+</body>
+</html>
