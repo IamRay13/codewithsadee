@@ -2,2340 +2,2494 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Glassy Player — Premium Single-File Music App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>Glass Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#00000033" />
 
-  <!-- Inline SVG favicon (work motif: briefcase in rounded square) -->
-  <link rel="icon" href='data:image/svg+xml;utf8,
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-      <rect x="4" y="4" width="56" height="56" rx="12" ry="12" fill="%231a1a1a"/>
-      <rect x="12" y="24" width="40" height="24" rx="6" ry="6" fill="%23ffffff" opacity="0.9"/>
-      <rect x="22" y="16" width="20" height="8" rx="2" ry="2" fill="%23ffffff" opacity="0.9"/>
-      <rect x="12" y="32" width="40" height="2" fill="%231a1a1a" opacity="0.35"/>
-      <circle cx="32" cy="33" r="2" fill="%231a1a1a"/>
+  <!-- Work-themed favicon (briefcase), not music-related -->
+  <link rel="icon" type="image/svg+xml"
+    href='data:image/svg+xml;utf8,
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Briefcase">
+      <defs>
+        <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="%23000" stop-opacity=".2"/>
+          <stop offset="1" stop-color="%23000" stop-opacity=".5"/>
+        </linearGradient>
+      </defs>
+      <rect x="8" y="16" width="48" height="36" rx="6" fill="url(%23g)" stroke="%23000" stroke-opacity=".25" />
+      <rect x="22" y="10" width="20" height="10" rx="3" fill="%23000" fill-opacity=".2" stroke="%23000" stroke-opacity=".25"/>
+      <rect x="8" y="30" width="48" height="6" fill="%23fff" fill-opacity=".12"/>
+      <circle cx="32" cy="33" r="2.5" fill="%23fff" fill-opacity=".7"/>
     </svg>' />
 
   <style>
     :root{
-      --glass:#00000033;
-      --glass-strong:#00000066;
-      --glass-solid:#0b0b0bcc;
-      --text:#f3f3f5;
-      --muted:#c9c9cf;
-      --accent:#7dd3fc;        /* soft cyan */
-      --accent-2:#a78bfa;      /* violet */
-      --danger:#ff6666;
-      --ok:#6ee7b7;
-      --shadow: 0 10px 30px rgba(0,0,0,0.35);
-      --radius:14px;
-      --radius-sm:10px;
-      --radius-xs:8px;
-      --focus: 0 0 0 3px rgba(125,211,252,0.5), 0 0 0 6px rgba(167,139,250,0.25);
-      --track-h:4px;
-      --blur: 28px;
-      --backdrop: saturate(130%) blur(16px);
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --glass-bg: rgba(0,0,0,0.2);        /* #00000033 vibe */
+      --glass-stroke: rgba(0,0,0,0.25);
+      --text-strong: #fff;
+      --text-soft: rgba(255,255,255,0.75);
+      --text-dim: rgba(255,255,255,0.55);
+      --accent: #00d27a;                  /* tasteful accent */
+      --accent-2: #8ab4ff;
+      --danger: #ff4d4d;
+      --shadow: rgba(0,0,0,0.45);
+      --blur: 24px;
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+      --track: rgba(255,255,255,0.14);
+      --track-hover: rgba(255,255,255,0.22);
+      --track-fill: #fff;
+      --grid-gap: 16px;
     }
-
-    html,body{
-      height:100%;
-      background:#0a0a0b;
-      color:var(--text);
-      font-family: var(--font);
-      letter-spacing:0.15px;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font: 15px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text-strong);
+      background: #0b0b0c;
+      overflow: hidden;
     }
-
-    *{ box-sizing:border-box; }
 
     /* Background layer */
-    .bg {
-      position:fixed;
-      inset:0;
-      background-position:center;
-      background-size:cover;
-      background-repeat:no-repeat;
-      filter: blur(var(--blur)) brightness(0.7);
+    .bg{
+      position: fixed;
+      inset: 0;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      filter: blur(var(--blur)) saturate(1.2);
       transform: scale(1.05);
-      transition: background-image 300ms ease, filter 300ms ease, transform 300ms ease;
-      will-change: filter, transform;
-      z-index:-2;
+      transition: background-image .6s ease, filter .6s ease, opacity .5s ease;
+      opacity: .9;
     }
-
-    /* Optional curtain to ensure legibility on extreme images */
     .bg::after{
       content:"";
       position:absolute; inset:0;
-      background: radial-gradient(1200px 800px at 50% 60%, rgba(0,0,0,0.1), rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.75));
-    }
-
-    /* Spotlight poster view */
-    .spotlight {
-      position: fixed;
-      inset:0;
-      display:grid;
-      place-items:center;
-      opacity:0;
+      background: radial-gradient(1200px 700px at 20% 10%, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 55%) ,
+                  linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.6));
       pointer-events:none;
-      transition: opacity 280ms ease;
-      z-index:2;
     }
-    .spotlight.active{
-      opacity:1;
-      pointer-events: auto;
+
+    /* App shell */
+    .app{
+      position: relative;
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
     }
-    .spotlight .backdrop{
-      position:absolute; inset:0;
-      backdrop-filter: var(--backdrop);
-      -webkit-backdrop-filter: var(--backdrop);
-      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
+
+    /* Top bar */
+    .topbar{
+      display:flex; align-items:center; gap:12px;
+      padding:14px 16px;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.1));
+      border-bottom: 1px solid var(--glass-stroke);
     }
-    .spotlight .card{
-      position:relative;
-      width:min(88vw, 1080px);
-      display:grid;
-      grid-template-columns: 1fr min(48vw,520px);
-      gap: min(4vw,36px);
-      padding:min(4vw,36px);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-      box-shadow: var(--shadow);
-      border:1px solid rgba(255,255,255,0.08);
+    .logo{
+      display:flex; align-items:center; gap:10px;
+      font-weight:700; letter-spacing:.3px;
     }
-    @media (max-width: 900px){
-      .spotlight .card{ grid-template-columns: 1fr; }
+    .logo .dot{
+      width:10px; height:10px; border-radius:3px; background: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,210,122,.15), 0 8px 18px -6px var(--shadow);
     }
-    .spotlight .poster{
+    .search{
+      margin-left:auto; position:relative; width:min(520px, 55vw);
+    }
+    .search input{
       width:100%;
-      aspect-ratio:1/1;
-      border-radius: var(--radius);
-      overflow:hidden;
-      background: #111;
-      box-shadow: var(--shadow);
-      transform: translateY(6px) scale(0.985);
-      opacity:0.98;
-      transition: transform 300ms ease, opacity 300ms ease;
+      padding:10px 36px 10px 14px;
+      border-radius: 11px;
+      border: 1px solid var(--glass-stroke);
+      background: rgba(0,0,0,.25);
+      color: var(--text-strong);
+      outline: none;
+      transition: border-color .2s, background .2s;
     }
-    .spotlight.active .poster{
-      transform: translateY(0) scale(1);
-      opacity:1;
-    }
-    .spotlight .poster img{
-      width:100%; height:100%; object-fit:cover;
-      display:block;
-    }
-    .spotlight .meta{
-      align-self:center;
-    }
-    .spotlight .title{
-      font-size: clamp(28px, 3.2vw, 46px);
-      line-height:1.1;
-      font-weight: 750;
-      margin: 6px 0 10px;
-      letter-spacing:0.2px;
-      text-shadow: 0 6px 24px rgba(0,0,0,0.5);
-    }
-    .spotlight .sub{
-      color: var(--muted);
-      font-size: clamp(14px,1.2vw,16px);
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
-    .spotlight .actions{
-      margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;
-    }
-    .btn{
-      appearance:none; border:0;
-      border-radius: 999px;
-      padding: 10px 16px;
-      background: rgba(255,255,255,0.09);
-      color: var(--text);
-      cursor:pointer;
-      transition: transform 150ms ease, background 150ms ease, opacity 150ms ease;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-    }
-    .btn:hover{ background: rgba(255,255,255,0.14); transform: translateY(-1px); }
-    .btn:active{ transform: translateY(0); }
-    .btn.primary{ background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0a0a0a; }
-    .btn.primary:hover{ opacity:0.95; }
-
-    /* App layout */
-    .app {
-      position:relative;
-      min-height:100dvh;
-      display:grid;
-      grid-template-rows: 1fr auto;
+    .search input::placeholder{ color: var(--text-dim) }
+    .search svg{
+      position:absolute; right:10px; top:50%; transform:translateY(-50%);
+      width:18px; height:18px; opacity:.8
     }
 
-    /* Playlist drawer */
-    .drawer{
-      position: fixed;
-      left:16px; top:16px; bottom:96px;
-      width:min(360px, 92vw);
-      border-radius: var(--radius);
-      background: rgba(0,0,0,0.25);
-      backdrop-filter: var(--backdrop);
-      -webkit-backdrop-filter: var(--backdrop);
-      border:1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-      overflow:hidden;
+    /* Main content */
+    .content{
+      display:grid; grid-template-columns: 320px 1fr;
+      gap: var(--grid-gap);
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    /* Sidebar / queue */
+    .panel{
+      min-width: 260px;
+      height: 100%;
       display:flex; flex-direction:column;
-      transform: translateX(-8px) translateY(8px) scale(0.985);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity 220ms ease, transform 220ms ease;
-      z-index:1;
+      gap: 12px;
     }
-    .drawer.open{
-      transform: translateX(0) translateY(0) scale(1);
-      opacity:1;
-      pointer-events:auto;
+    .card{
+      background: rgba(0,0,0,.22);
+      border: 1px solid var(--glass-stroke);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 32px -14px var(--shadow);
+      overflow: hidden;
     }
-    .drawer .head{
-      padding:12px 12px 10px;
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border-bottom:1px solid rgba(255,255,255,0.06);
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    .section-title{
+      padding: 14px 16px 8px 16px;
+      font-weight: 700;
+      color: var(--text-soft);
+      letter-spacing:.2px;
     }
-    .drawer .search{
-      position:relative; flex:1;
-    }
-    .drawer input[type="search"]{
-      width:100%;
-      padding:10px 12px;
-      border-radius: var(--radius-xs);
-      border:1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.4);
-      color: var(--text);
-      outline:none;
-      box-shadow:none;
-    }
-    .drawer input[type="search"]::placeholder{ color:#b9b9c2; }
-    .list{
+    .queue{
+      display:flex; flex-direction:column;
+      max-height: calc(100vh - 220px);
       overflow:auto;
-      padding:8px;
-      display:flex; flex-direction:column; gap:6px;
+      scrollbar-width: thin;
     }
-    .row{
+    .queue-item{
       display:grid;
       grid-template-columns: 44px 1fr auto;
       align-items:center;
-      gap:12px;
-      padding:8px;
-      border-radius: var(--radius-xs);
+      gap: 10px;
+      padding: 10px 12px;
       cursor:pointer;
-      background: transparent;
-      transition: background 140ms ease, transform 140ms ease;
+      transition: background .2s;
+    }
+    .queue-item:hover{ background: rgba(255,255,255,0.06) }
+    .queue-item.active{ background: rgba(255,255,255,0.1) }
+    .q-thumb{
+      width:44px; height:44px; border-radius: 8px;
+      background-size: cover; background-position:center;
+      border: 1px solid rgba(255,255,255,.15)
+    }
+    .q-meta{
+      min-width:0;
+    }
+    .q-title{
+      font-weight:600; color: var(--text-strong);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .q-sub{
+      font-size:12px; color: var(--text-dim);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .q-time{
+      font-size:12px; color: var(--text-dim); padding-left:8px;
+    }
+
+    /* Player center column */
+    .stage{
+      display:grid; grid-template-rows: 1fr auto;
+      gap: var(--grid-gap);
+      min-width:0; overflow:hidden;
+    }
+    .hero{
+      display:grid; grid-template-columns: 1fr;
+      place-items:center; min-height: 0; position:relative;
+      padding: clamp(10px, 2.5vw, 20px);
+    }
+    .art-wrap{
+      position: relative;
+      width: min(480px, 48vw);
+      aspect-ratio: 1 / 1;
+      border-radius: 24px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.2);
+      box-shadow: 0 30px 80px -30px var(--shadow);
+      transform: translateZ(0);
+    }
+    .art{
+      width: 100%; height:100%;
+      background-position:center; background-size:cover;
+      transition: transform .6s ease, filter .6s ease, box-shadow .6s ease;
+    }
+    .art.playing{
+      transform: scale(1.02);
+      filter: none;
+      box-shadow: inset 0 0 0 0 rgba(255,255,255,0);
+    }
+    .badge{
+      position:absolute; left:12px; top:12px;
+      padding:6px 10px; border-radius:999px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid var(--glass-stroke);
+      font-size:12px; color: var(--text-soft);
+      display:flex; align-items:center; gap:6px;
+    }
+    .meta{
+      display:flex; flex-direction:column; gap:2px;
+      margin-top: 14px; text-align:center;
+    }
+    .title{
+      font-size: clamp(20px, 2.5vw, 28px);
+      font-weight:800; letter-spacing:.2px;
+    }
+    .byline{
+      color: var(--text-soft);
+    }
+
+    /* Controls */
+    .controls{
+      padding: 12px 16px 18px 16px;
+      display:grid; grid-template-columns: auto 1fr auto;
+      align-items:center; gap: 14px;
+      border-top: 1px solid var(--glass-stroke);
+      background: rgba(0,0,0,.22);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 32px -14px var(--shadow);
+    }
+    .btnrow{
+      display:flex; align-items:center; gap:8px;
+    }
+    .icon-btn{
+      width:36px; height:36px; border-radius: 10px;
+      display:grid; place-items:center; cursor:pointer;
+      color: var(--text-strong);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--glass-stroke);
+      transition: transform .08s ease, background .2s ease, color .2s ease;
       outline: none;
     }
-    .row:hover{ background: rgba(255,255,255,0.06); }
-    .row:active{ transform: translateY(1px); }
-    .row:focus-visible{ box-shadow: var(--focus); }
-    .row.active{
-      background: linear-gradient(90deg, rgba(125,211,252,0.20), rgba(167,139,250,0.14));
-      box-shadow: inset 0 0 0 1px rgba(125,211,252,0.35);
-    }
-    .row .thumb{
-      width:44px; height:44px;
-      border-radius:10px; overflow:hidden; background:#111;
-    }
-    .row .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .row .meta{
-      display:flex; flex-direction:column; min-width:0;
-    }
-    .row .title{
-      font-weight:600; font-size:14px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
-    }
-    .row .sub{
-      font-size:12px; color:var(--muted); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
-    }
+    .icon-btn:hover{ background: rgba(255,255,255,0.12) }
+    .icon-btn:active{ transform: translateY(1px) }
+    .icon-btn.active{ color: var(--accent) }
+    .icon-btn.danger.active{ color: var(--danger) }
 
-    /* Center artwork touch area */
-    .stage{
-      margin: min(5vw, 56px) auto;
-      width:min(92vw, 980px);
-      display:grid;
-      place-items:center;
-      pointer-events:none; /* allow controls to be primary; enable for stage children */
+    .play-btn{
+      width:44px; height:44px; border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      box-shadow: 0 10px 20px -10px var(--shadow), inset 0 0 0 1px var(--glass-stroke);
     }
-    .artwrap{
-      pointer-events:auto;
-      width:min(68vw, 560px);
-      aspect-ratio:1/1;
-      border-radius: var(--radius);
-      overflow:hidden;
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-      transform: translateY(0) scale(1);
-      transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease, opacity 220ms ease;
-      position:relative;
-      cursor:pointer;
-    }
-    .artwrap:hover{ transform: translateY(-2px) scale(1.01); }
-    .artwrap:active{ transform: translateY(0) scale(0.995); }
-    .artwrap img{
-      width:100%; height:100%; object-fit:cover; display:block;
-      transition: transform 300ms ease, opacity 300ms ease, filter 300ms ease;
-    }
-    .artwrap .hint{
-      position:absolute; left:12px; bottom:12px;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      color:#e5e7eb; font-size:12px; padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,0.08);
-    }
-
-    /* Bottom control bar */
-    .bar{
-      position: sticky;
-      bottom:0;
-      width:100%;
-      background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.32));
-      backdrop-filter: var(--backdrop);
-      -webkit-backdrop-filter: var(--backdrop);
-      border-top:1px solid rgba(255,255,255,0.08);
-      padding:10px 14px 14px;
-    }
-    .bargrid{
-      display:grid;
-      grid-template-columns: 1.2fr 1.6fr 1.2fr;
-      gap:14px;
-      align-items:center;
-    }
-    @media (max-width: 900px){
-      .bargrid{ grid-template-columns: 1fr; gap:10px; }
-    }
-
-    .left, .center, .right{ display:flex; align-items:center; gap:12px; min-width:0; }
-
-    .mini{
-      display:flex; align-items:center; gap:10px; min-width:0;
-      padding:6px 8px; border-radius: var(--radius-xs);
-      background: rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.06);
-    }
-    .mini .mthumb{ width:40px; height:40px; border-radius:8px; overflow:hidden; background:#111; flex:none; }
-    .mini .mthumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .mini .mtext{ min-width:0; }
-    .mini .mtitle{ font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .mini .msub{ font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    .controls{
-      display:flex; align-items:center; gap:10px; justify-content:center; width:100%;
-    }
-    .iconbtn{
-      width:36px; height:36px;
-      display:grid; place-items:center;
-      border-radius:999px;
-      background: rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.08);
-      color:var(--text);
-      cursor:pointer;
-      transition: background 150ms ease, transform 150ms ease, opacity 150ms ease;
-    }
-    .iconbtn:hover{ background: rgba(255,255,255,0.14); transform: translateY(-1px); }
-    .iconbtn:active{ transform: translateY(0); }
-    .iconbtn[aria-pressed="true"]{ box-shadow: inset 0 0 0 1px var(--accent); background: rgba(125,211,252,0.18); }
-
-    .playbtn{
-      width:44px; height:44px; font-size:0;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #0a0a0a;
-      border: none;
-    }
-    .playbtn svg{ fill:#0a0a0a }
-    .playbtn.pause .play-icon{ display:none; }
-    .playbtn:not(.pause) .pause-icon{ display:none; }
 
     .timeline{
-      display:grid; grid-template-columns: auto 1fr auto; gap:10px; align-items:center; width:100%;
+      display:grid; grid-template-columns: 40px 1fr 40px;
+      align-items:center; gap:10px;
     }
-    .time{ font-variant-numeric: tabular-nums; font-size:12px; color:#e5e7eb; min-width:46px; text-align:center; }
-    .seek{
-      position:relative; height: var(--track-h); border-radius:999px;
-      background: rgba(255,255,255,0.16);
-      overflow:visible;
-      cursor:pointer;
+    .time{
+      font-variant-numeric: tabular-nums;
+      font-size:12px; color: var(--text-dim); text-align:center;
     }
-    .seek .fill{
-      position:absolute; left:0; top:0; bottom:0; width:0%;
-      border-radius:999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      pointer-events:none;
+    .range{
+      position:relative; height: 8px; border-radius: 999px; cursor: pointer;
+      background: var(--track);
+      transition: background .15s;
     }
-    .seek .knob{
-      position:absolute; top:50%; transform: translate(-50%,-50%);
-      width:14px; height:14px; border-radius:999px;
-      background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.45);
-      opacity:0; transition: opacity 120ms ease;
-      pointer-events:none;
+    .range:hover{ background: var(--track-hover) }
+    .fill{
+      position:absolute; height:100%; left:0; top:0;
+      background: var(--track-fill);
+      border-radius: inherit;
+      width:0%;
     }
-    .seek:hover .knob, .seek.dragging .knob{ opacity:1; }
+    .thumb{
+      position:absolute; top:50%; transform:translate(-50%, -50%);
+      width:14px; height:14px; border-radius:50%;
+      background: #fff; box-shadow: 0 4px 10px -4px var(--shadow);
+      opacity:0; transition: opacity .15s;
+      left:0%;
+    }
+    .range:hover .thumb{ opacity:1 }
 
-    .volume{
-      display:flex; align-items:center; gap:10px; margin-left:auto;
-      min-width: 160px;
+    /* Volume + extra */
+    .right{
+      display:flex; align-items:center; gap:10px;
+      min-width:220px;
+      justify-content:flex-end;
     }
-    @media (max-width: 900px){
-      .volume{ min-width: 0; width:100%; }
+    .vol{
+      display:grid; grid-template-columns: 20px 120px; align-items:center; gap:8px;
     }
-    .vslider{
-      position:relative; height: var(--track-h); flex:1; border-radius:999px;
-      background: rgba(255,255,255,0.16);
-      cursor:pointer;
+    .vol .range{ height:6px }
+
+    /* Bottom now-playing bar for compact screens */
+    .nowbar{
+      display:flex; align-items:center; gap: 12px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--glass-stroke);
+      background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.25));
     }
-    .vslider .vfill{
-      position:absolute; left:0; top:0; bottom:0; width:0%;
-      border-radius:999px; background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    .mini-art{
+      width:40px; height:40px; border-radius:8px;
+      background-size:cover; background-position:center;
+      border: 1px solid rgba(255,255,255,.15);
+      flex: 0 0 auto;
+    }
+    .mini-meta{ min-width:0 }
+    .mini-title{
+      font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .mini-sub{ font-size:12px; color: var(--text-dim) }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .content{ grid-template-columns: 1fr; }
+      .panel{ order:2; min-height: 180px }
+      .stage{ order:1 }
+    }
+    @media (max-width: 560px){
+      .controls{ grid-template-columns: 1fr; gap:10px }
+      .timeline{ grid-template-columns: 1fr; gap:6px }
+      .time{ display:none }
+      .right{ justify-content: space-between }
+      .vol{ grid-template-columns: 20px 1fr }
     }
 
-    /* Tooltips */
-    [data-tip]{
-      position:relative;
-    }
-    [data-tip]::after{
-      content: attr(data-tip);
-      position:absolute; left:50%; bottom: calc(100% + 8px);
-      transform: translateX(-50%) translateY(4px);
-      background: #000;
-      color:#fff; font-size:11px; padding:6px 8px; border-radius:6px;
-      white-space:nowrap; opacity:0; pointer-events:none;
-      transition: opacity 120ms ease, transform 120ms ease;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
-    }
-    [data-tip]:hover::after{ opacity:1; transform: translateX(-50%) translateY(0); }
-
-    /* Focus styles */
-    button:focus-visible, .iconbtn:focus-visible, .artwrap:focus-visible, input[type="search"]:focus-visible{
-      outline:none; box-shadow: var(--focus);
+    /* Accessibility focus */
+    .icon-btn:focus-visible, .search input:focus-visible, .queue-item:focus-visible{
+      outline: 2px solid var(--accent-2);
+      outline-offset: 2px;
     }
 
-    /* Toasts */
-    .toast{
-      position:fixed; right:16px; bottom:110px;
-      display:flex; gap:10px; align-items:center;
-      padding:10px 14px; border-radius:10px;
-      background: rgba(0,0,0,0.72);
-      border:1px solid rgba(255,255,255,0.08);
-      color:#fff; opacity:0; transform: translateY(6px);
-      transition: opacity 200ms ease, transform 200ms ease;
-      pointer-events:none; z-index:3;
+    /* Tooltip */
+    .tip{
+      position: absolute; transform: translate(-50%,-120%);
+      background: rgba(0,0,0,.8);
+      color:#fff; padding:4px 6px; border-radius:6px;
+      font-size: 11px; pointer-events: none; opacity:0;
+      transition: opacity .12s;
+      white-space: nowrap;
     }
-    .toast.show{ opacity:1; transform: translateY(0); }
-
-    /* Reduced motion respect */
-    @media (prefers-reduced-motion: reduce){
-      .spotlight .poster, .artwrap, .iconbtn, .btn, .row{ transition: none !important; }
-    }
+    .range:hover .tip{ opacity:1 }
   </style>
 </head>
+
 <body>
-  <!-- Blurred background -->
   <div id="bg" class="bg" aria-hidden="true"></div>
 
-  <!-- Spotlight view (unblurred poster + info) -->
-  <section id="spotlight" class="spotlight" aria-live="polite" aria-label="Now playing spotlight">
-    <div class="backdrop" role="presentation"></div>
-    <div class="card" role="group" aria-label="Track details">
-      <div class="poster" aria-hidden="true">
-        <img id="spotImg" alt="">
+  <div class="app">
+    <!-- Top bar -->
+    <header class="topbar" aria-label="Top bar">
+      <div class="logo" aria-label="Glass Player">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Glass Player</span>
       </div>
-      <div class="meta">
-        <div class="title" id="spotTitle">—</div>
-        <div class="sub" id="spotSub">—</div>
-        <div class="actions">
-          <button id="spotPlay" class="btn primary" aria-label="Play or pause">Play</button>
-          <button id="spotHide" class="btn" aria-label="Minimize spotlight">Minimize</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Playlist Drawer -->
-  <aside id="drawer" class="drawer" aria-label="Playlist" aria-expanded="false">
-    <div class="head">
       <div class="search" role="search">
-        <input id="search" type="search" placeholder="Search title, artist, album" aria-label="Search playlist" />
-      </div>
-      <button id="closeDrawer" class="iconbtn" aria-label="Close playlist" data-tip="Close">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <input id="search" type="search" placeholder="Search title, artist, album…" aria-label="Search" />
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21l-5.2-5.2M16 10.5A5.5 5.5 0 1 1 5 10.5a5.5 5.5 0 0 1 11 0Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
-      </button>
-    </div>
-    <div id="list" class="list" role="listbox" aria-label="Tracks"></div>
-  </aside>
-
-  <main class="app" role="application" aria-label="Glassy Player">
-    <section class="stage" aria-label="Artwork area">
-      <div id="art" class="artwrap" tabindex="0" role="button" aria-label="Toggle spotlight or swipe to change">
-        <img id="artImg" alt="">
-        <div class="hint">Tap to expand • Swipe ◀ ▶</div>
       </div>
-    </section>
+    </header>
 
-    <!-- Bottom Control Bar -->
-    <footer class="bar" role="group" aria-label="Player controls">
-      <div class="bargrid">
-        <div class="left">
-          <button id="toggleDrawer" class="iconbtn" aria-label="Open playlist" data-tip="Playlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 6h16M4 12h10M4 18h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="mini" aria-live="polite">
-            <div class="mthumb"><img id="miniImg" alt=""></div>
-            <div class="mtext">
-              <div id="miniTitle" class="mtitle">—</div>
-              <div id="miniSub" class="msub">—</div>
+    <!-- Main content -->
+    <main class="content">
+      <!-- Sidebar / queue -->
+      <aside class="panel">
+        <div class="card">
+          <div class="section-title">Queue</div>
+          <div id="queue" class="queue" role="listbox" aria-label="Track queue"></div>
+        </div>
+      </aside>
+
+      <!-- Center stage -->
+      <section class="stage">
+        <div class="hero card">
+          <div class="art-wrap">
+            <div id="badge" class="badge" aria-live="polite">
+              <span id="mode-label">Discover</span>
             </div>
+            <div id="art" class="art" role="img" aria-label="Current artwork"></div>
+          </div>
+
+          <div class="meta" aria-live="polite">
+            <div id="title" class="title">—</div>
+            <div id="byline" class="byline">—</div>
           </div>
         </div>
 
-        <div class="center">
-          <div class="controls" role="toolbar" aria-label="Transport">
-            <button id="prev" class="iconbtn" aria-label="Previous" data-tip="Previous (P)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M6 5h2v14H6zM9.5 12L20 5v14L9.5 12z"/>
-              </svg>
+        <!-- Controls -->
+        <div class="controls" aria-label="Playback controls">
+          <div class="btnrow">
+            <button id="shuffle" class="icon-btn" aria-label="Shuffle" title="Shuffle (S)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M14.82 12.94 13.39 11.5 8 17H5v2h4l5.82-6.06zM15 6h4v2h-4l-1.3 1.3 1.42 1.42L20 7.83V10h2V4h-6v2zM5 7h4l8 8h4v2h-5l-8-8H5V7z"/></svg>
             </button>
-
-            <button id="play" class="iconbtn playbtn" aria-label="Play/Pause" data-tip="Play/Pause (Space)">
-              <svg class="play-icon" width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a" aria-hidden="true">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-              <svg class="pause-icon" width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a" aria-hidden="true">
-                <path d="M6 5h4v14H6zM14 5h4v14h-4z"/>
-              </svg>
+            <button id="prev" class="icon-btn" aria-label="Previous" title="Previous (J)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 6h2v12H6zM9.5 12 20 6v12z"/></svg>
             </button>
-
-            <button id="next" class="iconbtn" aria-label="Next" data-tip="Next (N)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M16 19h2V5h-2zM4 19l11-7L4 5z"/>
-              </svg>
+            <button id="play" class="icon-btn play-btn" aria-label="Play/Pause" title="Play/Pause (Space)">
+              <svg id="play-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button id="next" class="icon-btn" aria-label="Next" title="Next (L)">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M16 6h2v12h-2zM4 6l10.5 6L4 18z"/></svg>
+            </button>
+            <button id="repeat" class="icon-btn" aria-label="Repeat" title="Repeat (R)">
+              <svg id="repeat-icon" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7 7h8v2H7a3 3 0 0 0 0 6h2v-2H7a1 1 0 0 1 0-2h10v5l3-3-3-3v2H9a3 3 0 0 0 0 6h8v-2H9a1 1 0 0 1 0-2h10V7H7z"/></svg>
             </button>
           </div>
-          <div class="timeline" aria-label="Timeline">
-            <div id="tElapsed" class="time" aria-live="off">0:00</div>
-            <div id="seek" class="seek" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
-              <div id="seekFill" class="fill"></div>
-              <div id="seekKnob" class="knob"></div>
+
+          <div class="timeline" aria-label="Seek">
+            <div id="cur" class="time">0:00</div>
+            <div id="seek" class="range" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Seek">
+              <div id="seek-fill" class="fill"></div>
+              <div id="seek-thumb" class="thumb"></div>
+              <div id="seek-tip" class="tip">0:00</div>
             </div>
-            <div id="tRemain" class="time" aria-live="off">-0:00</div>
+            <div id="dur" class="time">0:00</div>
+          </div>
+
+          <div class="right">
+            <div class="vol" aria-label="Volume">
+              <button id="mute" class="icon-btn" aria-label="Mute/Unmute" title="Mute (M)">
+                <svg id="vol-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M5 9v6h4l5 4V5L9 9H5z"/>
+                </svg>
+              </button>
+              <div id="vol" class="range" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80" aria-label="Volume">
+                <div id="vol-fill" class="fill" style="width:80%"></div>
+                <div id="vol-thumb" class="thumb" style="left:80%"></div>
+              </div>
+            </div>
+
+            <button id="toggle-queue" class="icon-btn" aria-label="Toggle queue" title="Toggle queue">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h12v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+            </button>
           </div>
         </div>
+      </section>
+    </main>
 
-        <div class="right">
-          <button id="shuffle" class="iconbtn" aria-label="Shuffle" data-tip="Shuffle (S)" aria-pressed="false">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M17 3l3 3-3 3M4 6h6c3 0 3 6 6 6h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M17 15l3 3-3 3M4 18h6c3 0 4-6 7-6h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <button id="repeat" class="iconbtn" aria-label="Repeat" data-tip="Repeat (R): off" aria-pressed="false">
-            <svg id="repeatAllIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <svg id="repeatOneIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
-              <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <text x="11.5" y="15.5" text-anchor="middle" font-size="8" fill="currentColor" font-weight="700">1</text>
-            </svg>
-          </button>
-
-          <button id="mute" class="iconbtn" aria-label="Mute" data-tip="Mute">
-            <svg id="volOn" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M11 5l-5 4H3v6h3l5 4V5z" fill="currentColor"/>
-              <path d="M15 9a4 4 0 010 6M17 7a7 7 0 010 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <svg id="volOff" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
-              <path d="M11 5l-5 4H3v6h3l5 4V5z" fill="currentColor"/>
-              <path d="M16 8l6 6M22 8l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-
-          <div class="volume" aria-label="Volume">
-            <div id="vslider" class="vslider" role="slider" aria-label="Volume slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" tabindex="0">
-              <div id="vfill" class="vfill"></div>
-            </div>
-          </div>
-
-          <button id="options" class="iconbtn" aria-label="Options" data-tip="Options">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
-            </svg>
-          </button>
-        </div>
+    <!-- Now playing (compact) -->
+    <footer class="nowbar" aria-label="Now playing">
+      <div id="mini-art" class="mini-art"></div>
+      <div class="mini-meta">
+        <div id="mini-title" class="mini-title">—</div>
+        <div id="mini-sub" class="mini-sub">—</div>
       </div>
     </footer>
-  </main>
+  </div>
 
-  <!-- Hidden audio element -->
   <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
 
-  <!-- Toast -->
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
   <script>
-    // ---------- Data (source of truth) ----------
+    // ---------- Data ----------
     const musicData = [
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Glassy Player — Premium Single-File Music App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+     {
+    backgroundImage: "./assets/images/poster-1.jpg",
+    posterUrl: "./assets/images/poster-1.jpg",
+    title: "Cradles",
+    album: "Cradles",
+    year: 2019,
+    artist: "Sub urban",
+    musicPath: "./assets/music/music-1.mp3",
+  },
+  {
+  backgroundImage: "./assets/images/This is what sadness feels like.jpg",
+  posterUrl: "./assets/images/This is what sadness feels like.jpg",
+  title: "This is what sadness feels like",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - This is what sadness feels like.mp3",
+},
+{
+  backgroundImage: "./assets/images/This is what space feels like.jpg",
+  posterUrl: "./assets/images/This is what space feels like.jpg", // fixed key name
+  title: "This is what space feels like",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - This is what space feels like.mp3",
+},
+{
+  backgroundImage: "./assets/images/This is what winter feels like.jpg",
+  posterUrl: "./assets/images/This is what winter feels like.jpg",
+  title: "This is what winter feels like",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - This is what winter feels like.mp3",
+},
+{
+  backgroundImage: "./assets/images/Golden hour.jpg",
+  posterUrl: "./assets/images/Golden hour.jpg",
+  title: "Golden hour",
+  album: "this is what ____ feels like",
+  year: 2022,
+  artist: "JVKE",
+  musicPath: "./assets/music/JVKE - Golden hour.mp3",
+},
+{
+  backgroundImage: "./assets/images/Fast Car.jpg",
+  posterUrl: "./assets/images/Fast Car.jpg",
+  title: "Fast Car",
+  album: "Gettin’ Old",
+  year: 2023,
+  artist: "Luke Combs",
+  musicPath: "./assets/music/Luke Combs - Fast Car.mp3",
+},
+{
+  backgroundImage: "./assets/images/Idea 22.jpg",
+  posterUrl: "./assets/images/Idea 22.jpg",
+  title: "Idea 22",
+  album: "Idea 22 (single)",
+  year: 2022,
+  artist: "Gibran Alcocer",
+  musicPath: "./assets/music/Idea 22.mp3",
+},
 
-  <!-- Inline SVG favicon (work motif: briefcase in rounded square) -->
-  <link rel="icon" href='data:image/svg+xml;utf8,
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-      <rect x="4" y="4" width="56" height="56" rx="12" ry="12" fill="%231a1a1a"/>
-      <rect x="12" y="24" width="40" height="24" rx="6" ry="6" fill="%23ffffff" opacity="0.9"/>
-      <rect x="22" y="16" width="20" height="8" rx="2" ry="2" fill="%23ffffff" opacity="0.9"/>
-      <rect x="12" y="32" width="40" height="2" fill="%231a1a1a" opacity="0.35"/>
-      <circle cx="32" cy="33" r="2" fill="%231a1a1a"/>
-    </svg>' />
+         {
+    backgroundImage: "./assets/images/My Type.jpg",
+    posterUrl: "./assets/images/My Type.jpg",
+    title: "My Type",
+    album: "Memories...Do Not Open",
+    year: 2017,
+    artist: "The Chainsmokers, featuring Emily Warren",
+    musicPath: "./assets/music/The Chainsmokers - My Type (Audio) ft. Emily Warren.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Better.jpg",
+    posterUrl: "./assets/images/Better.jpg",
+    title: "Better",
+    album: "Free Spirit",
+    year: 2018,
+    artist: "Khalid",
+    musicPath: "./assets/music/Khalid - Better (Official Video) 4.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Lovely.jpg",
+    posterUrl: "./assets/images/Lovely.jpg",
+    title: "Lovely",
+    album: "Free Spirit",
+    year: 2018,
+    artist: "Khalid",
+    musicPath: "./assets/music/Billie Eilish, Khalid - lovely 4.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/runaway1.jpg",
+    posterUrl: "./assets/images/runaway1.jpg",
+    title: "Runaway",
+    album: "All My Demons Greeting Me as a Friend",
+    year: 2015,
+    artist: "AURORA ",
+    musicPath: "./assets/music/AURORA - Runaway.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/MAPA.jpg",
+    posterUrl: "./assets/images/MAPA.jpg",
+    title: "MAPA",
+    album: "Pagsibol",
+    year: 2021,
+    artist: "SB19",
+    musicPath: "./assets/music/SB19 MAPA.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/DUNGKA.jpg",
+    posterUrl: "./assets/images/DUNGKA.jpg",
+    title: "DUNGKA",
+    album: "Simula at Wakas",
+    year: 2025,
+    artist: "SB19",
+    musicPath: "./assets/music/SB19 DUNGKA.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Go Up.jpg",
+    posterUrl: "./assets/images/Go Up.jpg",
+    title: "Go Up",
+    album: "Get in the Zone",
+    year: 2019,
+    artist: "SB19",
+    musicPath: "./assets/music/SB19 Go Up.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Multo.jpg",
+    posterUrl: "./assets/images/Multo.jpg",
+    title: "Multo",
+    album: "Silakbo",
+    year: 2024,
+    artist: "Cup of Joe",
+    musicPath: "./assets/music/Multo - Cup of Joe.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Saan.jpg",
+    posterUrl: "./assets/images/Saan.jpg",
+    title: "Saan",
+    album: "Saan? - Single",
+    year: 2023,
+    artist: "Maki",
+    musicPath: "./assets/music/Maki - Saan.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Dilaw.jpg",
+    posterUrl: "./assets/images/Dilaw.jpg",
+    title: "Dilaw",
+    album: "Kolorcoaster",
+    year: 2024,
+    artist: "Maki ",
+    musicPath: "./assets/music/Maki - Dilaw.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/FreeSpirit.jpg",
+    posterUrl: "./assets/images/FreeSpirit.jpg",
+    title: "Better",
+    album: "Free Spirit",
+    year: 2018,
+    artist: "Khalid",
+    musicPath: "./assets/music/Khalid - Free Spirit (Official Video).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Golden.jpg",
+    posterUrl: "./assets/images/Golden.jpg",
+    title: "Huntrix",
+    album: "KPop Demon Hunters",
+    year: 2025,
+    artist: "Huntrix",
+    musicPath: "./assets/music/Huntrix - Golden (Lyrics) KPop Demon Hunters.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/Ava.jpg",
+    posterUrl: "./assets/images/Ava.jpg",
+    title: "Ava",
+    album: "We Fam Econo",
+    year: 2014,
+    artist: "Arisael Guzman",
+    musicPath: "./assets/music/Famy - Ava.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Stressed Out.jpg",
+    posterUrl: "./assets/images/Stressed Out.jpg",
+    title: "Stressed Out",
+    album: "Blurryface",
+    year: 2015,
+    artist: "Twenty One Pilots",
+    musicPath: "./assets/music/twenty one pilots_ Stressed Out.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/Ride.jpg",
+    posterUrl: "./assets/images/Ride.jpg",
+    title: "Ride",
+    album: "Blurryface",
+    year: 2015,
+    artist: "Twenty One Pilots",
+    musicPath: "./assets/music/twenty one pilots - Ride.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/Mad Hatter.jpg",
+    posterUrl: "./assets/images/Mad Hatter.jpg",
+    title: "Mad Hatter",
+    album: "Cry Baby",
+    year: 2015,
+    artist: "Melanie Martinez",
+    musicPath: "./assets/music/Melanie Martinez - Mad Hatter.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Heathens.jpg",
+    posterUrl: "./assets/images/Heathens.jpg",
+    title: "Heathens",
+    album: "Suicide Squad",
+    year: 2016,
+    artist: "Twenty One Pilots",
+    musicPath: "./assets/music/SpotiDownloader.com - Heathens - Twenty One Pilots.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/SailorSong.jpg",
+    posterUrl: "./assets/images/SailorSong.jpg",
+    title: "Sailor Song",
+    album: "At the Beach, in Every Life",
+    year: 2024,
+    artist: "Gigi Perez",
+    musicPath: "./assets/music/Gigi Perez - Sailor Song [Official Music Video].mp3",
+  },
 
-  <style>
-    :root{
-      --glass:#00000033;
-      --glass-strong:#00000066;
-      --glass-solid:#0b0b0bcc;
-      --text:#f3f3f5;
-      --muted:#c9c9cf;
-      --accent:#7dd3fc;        /* soft cyan */
-      --accent-2:#a78bfa;      /* violet */
-      --danger:#ff6666;
-      --ok:#6ee7b7;
-      --shadow: 0 10px 30px rgba(0,0,0,0.35);
-      --radius:14px;
-      --radius-sm:10px;
-      --radius-xs:8px;
-      --focus: 0 0 0 3px rgba(125,211,252,0.5), 0 0 0 6px rgba(167,139,250,0.25);
-      --track-h:4px;
-      --blur: 28px;
-      --backdrop: saturate(130%) blur(16px);
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
-    }
+       {
+    backgroundImage: "./assets/images/ordinary.jpg",
+    posterUrl: "./assets/images/ordinary.jpg",
+    title: "Ordinary",
+    album: "You'll Be Alright, Kid",
+    year: 2025,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/SpotiDownloader.com - Ordinary - Wedding Version - Alex Warren.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Older.jpg",
+    posterUrl: "./assets/images/Older.jpg",
+    title: "Older",
+    album: "Loser (EP)",
+    year: 2018,
+    artist: "Sasha Alex Sloan",
+    musicPath: "./assets/music/Sasha Alex Sloan - Older.mp3",
+  },
 
-    html,body{
-      height:100%;
-      background:#0a0a0b;
-      color:var(--text);
-      font-family: var(--font);
-      letter-spacing:0.15px;
-    }
-
-    *{ box-sizing:border-box; }
-
-    /* Background layer */
-    .bg {
-      position:fixed;
-      inset:0;
-      background-position:center;
-      background-size:cover;
-      background-repeat:no-repeat;
-      filter: blur(var(--blur)) brightness(0.7);
-      transform: scale(1.05);
-      transition: background-image 300ms ease, filter 300ms ease, transform 300ms ease;
-      will-change: filter, transform;
-      z-index:-2;
-    }
-
-    /* Optional curtain to ensure legibility on extreme images */
-    .bg::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(1200px 800px at 50% 60%, rgba(0,0,0,0.1), rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.75));
-    }
-
-    /* Spotlight poster view */
-    .spotlight {
-      position: fixed;
-      inset:0;
-      display:grid;
-      place-items:center;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity 280ms ease;
-      z-index:2;
-    }
-    .spotlight.active{
-      opacity:1;
-      pointer-events: auto;
-    }
-    .spotlight .backdrop{
-      position:absolute; inset:0;
-      backdrop-filter: var(--backdrop);
-      -webkit-backdrop-filter: var(--backdrop);
-      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
-    }
-    .spotlight .card{
-      position:relative;
-      width:min(88vw, 1080px);
-      display:grid;
-      grid-template-columns: 1fr min(48vw,520px);
-      gap: min(4vw,36px);
-      padding:min(4vw,36px);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-      box-shadow: var(--shadow);
-      border:1px solid rgba(255,255,255,0.08);
-    }
-    @media (max-width: 900px){
-      .spotlight .card{ grid-template-columns: 1fr; }
-    }
-    .spotlight .poster{
-      width:100%;
-      aspect-ratio:1/1;
-      border-radius: var(--radius);
-      overflow:hidden;
-      background: #111;
-      box-shadow: var(--shadow);
-      transform: translateY(6px) scale(0.985);
-      opacity:0.98;
-      transition: transform 300ms ease, opacity 300ms ease;
-    }
-    .spotlight.active .poster{
-      transform: translateY(0) scale(1);
-      opacity:1;
-    }
-    .spotlight .poster img{
-      width:100%; height:100%; object-fit:cover;
-      display:block;
-    }
-    .spotlight .meta{
-      align-self:center;
-    }
-    .spotlight .title{
-      font-size: clamp(28px, 3.2vw, 46px);
-      line-height:1.1;
-      font-weight: 750;
-      margin: 6px 0 10px;
-      letter-spacing:0.2px;
-      text-shadow: 0 6px 24px rgba(0,0,0,0.5);
-    }
-    .spotlight .sub{
-      color: var(--muted);
-      font-size: clamp(14px,1.2vw,16px);
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
-    .spotlight .actions{
-      margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;
-    }
-    .btn{
-      appearance:none; border:0;
-      border-radius: 999px;
-      padding: 10px 16px;
-      background: rgba(255,255,255,0.09);
-      color: var(--text);
-      cursor:pointer;
-      transition: transform 150ms ease, background 150ms ease, opacity 150ms ease;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
-    }
-    .btn:hover{ background: rgba(255,255,255,0.14); transform: translateY(-1px); }
-    .btn:active{ transform: translateY(0); }
-    .btn.primary{ background: linear-gradient(135deg, var(--accent), var(--accent-2)); color:#0a0a0a; }
-    .btn.primary:hover{ opacity:0.95; }
-
-    /* App layout */
-    .app {
-      position:relative;
-      min-height:100dvh;
-      display:grid;
-      grid-template-rows: 1fr auto;
-    }
-
-    /* Playlist drawer */
-    .drawer{
-      position: fixed;
-      left:16px; top:16px; bottom:96px;
-      width:min(360px, 92vw);
-      border-radius: var(--radius);
-      background: rgba(0,0,0,0.25);
-      backdrop-filter: var(--backdrop);
-      -webkit-backdrop-filter: var(--backdrop);
-      border:1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      display:flex; flex-direction:column;
-      transform: translateX(-8px) translateY(8px) scale(0.985);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity 220ms ease, transform 220ms ease;
-      z-index:1;
-    }
-    .drawer.open{
-      transform: translateX(0) translateY(0) scale(1);
-      opacity:1;
-      pointer-events:auto;
-    }
-    .drawer .head{
-      padding:12px 12px 10px;
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border-bottom:1px solid rgba(255,255,255,0.06);
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-    }
-    .drawer .search{
-      position:relative; flex:1;
-    }
-    .drawer input[type="search"]{
-      width:100%;
-      padding:10px 12px;
-      border-radius: var(--radius-xs);
-      border:1px solid rgba(255,255,255,0.08);
-      background: rgba(0,0,0,0.4);
-      color: var(--text);
-      outline:none;
-      box-shadow:none;
-    }
-    .drawer input[type="search"]::placeholder{ color:#b9b9c2; }
-    .list{
-      overflow:auto;
-      padding:8px;
-      display:flex; flex-direction:column; gap:6px;
-    }
-    .row{
-      display:grid;
-      grid-template-columns: 44px 1fr auto;
-      align-items:center;
-      gap:12px;
-      padding:8px;
-      border-radius: var(--radius-xs);
-      cursor:pointer;
-      background: transparent;
-      transition: background 140ms ease, transform 140ms ease;
-      outline: none;
-    }
-    .row:hover{ background: rgba(255,255,255,0.06); }
-    .row:active{ transform: translateY(1px); }
-    .row:focus-visible{ box-shadow: var(--focus); }
-    .row.active{
-      background: linear-gradient(90deg, rgba(125,211,252,0.20), rgba(167,139,250,0.14));
-      box-shadow: inset 0 0 0 1px rgba(125,211,252,0.35);
-    }
-    .row .thumb{
-      width:44px; height:44px;
-      border-radius:10px; overflow:hidden; background:#111;
-    }
-    .row .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .row .meta{
-      display:flex; flex-direction:column; min-width:0;
-    }
-    .row .title{
-      font-weight:600; font-size:14px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
-    }
-    .row .sub{
-      font-size:12px; color:var(--muted); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;
-    }
-
-    /* Center artwork touch area */
-    .stage{
-      margin: min(5vw, 56px) auto;
-      width:min(92vw, 980px);
-      display:grid;
-      place-items:center;
-      pointer-events:none; /* allow controls to be primary; enable for stage children */
-    }
-    .artwrap{
-      pointer-events:auto;
-      width:min(68vw, 560px);
-      aspect-ratio:1/1;
-      border-radius: var(--radius);
-      overflow:hidden;
-      background: rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-      transform: translateY(0) scale(1);
-      transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease, opacity 220ms ease;
-      position:relative;
-      cursor:pointer;
-    }
-    .artwrap:hover{ transform: translateY(-2px) scale(1.01); }
-    .artwrap:active{ transform: translateY(0) scale(0.995); }
-    .artwrap img{
-      width:100%; height:100%; object-fit:cover; display:block;
-      transition: transform 300ms ease, opacity 300ms ease, filter 300ms ease;
-    }
-    .artwrap .hint{
-      position:absolute; left:12px; bottom:12px;
-      background: rgba(0,0,0,0.45);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      color:#e5e7eb; font-size:12px; padding:6px 10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,0.08);
-    }
-
-    /* Bottom control bar */
-    .bar{
-      position: sticky;
-      bottom:0;
-      width:100%;
-      background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.32));
-      backdrop-filter: var(--backdrop);
-      -webkit-backdrop-filter: var(--backdrop);
-      border-top:1px solid rgba(255,255,255,0.08);
-      padding:10px 14px 14px;
-    }
-    .bargrid{
-      display:grid;
-      grid-template-columns: 1.2fr 1.6fr 1.2fr;
-      gap:14px;
-      align-items:center;
-    }
-    @media (max-width: 900px){
-      .bargrid{ grid-template-columns: 1fr; gap:10px; }
-    }
-
-    .left, .center, .right{ display:flex; align-items:center; gap:12px; min-width:0; }
-
-    .mini{
-      display:flex; align-items:center; gap:10px; min-width:0;
-      padding:6px 8px; border-radius: var(--radius-xs);
-      background: rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.06);
-    }
-    .mini .mthumb{ width:40px; height:40px; border-radius:8px; overflow:hidden; background:#111; flex:none; }
-    .mini .mthumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .mini .mtext{ min-width:0; }
-    .mini .mtitle{ font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .mini .msub{ font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    .controls{
-      display:flex; align-items:center; gap:10px; justify-content:center; width:100%;
-    }
-    .iconbtn{
-      width:36px; height:36px;
-      display:grid; place-items:center;
-      border-radius:999px;
-      background: rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.08);
-      color:var(--text);
-      cursor:pointer;
-      transition: background 150ms ease, transform 150ms ease, opacity 150ms ease;
-    }
-    .iconbtn:hover{ background: rgba(255,255,255,0.14); transform: translateY(-1px); }
-    .iconbtn:active{ transform: translateY(0); }
-    .iconbtn[aria-pressed="true"]{ box-shadow: inset 0 0 0 1px var(--accent); background: rgba(125,211,252,0.18); }
-
-    .playbtn{
-      width:44px; height:44px; font-size:0;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #0a0a0a;
-      border: none;
-    }
-    .playbtn svg{ fill:#0a0a0a }
-    .playbtn.pause .play-icon{ display:none; }
-    .playbtn:not(.pause) .pause-icon{ display:none; }
-
-    .timeline{
-      display:grid; grid-template-columns: auto 1fr auto; gap:10px; align-items:center; width:100%;
-    }
-    .time{ font-variant-numeric: tabular-nums; font-size:12px; color:#e5e7eb; min-width:46px; text-align:center; }
-    .seek{
-      position:relative; height: var(--track-h); border-radius:999px;
-      background: rgba(255,255,255,0.16);
-      overflow:visible;
-      cursor:pointer;
-    }
-    .seek .fill{
-      position:absolute; left:0; top:0; bottom:0; width:0%;
-      border-radius:999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      pointer-events:none;
-    }
-    .seek .knob{
-      position:absolute; top:50%; transform: translate(-50%,-50%);
-      width:14px; height:14px; border-radius:999px;
-      background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.45);
-      opacity:0; transition: opacity 120ms ease;
-      pointer-events:none;
-    }
-    .seek:hover .knob, .seek.dragging .knob{ opacity:1; }
-
-    .volume{
-      display:flex; align-items:center; gap:10px; margin-left:auto;
-      min-width: 160px;
-    }
-    @media (max-width: 900px){
-      .volume{ min-width: 0; width:100%; }
-    }
-    .vslider{
-      position:relative; height: var(--track-h); flex:1; border-radius:999px;
-      background: rgba(255,255,255,0.16);
-      cursor:pointer;
-    }
-    .vslider .vfill{
-      position:absolute; left:0; top:0; bottom:0; width:0%;
-      border-radius:999px; background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    }
-
-    /* Tooltips */
-    [data-tip]{
-      position:relative;
-    }
-    [data-tip]::after{
-      content: attr(data-tip);
-      position:absolute; left:50%; bottom: calc(100% + 8px);
-      transform: translateX(-50%) translateY(4px);
-      background: #000;
-      color:#fff; font-size:11px; padding:6px 8px; border-radius:6px;
-      white-space:nowrap; opacity:0; pointer-events:none;
-      transition: opacity 120ms ease, transform 120ms ease;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
-    }
-    [data-tip]:hover::after{ opacity:1; transform: translateX(-50%) translateY(0); }
-
-    /* Focus styles */
-    button:focus-visible, .iconbtn:focus-visible, .artwrap:focus-visible, input[type="search"]:focus-visible{
-      outline:none; box-shadow: var(--focus);
-    }
-
-    /* Toasts */
-    .toast{
-      position:fixed; right:16px; bottom:110px;
-      display:flex; gap:10px; align-items:center;
-      padding:10px 14px; border-radius:10px;
-      background: rgba(0,0,0,0.72);
-      border:1px solid rgba(255,255,255,0.08);
-      color:#fff; opacity:0; transform: translateY(6px);
-      transition: opacity 200ms ease, transform 200ms ease;
-      pointer-events:none; z-index:3;
-    }
-    .toast.show{ opacity:1; transform: translateY(0); }
-
-    /* Reduced motion respect */
-    @media (prefers-reduced-motion: reduce){
-      .spotlight .poster, .artwrap, .iconbtn, .btn, .row{ transition: none !important; }
-    }
-  </style>
-</head>
-<body>
-  <!-- Blurred background -->
-  <div id="bg" class="bg" aria-hidden="true"></div>
-
-  <!-- Spotlight view (unblurred poster + info) -->
-  <section id="spotlight" class="spotlight" aria-live="polite" aria-label="Now playing spotlight">
-    <div class="backdrop" role="presentation"></div>
-    <div class="card" role="group" aria-label="Track details">
-      <div class="poster" aria-hidden="true">
-        <img id="spotImg" alt="">
-      </div>
-      <div class="meta">
-        <div class="title" id="spotTitle">—</div>
-        <div class="sub" id="spotSub">—</div>
-        <div class="actions">
-          <button id="spotPlay" class="btn primary" aria-label="Play or pause">Play</button>
-          <button id="spotHide" class="btn" aria-label="Minimize spotlight">Minimize</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Playlist Drawer -->
-  <aside id="drawer" class="drawer" aria-label="Playlist" aria-expanded="false">
-    <div class="head">
-      <div class="search" role="search">
-        <input id="search" type="search" placeholder="Search title, artist, album" aria-label="Search playlist" />
-      </div>
-      <button id="closeDrawer" class="iconbtn" aria-label="Close playlist" data-tip="Close">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
-    <div id="list" class="list" role="listbox" aria-label="Tracks"></div>
-  </aside>
-
-  <main class="app" role="application" aria-label="Glassy Player">
-    <section class="stage" aria-label="Artwork area">
-      <div id="art" class="artwrap" tabindex="0" role="button" aria-label="Toggle spotlight or swipe to change">
-        <img id="artImg" alt="">
-        <div class="hint">Tap to expand • Swipe ◀ ▶</div>
-      </div>
-    </section>
-
-    <!-- Bottom Control Bar -->
-    <footer class="bar" role="group" aria-label="Player controls">
-      <div class="bargrid">
-        <div class="left">
-          <button id="toggleDrawer" class="iconbtn" aria-label="Open playlist" data-tip="Playlist">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 6h16M4 12h10M4 18h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <div class="mini" aria-live="polite">
-            <div class="mthumb"><img id="miniImg" alt=""></div>
-            <div class="mtext">
-              <div id="miniTitle" class="mtitle">—</div>
-              <div id="miniSub" class="msub">—</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="center">
-          <div class="controls" role="toolbar" aria-label="Transport">
-            <button id="prev" class="iconbtn" aria-label="Previous" data-tip="Previous (P)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M6 5h2v14H6zM9.5 12L20 5v14L9.5 12z"/>
-              </svg>
-            </button>
-
-            <button id="play" class="iconbtn playbtn" aria-label="Play/Pause" data-tip="Play/Pause (Space)">
-              <svg class="play-icon" width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a" aria-hidden="true">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-              <svg class="pause-icon" width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0a" aria-hidden="true">
-                <path d="M6 5h4v14H6zM14 5h4v14h-4z"/>
-              </svg>
-            </button>
-
-            <button id="next" class="iconbtn" aria-label="Next" data-tip="Next (N)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M16 19h2V5h-2zM4 19l11-7L4 5z"/>
-              </svg>
-            </button>
-          </div>
-          <div class="timeline" aria-label="Timeline">
-            <div id="tElapsed" class="time" aria-live="off">0:00</div>
-            <div id="seek" class="seek" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
-              <div id="seekFill" class="fill"></div>
-              <div id="seekKnob" class="knob"></div>
-            </div>
-            <div id="tRemain" class="time" aria-live="off">-0:00</div>
-          </div>
-        </div>
-
-        <div class="right">
-          <button id="shuffle" class="iconbtn" aria-label="Shuffle" data-tip="Shuffle (S)" aria-pressed="false">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M17 3l3 3-3 3M4 6h6c3 0 3 6 6 6h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M17 15l3 3-3 3M4 18h6c3 0 4-6 7-6h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <button id="repeat" class="iconbtn" aria-label="Repeat" data-tip="Repeat (R): off" aria-pressed="false">
-            <svg id="repeatAllIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <svg id="repeatOneIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
-              <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <text x="11.5" y="15.5" text-anchor="middle" font-size="8" fill="currentColor" font-weight="700">1</text>
-            </svg>
-          </button>
-
-          <button id="mute" class="iconbtn" aria-label="Mute" data-tip="Mute">
-            <svg id="volOn" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M11 5l-5 4H3v6h3l5 4V5z" fill="currentColor"/>
-              <path d="M15 9a4 4 0 010 6M17 7a7 7 0 010 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <svg id="volOff" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:none">
-              <path d="M11 5l-5 4H3v6h3l5 4V5z" fill="currentColor"/>
-              <path d="M16 8l6 6M22 8l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </button>
-
-          <div class="volume" aria-label="Volume">
-            <div id="vslider" class="vslider" role="slider" aria-label="Volume slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" tabindex="0">
-              <div id="vfill" class="vfill"></div>
-            </div>
-          </div>
-
-          <button id="options" class="iconbtn" aria-label="Options" data-tip="Options">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </footer>
-  </main>
-
-  <!-- Hidden audio element -->
-  <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
-
-  <!-- Toast -->
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <script>
-    // ---------- Data (source of truth) ----------
-    const musicData = [
+     {
+    backgroundImage: "./assets/images/All I Want.jpg",
+    posterUrl: "./assets/images/All I Want.jpg",
+    title: "All I Want",
+    album: "High School Musical: The Musical: The Series: The Soundtrack",
+    year: 2023,
+    artist: "Olivia Rodrigo",
+    musicPath: "./assets/music/Olivia Rodrigo - All I Want.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/vampire.jpg",
+    posterUrl: "./assets/images/vampire.jpg",
+    title: "vampire",
+    album: "Guts",
+    year: 2023,
+    artist: "Olivia Rodrigo",
+    musicPath: "./assets/music/Olivia Rodrigo - vampire.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Here's to Never Growing Up.jpg",
+    posterUrl: "./assets/images/Here's to Never Growing Up.jpg",
+    title: "Here's to Never Growing Up",
+    album: "Avril Lavigne",
+    year: 2023,
+    artist: "Avril Lavigne",
+    musicPath: "./assets/music/Avril Lavigne - Here's to Never Growing Up.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Leave me in the dark.jpg",
+    posterUrl: "./assets/images/Leave me in the dark.jpg",
+    title: "Leave me in the dark",
+    album: "Leave me in the dark",
+    year: 2023,
+    artist: "Alexander Stewart",
+    musicPath: "./assets/music/Alexander Stewart  Leave Me in the Dark.mp3",
+  },
       {
-        backgroundImage: "./assets/images/poster-1.jpg",
-        posterUrl: "./assets/images/poster-1.jpg",
-        title: "Cradles",
-        album: "Cradles",
-        year: 2019,
-        artist: "Sub urban",
-        musicPath: "./assets/music/music-1.mp3"
-      },
+    backgroundImage: "./assets/images/How Could You.jpg",
+    posterUrl: "./assets/images/How Could You.jpg",
+    title: "How Could You",
+    album: "How Could You",
+    year: 2023,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - How Could You (Be OK).mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Memories.jpg",
+    posterUrl: "./assets/images/Memories.jpg",
+    title: "Memories",
+    album: "The Epilogue",
+    year: 2024,
+    artist: "Dean Lewis",
+    musicPath: "./assets/music/Dean Lewis - Memories.mp3",
+  },
       {
-        backgroundImage: "./assets/images/This is what sadness feels like.jpg",
-        posterUrl: "./assets/images/This is what sadness feels like.jpg",
-        title: "This is what sadness feels like",
-        album: "this is what ____ feels like",
-        year: 2022,
-        artist: "JVKE",
-        musicPath: "./assets/music/JVKE - This is what sadness feels like.mp3"
-      },
+    backgroundImage: "./assets/images/Save You a Seat.jpg",
+    posterUrl: "./assets/images/Save You a Seat.jpg",
+    title: "Save You a Seat",
+    album: "Save You a Seat",
+    year: 2024,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - Save You A Seat.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Chasing Shadows.jpg",
+    posterUrl: "./assets/images/Chasing Shadows.jpg",
+    title: "Chasing Shadows",
+    album: "You'll Be Alright, Kid",
+    year: 2022,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - Chasing Shadows.mp3",
+  },
       {
-        backgroundImage: "./assets/images/This is what space feels like.jpg",
-        posterUrl: "./assets/images/This is what space feels like.jpg",
-        title: "This is what space feels like",
-        album: "this is what ____ feels like",
-        year: 2022,
-        artist: "JVKE",
-        musicPath: "./assets/music/JVKE - This is what space feels like.mp3"
-      }
+    backgroundImage: "./assets/images/Before You Leave Me.jpg",
+    posterUrl: "./assets/images/Before You Leave Me.jpg",
+    title: "Before You Leave Me",
+    album: "Before You Leave Me",
+    year: 2024,
+    artist: "Alex Warren",
+    musicPath: "./assets/music/Alex Warren - Before You Leave Me.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/BOAF.jpg",
+    posterUrl: "./assets/images/BOAF.jpg",
+    title: "BIRDS OF A FEATHER",
+    album: "Hit Me Hard and Soft",
+    year: 2024,
+    artist: "Billie Eilish",
+    musicPath: "./assets/music/Billie Eilish - BIRDS OF A FEATHER.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Marilag.jpg",
+    posterUrl: "./assets/images/Marilag.jpg",
+    title: "Marilag ",
+    album: "Langit Mong Bughaw",
+    year: 2024,
+    artist: "Dionela",
+    musicPath: "./assets/music/spotifydown.com - Marilag - Dionela.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/better off without me.jpg",
+    posterUrl: "./assets/images/better off without me.jpg",
+    title: "Better off without me",
+    album: "better off without me",
+    year: 2022,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - better off without me (Acoustic).mp3",
+  },
+      {
+    backgroundImage: "./assets/images/GRAVITY.jpg",
+    posterUrl: "./assets/images/GRAVITY.jpg",
+    title: "GRAVITY",
+    album: "GRAVITY",
+    year: 2024,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - GRAVITY (Visualizer).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Without You With Me.jpg",
+    posterUrl: "./assets/images/Without You With Me.jpg",
+    title: "Without You With Me",
+    album: "Without You With M",
+    year: 2021,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - Without You With Me (Lyrics).mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Love Me Now or Lose Me Later.jpg",
+    posterUrl: "./assets/images/Love Me Now or Lose Me Later.jpg",
+    title: "Love Me Now or Lose Me Later",
+    album: "KYGO",
+    year: 2024,
+    artist: "Kygo & Matt Hansen",
+    musicPath: "./assets/music/Kygo, Matt Hansen - Love Me Now or Lose Me Later (Lyric video) _ Live from The Troll's Tongue.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/LET EM GO.jpg",
+    posterUrl: "./assets/images/LET EM GO.jpg",
+    title: "LET EM GO",
+    album: "LET EM GO",
+    year: 2023,
+    artist: "Matt Hansen",
+    musicPath: "./assets/music/Matt Hansen - LET EM GO (Official Visualizer).mp3",
+  },
+
+      {
+    backgroundImage: "./assets/images/Andamnako.jpg",
+    posterUrl: "./assets/images/Andamnako.jpg",
+    title: "Andam Na Ko",
+    album: "Bagani",
+    year: 2021,
+    artist: "Oh! Caraga",
+    musicPath: "./assets/music/Oh! Caraga - Andam Na Ko.mp3",
+  },
+      {
+    backgroundImage: "./assets/images/Ipanumpako.jpg",
+    posterUrl: "./assets/images/Ipanumpako.jpg",
+    title: "Ipanumpa Ko",
+    album: "Bagani",
+    year: 2019,
+    artist: "Oh! Caraga",
+    musicPath: "./assets/music/Oh! Caraga - Ipanumpa Ko (Official Music Video).mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Vee.jpg",
+    posterUrl: "./assets/images/Vee.jpg",
+    title: "Kumapit Ka Lang",
+    album: "Floravee",
+    year: 2024,
+    artist: "Floravee",
+    musicPath: "./assets/music/Kumapit Ka Lang - Floravee.mp3",
+  },
+     {
+  backgroundImage: "./assets/images/Roses.jpg",
+  posterUrl: "./assets/images/Roses.jpg",
+  title: "Roses",
+  album: "Bouquet", // Update if the track is part of an album
+  year: 2015,       // Modify to the actual release year
+  artist: "The Chainsmokers",
+  musicPath: "./assets/music/The Chainsmokers - Roses (Lyric Video) ft. ROZES.mp3",
+},
+       {
+  backgroundImage: "./assets/images/Let me love you.jpg",
+  posterUrl: "./assets/images/Let me love you.jpg",
+  title: "Let Me Love You (ft. Justin Bieber)",
+  album: "Encore", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "DJ Snake",
+  musicPath: "./assets/music/DJ Snake - Let Me Love You ft. Justin Bieber.mp3",
+},
+       {
+  backgroundImage: "./assets/images/Perfect Strangers.jpg",
+  posterUrl: "./assets/images/Perfect Strangers.jpg",
+  title: "Perfect Strangers (ft. JP Cooper)",
+  album: "Blue", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "Jonas Blue",
+  musicPath: "./assets/music/Jonas Blue - Perfect Strangers ft. JP Cooper.mp3",
+},
+     {
+  backgroundImage: "./assets/images/Beautiful scars.jpg",
+  posterUrl: "./assets/images/Beautiful scars.jpg",
+  title: "Beautiful Scars",
+  album: "Still Alive (Deluxe Edition)", // Update if the track is part of an album
+  year: 2020,       // Modify to the actual release year
+  artist: "Maximillian",
+  musicPath: "./assets/music/Maximillian - Beautiful Scars.mp3",
+},
+     {
+  backgroundImage: "./assets/images/Cold water.jpg",
+  posterUrl: "./assets/images/Cold water.jpg",
+  title: "Cold Water",
+  album: "Major Lazer Essentials", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "Major Lazer",
+  musicPath: "./assets/music/Major Lazer - Cold Water (feat. Justin Bieber & MO).mp3",
+},
+     {
+  backgroundImage: "./assets/images/Closer.jpg",
+  posterUrl: "./assets/images/Closer.jpg",
+  title: "Closer (Lyric) ft. Halsey",
+  album: "Collage", // Update if the track is part of an album
+  year: 2016,       // Modify to the actual release year
+  artist: "The Chainsmokers",
+  musicPath: "./assets/music/The Chainsmokers - Closer (Lyric) ft. Halsey.mp3",
+},
+ {
+  backgroundImage: "./assets/images/As it was.jpg",
+  posterUrl: "./assets/images/As it was.jpg",
+  title: "As it was",
+  album: "As it was", // Update if the track is part of an album
+  year: 2025,       // Modify to the actual release year
+  artist: "Harry Styles",
+  musicPath: "./assets/music/SpotiDownloader.com - As It Was - Pop Goes Ambient.mp3",
+},
+ {
+  backgroundImage: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.jpg",
+  title: "I Miss You, I'm Sorry",
+  album: "Minor", // Update if the track is part of an album
+  year: 2020,       // Modify to the actual release year
+  artist: "Gracie Abrams",
+  musicPath: "./assets/music/SpotiDownloader.com - I miss you, I’m sorry - Gracie Abrams.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Briston - Sydney Rose.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Briston - Sydney Rose.jpg",
+  title: "Briston",
+  album: "Briston", // Update if the track is part of an album
+  year: 2024,       // Modify to the actual release year
+  artist: "Sydney Rose",
+  musicPath: "./assets/music/SpotiDownloader.com - Briston - Sydney Rose.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Little Bit Better - Caleb Hearn.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Little Bit Better - Caleb Hearn.jpg",
+  title: "Little Bit Better",
+  album: "Little Bit Better", // Update if the track is part of an album
+  year: 2024,       // Modify to the actual release year
+  artist: "Caleb Hearn & ROSIE",
+  musicPath: "./assets/music/SpotiDownloader.com - Little Bit Better - Caleb Hearn.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Lonely Dirt Road - Dax.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Lonely Dirt Road - Dax.jpg",
+  title: "Lonely Dirt Road",
+  album: "From A Man’s Perspective", // Update if the track is part of an album
+  year: 2021,       // Modify to the actual release year
+  artist: "Dax",
+  musicPath: "./assets/music/SpotiDownloader.com - Lonely Dirt Road - Dax.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - Sparks - Coldplay.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - Sparks - Coldplay.jpg",
+  title: "Sparks",
+  album: "Parachutes", // Update if the track is part of an album
+  year: 2000,       // Modify to the actual release year
+  artist: "Coldplay",
+  musicPath: "./assets/music/SpotiDownloader.com - Sparks - Coldplay.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - ceilings - Lizzy McAlpine.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - ceilings - Lizzy McAlpine.jpg",
+  title: "ceilings",
+  album: "Five Seconds Flat", // Update if the track is part of an album
+  year: 2022,       // Modify to the actual release year
+  artist: "Lizzy McAlpine",
+  musicPath: "./assets/music/SpotiDownloader.com - ceilings - Lizzy McAlpine.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - something to remember - Matt Hansen.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - something to remember - Matt Hansen.jpg",
+  title: "something to remember",
+  album: "something to remember", // Update if the track is part of an album
+  year: 2023,       // Modify to the actual release year
+  artist: "Matt Hansen",
+  musicPath: "./assets/music/SpotiDownloader.com - something to remember - Matt Hansen.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - would've been you - sombr.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - would've been you - sombr.jpg",
+  title: "would've been you",
+  album: "In Another Life", // Update if the track is part of an album
+  year: 2023,       // Modify to the actual release year
+  artist: "Sombr",
+  musicPath: "./assets/music/SpotiDownloader.com - would've been you - sombr.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - you were good to me - Jeremy Zucker.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - you were good to me - Jeremy Zucker.jpg",
+  title: "You Were Good to Me",
+  album: "Brent", // Update if the track is part of an album
+  year: 2019,       // Modify to the actual release year
+  artist: "Jeremy Zucker & Chelsea Cutler",
+  musicPath: "./assets/music/SpotiDownloader.com - you were good to me - Jeremy Zucker.mp3",
+},
+{
+  backgroundImage: "./assets/images/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.jpg",
+  posterUrl: "./assets/images/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.jpg",
+  title: "Good life",
+  album: "Good life", // Update if the track is part of an album
+  year: 2025,  // Modify to the actual release year
+  artist: "Chelsea Cutler",
+  musicPath: "./assets/music/SpotiDownloader.com - i’ll have a good life darling, but it won’t be with you. - Chelsea Cutler.mp3",
+},
+{
+  backgroundImage: "./assets/images/vsc-middle-of-nowhere.jpg",
+  posterUrl: "./assets/images/vsc-middle-of-nowhere.jpg",
+  title: "Middle Of Nowhere",
+  album: "Single", // Update if the track is part of an album
+  year: 2020, // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiDownloader.com - Middle Of Nowhere - Vancouver Sleep Clinic.mp3",
+},
+{
+  backgroundImage: "./assets/images/Someone To Stay.jpg",
+  posterUrl: "./assets/images/Someone To Stay.jpg",
+  title: "Someone To Stay (Acoustic)",
+  album: "Someone To Stay (Acoustic)", // Album name same as track title, if applicable
+  year: 2023,       // Modify to the actual release year
+  artist: "Vancouver Sleep Clinic",
+  musicPath: "./assets/music/SpotiMate.io - Someone To Stay _Acoustic_ - Vancouver Sleep Clinic (1).mp3",
+},
+ {
+  backgroundImage: "./assets/images/Upside Down.jpg",
+  posterUrl: "./assets/images/Upside Down.jpg",
+  title: "Upside Down",
+  album: "Single", // Update if the track is part of an album
+  year: 2004,       // Modify to the actual release year
+  artist: "6cyclemind",
+  musicPath: "./assets/music/6cyclemind - Upside Down (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Paraluman.jpg",
+  posterUrl: "./assets/images/Paraluman.jpg",
+  title: "Paraluman",
+  album: "Single", // Update if the track is part of an album
+  year: 2005,       // Modify to the actual release year
+  artist: "Adie",
+  musicPath: "./assets/music/Adie - Paraluman (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Magbalik.jpg",
+  posterUrl: "./assets/images/Magbalik.jpg",
+  title: "Magbalik",
+  album: "Fisheye", // Update if the track is part of an album
+  year: 2006,       // Modify to the actual release year
+  artist: "Callalily",
+  musicPath: "./assets/music/Callalily - Magbalik (Lyrics).mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Dandelions.jpg",
+  posterUrl: "./assets/images/Dandelions.jpg",
+  title: "Dandelions (Slowed & Reverb)",
+  album: "Single", // Update if the track is part of an album
+  year: 2017,       // Modify to the actual release year
+  artist: "Ruth B.",
+  musicPath: "./assets/music/SpotiMate.io - Dandelions - slowed _ reverb - Ruth B..mp3",
+},
+
+{
+  backgroundImage: "./assets/images/Tonight.jpg",
+  posterUrl: "./assets/images/Tonight.jpg",
+  title: "Tonight",
+  album: "Single", // Update if the track is part of an album
+  year: 2009,       // Modify to the actual release year
+  artist: "FM Static",
+  musicPath: "./assets/music/Tonight - FM Static (Lyrics).mp3",
+},
+
+     {
+    backgroundImage: "./assets/images/The Lord Will Provide.jpg",
+    posterUrl: "./assets/images/The Lord Will Provide.jpg",
+    title: "The Lord Will Provide",
+    album: "Passion", // Update if the track is part of an album
+    year: 2025,       // Modify to the actual release year
+    artist: "Anna Golden x Landon Wolfe",
+    musicPath: "./assets/music/Passion, Anna Golden, Landon Wolfe - The Lord Will Provide (Live From Passion 2025).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
+    posterUrl: "./assets/images/this-band-kahit-ayaw-mo-na.jpg",
+    title: "Kahit Ayaw Mo Na (Lyrics)",
+    album: "Single", // Update if the track is part of an album
+    year: 2025,       // Modify to the actual release year
+    artist: "This Band",
+    musicPath: "./assets/music/This Band - Kahit Ayaw Mo Na (Lyrics).mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Passenger Seat.jpg",
+    posterUrl: "./assets/images/Passenger Seat.jpg",
+    title: "Passenger Seat",
+    album: "No More Doubt",
+    year: 1999,
+    artist: "Stephen Speaks",
+    musicPath: "./assets/music/Passenger Seat.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/The Day You Said Goodnight.jpg",
+    posterUrl: "./assets/images/The Day You Said Goodnight.jpg",
+    title: "The Day You Said Goodnight",
+    album: "Hale",
+    year: 2005,
+    artist: "Hale",
+    musicPath: "./assets/music/The Day You Said Goodnight.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/You'll Be Safe Here.jpg",
+    posterUrl: "./assets/images/You'll Be Safe Here.jpg",
+    title: "You'll Be Safe Here",
+    album: "Rivermaya",
+    year: 2005,
+    artist: "Rico Blanco",
+    musicPath: "./assets/music/You'll Be Safe Here.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/One last breath.jpg",
+    posterUrl: "./assets/images/One last breath.jpg",
+    title: "One Last Breath",
+    album: "Weathered",
+    year: 2021,
+    artist: "Creed",
+    musicPath: "./assets/music/One Last Breath.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/ben-and-ben-leaves.jpg",
+    posterUrl: "./assets/images/ben-and-ben-leaves.jpg",
+    title: "Leaves (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Ben & Ben",
+    musicPath: "./assets/music/Ben & Ben - Leaves (Lyrics).mp3",
+  },
+   {
+    backgroundImage: "./assets/images/sana-i-belong-to-the-zoo.jpg",
+    posterUrl: "./assets/images/sana-i-belong-to-the-zoo.jpg",
+    title: "I Belong to the Zoo (Lyrics) HD",
+    album: "Single", // Modify according to any album details if applicable
+    year: 2025,       // Update the release year as needed
+    artist: "Sana",
+    musicPath: "./assets/music/Sana   I Belong to the Zoo Lyrics HD.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    posterUrl: "./assets/images/dati-sam-concepcion-tippy-dos-santos-quest.jpg",
+    title: "Sam Concepcion, Tippy Dos Santos and Quest (Lyrics)",
+    album: "Single",
+    year: 2025,
+    artist: "Dati",
+    musicPath: "./assets/music/Dati - Sam Concepcion, Tippy Dos Santos and Quest (Lyrics).mp3",
+  },
+ {
+  backgroundImage: "./assets/images/kina-get-you-the-moon.jpg",
+  posterUrl: "./assets/images/kina-get-you-the-moon.jpg",
+  title: "get you the moon (Lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "Kina ft. Snow",
+  musicPath: "./assets/music/Kina - get you the moon (Lyrics) ft. Snow.mp3",
+},
+ {
+  backgroundImage: "./assets/images/sapientdream-pastlives.jpg",
+  posterUrl: "./assets/images/sapientdream-pastlives.jpg",
+  title: "Pastlives (lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "sapientdream",
+  musicPath: "./assets/music/sapientdream - Pastlives (lyrics).mp3",
+},
+{
+  backgroundImage: "./assets/images/yung-kai-blue.jpg",
+  posterUrl: "./assets/images/yung-kai-blue.jpg",
+  title: "Blue (Lyrics)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "yung kai",
+  musicPath: "./assets/music/yung kai - blue (Lyrics).mp3",
+},
+{
+  backgroundImage: "./assets/images/breathe-tommee-profitt.jpg",
+  posterUrl: "./assets/images/breathe-tommee-profitt.jpg",
+  title: "Breathe (feat. Fleurie)",
+  album: "Single", // Change if the track belongs to an album
+  year: 2025,       // Modify according to the actual release year
+  artist: "Tommee Profitt",
+  musicPath: "./assets/music/Breathe (feat. Fleurie) - Tommee Profitt.mp3",
+},
+   {
+    backgroundImage: "./assets/images/Fleurie.jpg",
+    posterUrl: "./assets/images/Fleurie.jpg",
+    title: "Shallow",
+    album: "Shallow", // Change if the track belongs to an album
+    year: 2023,               // Modify according to the actual release year
+    artist: "Fleurie",
+    musicPath: "./assets/music/Shallow (Emotional Piano Cover) feat. Fleurie - Tommee Profitt.mp3",
+  },
+ {
+    backgroundImage: "./assets/images/joji - worldstar money.jpg",
+    posterUrl: "./assets/images/joji - worldstar money.jpg",
+    title: "Chasing Cars",
+    album: "Chasing Cars", // Change if the track belongs to an album
+    year: 2023,               // Modify according to the actual release year
+    artist: "Fleurie",
+    musicPath: "./assets/music/Chasing Cars - Tommee Profitt & Fleurie.mp3",
+  },
+ 
+  {
+    backgroundImage: "./assets/images/Avicii - The Nights.jpg",
+    posterUrl: "./assets/images/Avicii - The Nights.jpg",
+    title: "The Nights",
+    album: "The Nights",
+    year: 2014,
+    artist: "Bazzi",
+    musicPath: "./assets/music/Avicii - The Nights.mp3",
+  },
+
+{
+    backgroundImage: "./assets/images/Bazzi.jpg",
+    posterUrl: "./assets/images/Bazzi.jpg",
+    title: "Paradise",
+    album: "Paradise",
+    year: 2019,
+    artist: "Bazzi",
+    musicPath: "./assets/music/Bazzi - Paradise [Official Music Video].mp3",
+},
+
+{
+    backgroundImage: "./assets/images/Bazzi_Featuring_Camila.jpg",
+    posterUrl: "./assets/images/Bazzi_Featuring_Camila.jpg",
+    title: "Beautiful",
+    album: "Beautiful",
+    year: 2018,
+    artist: "Bazzi feat. Camila Cabello",
+    musicPath: "./assets/music/Bazzi feat. Camila Cabello - Beautiful [Official Music Video].mp3",
+},
+    {
+  backgroundImage: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
+  posterUrl: "./assets/images/Lavrans Svendsen Stay The Voice Norway 2024.jpg",
+  title: "Stay",
+  album: "The Voice Norway 2024 Knockout",
+  year: 2024,
+  artist: "Lavrans Svendsen",
+  musicPath: "./assets/music/Lavrans Svendsen Stay The Voice Norway 2024.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Tom Odell - Another Love.jpg",
+  posterUrl: "./assets/images/Tom Odell - Another Love.jpg",
+  title: "Another Love",
+  album: "Long Way Down",
+  year: 2013,
+  artist: "Tom Odell",
+  musicPath: "./assets/music/Tom Odell - Another Love.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
+  posterUrl: "./assets/images/Ali Gatie - What If I Told You That I Love You.jpg",
+  title: "What If I Told You That I Love You",
+  album: "WHO HURT YOU?",
+  year: 2020,
+  artist: "Ali Gatie",
+  musicPath: "./assets/music/Ali Gatie - What If I Told You That I Love You.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/sapientdream - Pastlives.jpg",
+  posterUrl: "./assets/images/sapientdream - Pastlives.jpg",
+  title: "Pastlives",
+  album: "Drowning EP",
+  year: 2018,
+  artist: "sapientdream",
+  musicPath: "./assets/music/sapientdream - Pastlives.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Benson Boone - Beautiful Things.jpg",
+  posterUrl: "./assets/images/Benson Boone - Beautiful Things.jpg",
+  title: "Beautiful Things",
+  album: "Fireworks & Rollerblades",
+  year: 2024,
+  artist: "Benson Boone",
+  musicPath: "./assets/music/Benson Boone - Beautiful Things.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Myles Smith - Stargazing.jpg",
+  posterUrl: "./assets/images/Myles Smith - Stargazing.jpg",
+  title: "Stargazing",
+  album: "You Promised A Lifetime",
+  year: 2024,
+  artist: "Myles Smith",
+  musicPath: "./assets/music/Myles Smith - Stargazing.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Myles Smith - Wait For You.jpg",
+  posterUrl: "./assets/images/Myles Smith - Wait For You.jpg",
+  title: "Wait For You",
+  album: "A Minute…",
+  year: 2024,
+  artist: "Myles Smith",
+  musicPath: "./assets/music/Myles Smith - Wait For You.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Alex Warren - Carry You Home.jpg",
+  posterUrl: "./assets/images/Alex Warren - Carry You Home.jpg",
+  title: "Carry You Home",
+  album: "You'll Be Alright, Kid (Chapter 1)",
+  year: 2024,
+  artist: "Alex Warren",
+  musicPath: "./assets/music/Alex Warren - Carry You Home.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
+  posterUrl: "./assets/images/Billie Eilish - Ocean Eyes.jpg",
+  title: "Ocean Eyes",
+  album: "Ocean Eyes",
+  year: 2016,
+  artist: "Billie Eilish",
+  musicPath: "./assets/music/Billie Eilish - Ocean Eyes.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
+  posterUrl: "./assets/images/Billie Eilish, Khalid - Lovely.jpg",
+  title: "Lovely",
+  album: "13 Reasons Why: Season 2 (Music from the Original TV Series)",
+  year: 2018,
+  artist: "Billie Eilish, Khalid",
+  musicPath: "./assets/music/Billie Eilish, Khalid - Lovely.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Why Don't We - 8 Letters.jpg",
+  posterUrl: "./assets/images/Why Don't We - 8 Letters.jpg",
+  title: "8 Letters",
+  album: "8 Letters",
+  year: 2018,
+  artist: "Why Don't We",
+  musicPath: "./assets/music/Why Don't We - 8 Letters.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/LANY - Malibu Nights.jpg",
+  posterUrl: "./assets/images/LANY - Malibu Nights.jpg",
+  title: "Malibu Nights",
+  album: "Malibu Nights",
+  year: 2018,
+  artist: "LANY",
+  musicPath: "./assets/music/LANY - Malibu Nights.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Death Bed.jpg",
+  posterUrl: "./assets/images/Death Bed.jpg",
+  title: "Death Bed (Coffee for Your Head)",
+  album: "Some Boring Love Stories, Pt. 2",
+  year: 2019,
+  artist: "Powfu",
+  musicPath: "./assets/music/Powfu - Death Bed.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/The Chainsmokers - All We Know ft. Phoebe Ryan.jpg",
+  posterUrl: "./assets/images/The Chainsmokers - All We Know ft. Phoebe Ryan.jpg",
+  title: "All We Know",
+  album: "Collage",
+  year: 2016,
+  artist: "The Chainsmokers ft. Phoebe Ryan",
+  musicPath: "./assets/music/The Chainsmokers - All We Know ft. Phoebe Ryan.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Shawn Mendes - Treat You Better.jpg",
+  posterUrl: "./assets/images/Shawn Mendes - Treat You Better.jpg",
+  title: "Treat You Better",
+  album: "Illuminate",
+  year: 2016,
+  artist: "Shawn Mendes",
+  musicPath: "./assets/music/Shawn Mendes - Treat You Better.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/So Sick - Ne-Yo.jpg",
+  posterUrl: "./assets/images/So Sick - Ne-Yo.jpg",
+  title: "So Sick",
+  album: "In My Own Words",
+  year: 2006,
+  artist: "Ne-Yo",
+  musicPath: "./assets/music/So Sick - Ne-Yo.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Troye Sivan - Youth.jpg",
+  posterUrl: "./assets/images/Troye Sivan - Youth.jpg",
+  title: "Youth",
+  album: "Blue Neighbourhood",
+  year: 2015,
+  artist: "Troye Sivan",
+  musicPath: "./assets/music/Troye Sivan - Youth.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/The Chainsmokers - Paris.jpg",
+  posterUrl: "./assets/images/The Chainsmokers - Paris.jpg",
+  title: "Paris",
+  album: "Memories...Do Not Open",
+  year: 2017,
+  artist: "The Chainsmokers",
+  musicPath: "./assets/music/The Chainsmokers - Paris.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/The Chainsmokers - Don't Let Me Down ft. Daya.jpg",
+  posterUrl: "./assets/images/The Chainsmokers - Don't Let Me Down ft. Daya.jpg",
+  title: "Don't Let Me Down",
+  album: "Collage",
+  year: 2016,
+  artist: "The Chainsmokers ft. Daya",
+  musicPath: "./assets/music/The Chainsmokers - Don't Let Me Down ft. Daya.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/Alessia Cara - Scars To Your Beautiful.jpg",
+  posterUrl: "./assets/images/Alessia Cara - Scars To Your Beautiful.jpg",
+  title: "Scars To Your Beautiful",
+  album: "Know-It-All",
+  year: 2015,
+  artist: "Alessia Cara",
+  musicPath: "./assets/music/Alessia Cara - Scars To Your Beautiful.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Eroplanong Papel.jpg",
+    posterUrl: "./assets/images/Eroplanong Papel.jpg",
+    title: "Eroplanong Papel",
+    album: "Langit Mong Bughaw",
+    year: 2016,
+    artist: "December Avenue",
+    musicPath: "./assets/music/Eroplanong Papel - December Avenue.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Heaven Knows.jpg",
+    posterUrl: "./assets/images/Heaven Knows.jpg",
+    title: "Heaven Knows",
+    album: "Strike Whilst The Iron Is Hot",
+    year: 2005,
+    artist: "Orange & Lemons",
+    musicPath: "./assets/music/Heaven Knows - This Angel Has Flown - Orange & Lemons.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Roses.jpg",
+    posterUrl: "./assets/images/Roses.jpg",
+    title: "Roses",
+    album: "Bouquet",
+    year: 2000,
+    artist: "The Chainsmokers",
+    musicPath: "./assets/music/Roses - The Chainsmokers.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Hanggang Kailan.jpg",
+    posterUrl: "./assets/images/Hanggang Kailan.jpg",
+    title: "Hanggang Kailan",
+    album: "Strike Whilst The Iron Is Hot",
+    year: 2005,
+    artist: "Orange & Lemons",
+    musicPath: "./assets/music/Hanggang Kailan_Umuwi Ka Na Baby.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    posterUrl: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    title: "Sa Ngalan Ng Pag-Ibig",
+    album: "Langit Mong Bughaw",
+    year: 2017,
+    artist: "December Avenue",
+    musicPath: "./assets/music/Sa Ngalan Ng Pag-Ibig_.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Die With A Smile.jpg",
+    posterUrl: "./assets/images/Die With A Smile.jpg",
+    title: "Die With A Smile",
+    album: "Die With A Smile",
+    year: 2024,
+    artist: "Lady Gaga x Bruno Mars",
+    musicPath: "./assets/music/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video).mp3",
+  },
+    {
+    backgroundImage: ".assets/images/Favorite lesson.jpg",
+    posterUrl: "./assets/images/Favorite lesson.jpg",
+    title: "Favorite lesson",
+    album: "Favorite lesson",
+    year: 2000,
+    artist: "favorite lesson",
+    musicPath: "./assets/music/spotifydown.com - favorite lesson (1).mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Never Not.jpg",
+    posterUrl: "./assets/images/Never Not.jpg",
+    title: "Nevet Not",
+    album: "I Met You When I Was 18",
+    year: 2018,
+    artist: "Lauv",
+    musicPath: "./assets/music/Never Not.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Here with me.jpg",
+    posterUrl: "./assets/images/Here with me.jpg",
+    title: "Here with me",
+    album: "No Angel",
+    year: 1999,
+    artist: "Dido",
+    musicPath: "./assets/music/Here with me.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/SNAP.jpg",
+    posterUrl: "./assets/images/SNAP.jpg",
+    title: "SNAP",
+    album: "Lay Your Hands Upon My Heart",
+    year: 2022,
+    artist: "Rosa Linn",
+    musicPath: "./assets/music/SNAP.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Too Good At Goodbyes.jpg",
+    posterUrl: "./assets/images/Too Good At Goodbyes.jpg",
+    title: "Too Good At Goodbyes",
+    album: "The Thrill of It All",
+    year: 2017,
+    artist: "Sam Smith",
+    musicPath: "./assets/music/Too Good At Goodbyes.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/At My Worst.jpg",
+    posterUrl: "./assets/images/At My Worst.jpg",
+    title: "At My Worst",
+    album: "The Prelude",
+    year: 2020,
+    artist: "Pink Sweat$",
+    musicPath: "./assets/music/At My Worst.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Middle.jpg",
+    posterUrl: "./assets/images/Middle.jpg",
+    title: "Middle",
+    album: "Encore",
+    year: 2000,
+    artist: "DJ Snake",
+    musicPath: "./assets/music/Middle.mp3",
+  },
+
+    {
+    backgroundImage: "./assets/images/drivers license.jpg",
+    posterUrl: "./assets/images/drivers license.jpg",
+    title: "Drivers license",
+    album: "Drivers license",
+    year: 2021,
+    artist: "Olivia Rodrigo",
+    musicPath: "./assets/music/drivers license.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/APT..jpg",
+    posterUrl: "./assets/images/APT..jpg",
+    title: "APT",
+    album: "APT",
+    year: 2024,
+    artist: "Rosie",
+    musicPath: "./assets/music/APT..mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Be Alright.jpg",
+    posterUrl: "./assets/images/Be Alright.jpg",
+    title: "Be Alright",
+    album: "A Place We Knew",
+    year: 2019,
+    artist: "Dean Lewis",
+    musicPath: "./assets/music/Be Alright.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Hanggang Kailan - Umuwi Ka Na Baby.jpg",
+    posterUrl: "./assets/images/Hanggang Kailan - Umuwi Ka Na Baby.jpg",
+    title: "Hanggang Kailan - Umuwi Ka Na Baby",
+    album: "Strike Whilst The Iron Is Hot",
+    year: 2005,
+    artist: "Hale",
+    musicPath: "./assets/music/Hanggang Kailan - Umuwi Ka Na Baby.mp3",
+  },
+
+    {
+    backgroundImage: "./assets/images/Snowman.jpg",
+    posterUrl: "./assets/images/Snowman.jpg",
+    title: "Snowman",
+    album: "Everyday Is Christmas",
+    year: 2017,
+    artist: "Sia",
+    musicPath: "./assets/music/spotifydown.com - Snowman.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Favorite lesson.jpg",
+    posterUrl: "./assets/images/Favorite lesson.jpg",
+    title: "Favorite lesson",
+    album: "Favorite lesson",
+    year: 2023,
+    artist: "Yaeow x Keenan Te",
+    musicPath: "./assets/music/spotifydown.com - favorite lesson.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Iris.jpg",
+    posterUrl: "./assets/images/Iris.jpg",
+    title: "Iris",
+    album: "Iris",
+    year: 1998,
+    artist: "GooGooDolls",
+    musicPath: "./assets/music/SpotifyMate.com - Iris - The Goo Goo Dolls.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Her.jpg",
+    posterUrl: "./assets/images/Her.jpg",
+    title: "Her",
+    album: "Her",
+    year: 2021,
+    artist: "JVKE",
+    musicPath: "./assets/music/SpotifyMate.com - her - JVKE.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Radio.jpg",
+    posterUrl: "./assets/images/Radio.jpg",
+    title: "Radio",
+    album: "Radio",
+    year: 2012,
+    artist: "LanaDelRey",
+    musicPath: "./assets/music/SpotifyMate.com - Radio - Lana Del Rey.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Angelbaby.jpg",
+    posterUrl: "./assets/images/Angelbaby.jpg",
+    title: "Angel Baby",
+    album: "Angel Baby",
+    year: 2021,
+    artist: "Troye Sivan Song",
+    musicPath: "./assets/music/spotifydown.com - Angel Baby.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Stay.jpg",
+    posterUrl: "./assets/images/Stay.jpg",
+    title: "Stay",
+    album: "Stay",
+    year: 2021,
+    artist: "Justin Bieber",
+    musicPath: "./assets/music/Stay Justin.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/The climb.jpg",
+    posterUrl: "./assets/images/The climb.jpg",
+    title: "The climb",
+    album: "The climb",
+    year: 2024,
+    artist: "Sky",
+    musicPath: "./assets/music/The climb.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Ghost.jpg",
+    posterUrl: "./assets/images/Ghost.jpg",
+    title: "Ghost",
+    album: "Justice",
+    year: 2021,
+    artist: "Justin Bieber",
+    musicPath: "./assets/music/Ghost.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
+    posterUrl: "./assets/images/Daneliya Tuleshova - Arcade.jpg",
+    title: "Arcade",
+    album: "Arcade",
+    year: 2023,
+    artist: "Daneliya Tuleshova",
+    musicPath: "./assets/music/Daneliya Tuleshova - Arcade.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Daneliya Tuleshova - Tears of gold.jpg",
+    posterUrl: "./assets/images/Daneliya Tuleshova - Tears of gold.jpg",
+    title: "Tears of Gold",
+    album: "Tears of Gold",
+    year: 2020,
+    artist: "Daneliya Tuleshova",
+    musicPath: "./assets/music/Daneliya Tuleshova - Tears of gold.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Lord Huron - The Night We Met.jpg",
+    posterUrl: "./assets/images/Lord Huron - The Night We Met.jpg",
+    title: "The Night We Met",
+    album: "Strange Trails",
+    year: 2015,
+    artist: "Lord Huron",
+    musicPath: "./assets/music/Lord Huron - The Night We Met.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Maroon 5 - Sugar.jpg",
+    posterUrl: "./assets/images/Maroon 5 - Sugar.jpg",
+    title: "Sugar",
+    album: "V",
+    year: 2014,
+    artist: "Maroon 5",
+    musicPath: "./assets/music/Maroon 5 - Sugar.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Somewhere Only We Know - Keane (cover) _ Renee Dominique.jpg",
+    posterUrl: "./assets/images/Somewhere Only We Know - Keane (cover) _ Renee Dominique.jpg",
+    title: "Somewhere Only We Know",
+    album: "Somewhere Only We Know",
+    year: 2019,
+    artist: "Reneé Dominique",
+    musicPath: "./assets/music/Somewhere Only We Know - Keane (cover) _ Renee Dominique.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/MoraloftheStory.jpg",
+    posterUrl: "./assets/images/MoraloftheStory.jpg",
+    title: "Ashe Moral of the Story",
+    album: "Ashlyn",
+    year: 2021,
+    artist: "Ashe",
+    musicPath: "./assets/music/Ashe Moral of the Story.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Levels.jpg",
+    posterUrl: "./assets/images/Levels.jpg",
+    title: "Levels",
+    album: "Levels",
+    year: 2011,
+    artist: "Avicii",
+    musicPath: "./assets/music/Avicii Levels.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/BeautifulThings.jpg",
+    posterUrl: "./assets/images/BeautifulThings.jpg",
+    title: "Beautiful Things",
+    album: "Fireworks & Rollerblades",
+    year: 2024,
+    artist: "Benson Boone",
+    musicPath: "./assets/music/Benson Boone Beautiful Things.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Hero.jpg",
+    posterUrl: "./assets/images/Hero.jpg",
+    title: "Hero",
+    album: "Hero",
+    year: 2016,
+    artist: "Cash Cash Hero x Christina Perri",
+    musicPath: "./assets/music/Cashcash x Chrsitina Perry Hero.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Runaway.jpg",
+    posterUrl: "./assets/images/Runaway.jpg",
+    title: "Runaway (U & I)",
+    album: "Pharmacy",
+    year: 2014,
+    artist: "Galantis",
+    musicPath: "./assets/music/Galantis Runaway U I.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Mary On A Cross.jpg",
+    posterUrl: "./assets/images/Mary On A Cross.jpg",
+    title: "Mary On A Cross",
+    album: "Mary On A Cross (slowed + reverb)",
+    year: 2019,
+    artist: "Ghost",
+    musicPath: "./assets/music/Ghost Mary On A Cross.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Labrinth The Feels.jpg",
+    posterUrl: "./assets/images/Labrinth The Feels.jpg",
+    title: "The Feels",
+    album: "Ends & Begins",
+    year: 2023,
+    artist: "Labrinth",
+    musicPath: "./assets/music/Labrinth The Feels.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Skin and bones.jpg",
+    posterUrl: "./assets/images/Skin and bones.jpg",
+    title: "Skin and Bones",
+    album: "Skin and Bones",
+    year: 2024,
+    artist: "David Kushner",
+    musicPath: "./assets/music/David Kushner Skin and Bones.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Black Friday.jpg",
+    posterUrl: "./assets/images/Black Friday.jpg",
+    title: "Black Friday",
+    album: "The End",
+    year: 2024,
+    artist: "Lost Frequencies x Tom Odell",
+    musicPath: "./assets/music/Lost Frequencies x Tom Odell - Black Friday.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Alone.jpg",
+    posterUrl: "./assets/images/Alone.jpg",
+    title: "Alone",
+    album: "Alone",
+    year: 2016,
+    artist: "Marshmello",
+    musicPath: "./assets/music/Marshmello - Alone.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Silence.jpg",
+    posterUrl: "./assets/images/Silence.jpg",
+    title: "Silence",
+    album: "Silence",
+    year: 2017,
+    artist: "(feat. Khalid)",
+    musicPath: "./assets/music/Silence (feat. Khalid).mp3",
+  },
+  {
+    backgroundImage: "./assets/images/I Took A Pill In Ibiza.jpg",
+    posterUrl: "./assets/images/I Took A Pill In Ibiza.jpg",
+    title: "I Took A Pill In Ibiza",
+    album: "At Night, Alone",
+    year: 2015,
+    artist: "Mike Posner",
+    musicPath: "./assets/music/Mike Posner - Took A Pill In Ibiza.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Those Eyes.jpg",
+    posterUrl: "./assets/images/Those Eyes.jpg",
+    title: "Those Eyes",
+    album: "Homecoming in my city",
+    year: 2019,
+    artist: "New West",
+    musicPath: "./assets/music/New West - Those Eyes.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Oceans (Where Feet May Fail).jpg",
+    posterUrl: "./assets/images/Oceans (Where Feet May Fail).jpg",
+    title: "Oceans (Where Feet May Fail)",
+    album: "Zion (Deluxe Edition)",
+    year: 2013,
+    artist: "Hillsong UNITED x TAYA",
+    musicPath: "./assets/music/Oceans (Where Feet May Fail).mp3",
+  },
+     {
+    backgroundImage: "./assets/images/To the Bone.jpg",
+    posterUrl: "./assets/images/To the Bone.jpg",
+    title: "To the Bone",
+    album: "The End of Flying Solo Era",
+    year: 2020,
+    artist: "Pamungkas x The PeoplePeople",
+    musicPath: "./assets/music/To the Bone Song by Pamungkas, The PeoplePeople.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Circles.jpg",
+    posterUrl: "./assets/images/Circles.jpg",
+    title: "Circles",
+    album: "Hollywood's Bleeding",
+    year: 2019,
+    artist: "Post Malone",
+    musicPath: "./assets/music/Post Malone - Circles.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/I Fall Apart.jpg",
+    posterUrl: "./assets/images/I Fall Apart.jpg",
+    title: "I Fall Apart",
+    album: "Stoney (Complete Edition)",
+    year: 2016,
+    artist: "Post Malone",
+    musicPath: "./assets/music/Post Malone I Fall Apart.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Present.jpg",
+    posterUrl: "./assets/images/Present.jpg",
+    title: "Present",
+    album: "Lens Flare",
+    year: 2021,
+    artist: "Lloyd Vaan",
+    musicPath: "./assets/music/Lloyd Vaan Present.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Atlantis.jpg",
+    posterUrl: "./assets/images/Atlantis.jpg",
+    title: "Atlantis",
+    album: "Atlantis",
+    year: 2022,
+    artist: "Seafret x Seeb",
+    musicPath: "./assets/music/Seafret - Atlantis.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/To Build a Home.jpg",
+    posterUrl: "./assets/images/To Build a Home.jpg",
+    title: "To Build a Home",
+    album: "Live At the Royal Albert Hall",
+    year: 2008,
+    artist: "The Cinematic Orchestra",
+    musicPath: "./assets/music/The Cinematic Orchestra – To Build a Home.mp3",
+  },
+       {
+    backgroundImage: "./assets/images/Someone to Stay.jpg",
+    posterUrl: "./assets/images/Someone to Stay.jpg",
+    title: "Someone to Stay",
+    album: "Revival",
+    year: 2016,
+    artist: "Vancouver Sleep Clinic",
+    musicPath: "./assets/music/Vancouver Sleep Clinic - Someone to Stay.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/Dancing On My Own.jpg",
+    posterUrl: "./assets/images/Dancing On My Own.jpg",
+    title: "Dancing On My Own",
+    album: "Only Human (Deluxe)",
+    year: 2016,
+    artist: "Calum Scott",
+    musicPath: "./assets/music/Calum Scott Dancing On My Own.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Falling.jpg",
+    posterUrl: "./assets/images/Falling.jpg",
+    title: "Falling",
+    album: "Fine Line",
+    year: 2019,
+    artist: "Harry Styles",
+    musicPath: "./assets/music/Harry Styles - Falling.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Allfallsdown.jpg",
+    posterUrl: "./assets/images/Allfallsdown.jpg",
+    title: "All Falls Down",
+    album: "All Falls Down",
+    year: 2017,
+    artist: "Alan Walker x Noah Cyrus x Digital Farm Animals",
+    musicPath: "./assets/music/Alan Walker - All Falls Down feat. Noah Cyrus with Digital Farm Animals.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Faded.jpg",
+    posterUrl: "./assets/images/Faded.jpg",
+    title: "Faded",
+    album: "Different World",
+    year: 2022,
+    artist: "Alan Walker",
+    musicPath: "./assets/music/Alan Walker - Faded.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/d4vid-herewithme.jpg",
+    posterUrl: "./assets/images/d4vid-herewithme.jpg",
+    title: "Here With Me",
+    album: "Here With Me",
+    year: 2022,
+    artist: "D4vid",
+    musicPath: "./assets/music/d4vd  Here With Me Official Music Video.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Healer.jpg",
+    posterUrl: "./assets/images/Healer.jpg",
+    title: "Healer",
+    album: "Changes",
+    year: 2024,
+    artist: "Hayd",
+    musicPath: "./assets/music/Hayd Healer.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/ASkyFullOfStars.jpg",
+    posterUrl: "./assets/images/ASkyFullOfStars.jpg",
+    title: "A Sky Full Of Stars",
+    album: "Ghost Stories",
+    year: 2014,
+    artist: "Coldplay",
+    musicPath: "./assets/music/A Sky Full Of Stars.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/MyUniverse.jpg",
+    posterUrl: "./assets/images/MyUniverse.jpg",
+    title: "My Universe",
+    album: "Music of the Spheres",
+    year: 2021,
+    artist: "Coldplay",
+    musicPath: "./assets/music/Coldplay My Universe.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Yellow.jpg",
+    posterUrl: "./assets/images/Yellow.jpg",
+    title: "Yellow",
+    album: "Parachutes",
+    year: 2000,
+    artist: "Coldplay",
+    musicPath: "./assets/music/Coldplay Yellow.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/Lonely.jpg",
+    posterUrl: "./assets/images/Lonely.jpg",
+    title: "Lonely",
+    album: "Lonely",
+    year: 2000,
+    artist: "Justin Bieber x Benny Blanco",
+    musicPath: "./assets/music/Lonely by Justin Bieber and Benny Blanco.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/CHIHIRO.jpg",
+    posterUrl: "./assets/images/CHIHIRO.jpg",
+    title: "CHIHIRO",
+    album: "Hit Me Hard and Soft",
+    year: 2024,
+    artist: "Billie Eilish",
+    musicPath: "./assets/music/Billie Eilish CHIHIRO.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Eastside.jpg",
+    posterUrl: "./assets/images/Eastside.jpg",
+    title: "Eastside",
+    album: "Friends Keep Secrets",
+    year: 2018,
+    artist: "Benny Blanco x Halsey Khalid",
+    musicPath: "./assets/music/Benny Blanco and Halsey Khalid Eastside.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Levitation.jpg",
+    posterUrl: "./assets/images/Levitation.jpg",
+    title: "Levitation",
+    album: "Alternate Versions",
+    year: 2024,
+    artist: "Aaron Hibell x Felsmann x Tiley",
+    musicPath: "./assets/music/Aaron Hibell, Felsmann and  Tiley Levitation.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/We Need A Miracle.jpg",
+    posterUrl: "./assets/images/We Need A Miracle.jpg",
+    title: "We Need A Miracle",
+    album: "We Need a Miracle",
+    year: 2021,
+    artist: "Charity Gayle",
+    musicPath: "./assets/music/Charity Gayle - We Need A Miracle.mp3",
+  },
+    {
+    backgroundImage: "./assets/images/Palagi.jpg",
+    posterUrl: "./assets/images/Palagi.jpg",
+    title: "Palagi",
+    album: "Palagi",
+    year: 2023,
+    artist: "TJ Monterde",
+    musicPath: "./assets/music/Palagi Live at The Cozy Cove  TJ Monterde.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
+    posterUrl: "./assets/images/kina-can-we-kiss-forever-official-video.jpg",
+    title: "Can We Kiss Forever (Official Video)",
+    album: "Single", // Update as needed
+    year: 2025,       // Change according to the actual launch year
+    artist: "Kina ft. Adriana Proenza",
+    musicPath: "./assets/music/Kina - Can We Kiss Forever_ (Official Video) ft. Adriana Proenza.mp3",
+  },
+  {
+    backgroundImage: "./assets/images/joker-in-this-shirt.jpg",
+    posterUrl: "./assets/images/joker-in-this-shirt.jpg",
+    title: "In This Shirt (Music Video Edit)",
+    album: "Single", // Modify if the track comes from an album
+    year: 2025,       // Update the release year accordingly
+    artist: "Joker",
+    musicPath: "./assets/music/Joker - In This Shirt  music video edit.mp3",
+  },
+   {
+    backgroundImage: "./assets/images/JericMaeChen.jpg",
+    posterUrl: "./assets/images/JericMaeChen.jpg",
+    title: "Fly me to the moon",
+    album: "Jeric Mae Chen",
+    year: 2024,
+    artist: "Jeric Mae Chen",
+    musicPath: "./assets/music/JericMaeChen.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Mamushi.jpg",
+    posterUrl: "./assets/images/Mamushi.jpg",
+    title: "Mamushi",
+    album: "MEGAN: ACT II",
+    year: 2024,
+    artist: "Megan Thee Stallion",
+    musicPath: "./assets/music/Megan Thee Stallion - Mamushi.mp3",
+  },
+     {
+    backgroundImage: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    posterUrl: "./assets/images/Sa Ngalan Ng Pag-Ibig.jpg",
+    title: "Sa Ngalan Ng Pag-Ibig",
+    album: "Langit Mong Bughaw",
+    year: 2019,
+    artist: "December Avenue",
+    musicPath: "./assets/music/Sa Ngalan Ng Pag-Ibig.mp3",
+  },
+ 
+      {
+    backgroundImage: "./assets/images/ayaw ana lay.jpg",
+    posterUrl: "./assets/images/ayaw ana lay.jpg",
+    title: "AYAW ANA LAY",
+    album: "Ayaw ana lay", // Update if the track is part of an album
+    year: 2025,       // Modify to the actual release year
+    artist: "Ayaw ana Lay",
+    musicPath: "./assets/music/Ayaw ana lay oy.mp3",
+  },
+      {
+  backgroundImage: "./assets/images/Kinawat ko.jpg",
+  posterUrl: "./assets/images/Kinawat ko.jpg",
+  title: "Kinawat ko",
+  album: "MEME",
+  year: 2024,
+  artist: "Kinawat ko",
+  musicPath: "./assets/music/Kinawat ko.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/GALIT KABA.jpg",
+  posterUrl: "./assets/images/GALIT KABA.jpg",
+  title: "GALIT KABA",
+  album: "MEME",
+  year: 2024,
+  artist: "GALIT KABA",
+  musicPath: "./assets/music/Galit kaba_.mp3",
+  },
+    {
+  backgroundImage: "./assets/images/CALM DOWN.jpg",
+  posterUrl: "./assets/images/CALM DOWN.jpg",
+  title: "CALM DOWN",
+  album: "MEME",
+  year: 2024,
+  artist: "CALM DOWN",
+  musicPath: "./assets/music/Please come down.mp3",
+  },
+
     ];
 
-    // ---------- Utilities ----------
-    const $ = sel => document.querySelector(sel);
-    const el = id => document.getElementById(id);
-    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-    const fmtTime = (s) => {
-      if (!isFinite(s) || s < 0) s = 0;
-      const m = Math.floor(s / 60);
-      const ss = Math.floor(s % 60).toString().padStart(2, "0");
-      return `${m}:${ss}`;
-    };
-    const rafThrottle = (fn) => {
-      let running = false;
-      return (...args) => {
-        if (running) return;
-        running = true;
-        requestAnimationFrame(() => {
-          fn(...args);
-          running = false;
-        });
-      };
-    };
-    const toast = (msg, kind="info") => {
-      const t = el('toast');
-      t.textContent = msg;
-      t.style.borderColor = kind === 'error' ? 'rgba(255,102,102,0.6)' : 'rgba(255,255,255,0.08)';
-      t.classList.add('show');
-      clearTimeout(toast._timer);
-      toast._timer = setTimeout(()=> t.classList.remove('show'), 2200);
+    // ---------- Helpers ----------
+    const $ = (sel, p=document) => p.querySelector(sel);
+    const $$ = (sel, p=document) => Array.from(p.querySelectorAll(sel));
+    const clamp = (v,min,max)=>Math.min(max,Math.max(min,v));
+    const fmt = s => {
+      if (!isFinite(s) || s < 0) return "0:00";
+      const m = Math.floor(s/60), ss = Math.floor(s%60);
+      return m + ":" + String(ss).padStart(2,"0");
     };
 
-    // ---------- State & Persistence ----------
-    const LS_KEY = 'glassy-player-v1';
-    const defaults = {
-      index: 0,
-      time: 0,
-      volume: 0.9,
-      muted: false,
-      shuffle: false,
-      repeat: 'off' // 'off' | 'all' | 'one'
-    };
-    const loadState = () => {
-      try {
-        const raw = localStorage.getItem(LS_KEY);
-        if (!raw) return {...defaults};
-        const s = JSON.parse(raw);
-        return {...defaults, ...s};
-      } catch { return {...defaults}; }
-    };
-    const saveState = () => {
-      const s = { index, volume, muted: audio.muted, shuffle, repeat, time: audio.currentTime || 0 };
-      try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch {}
-    };
+    // ---------- State ----------
+    let cur = 0;
+    let isPlaying = false;
+    let shuffle = false;
+    // repeatMode: 0=off, 1=all, 2=one
+    let repeatMode = 0;
+    let order = [...musicData.keys()];
+    let filtered = order.slice();
 
     // ---------- Elements ----------
-    const bg = el('bg');
-    const spotlight = el('spotlight');
-    const spotImg = el('spotImg');
-    const spotTitle = el('spotTitle');
-    const spotSub = el('spotSub');
-    const spotPlay = el('spotPlay');
-    const spotHide = el('spotHide');
+    const audio = $("#audio");
+    const bg = $("#bg");
+    const art = $("#art");
+    const badge = $("#badge");
+    const titleEl = $("#title");
+    const bylineEl = $("#byline");
+    const queueEl = $("#queue");
 
-    const drawer = el('drawer');
-    const list = el('list');
-    const search = el('search');
-    const toggleDrawer = el('toggleDrawer');
-    const closeDrawer = el('closeDrawer');
+    const playBtn = $("#play");
+    const playIcon = $("#play-icon");
+    const prevBtn = $("#prev");
+    const nextBtn = $("#next");
+    const shuffleBtn = $("#shuffle");
+    const repeatBtn = $("#repeat");
+    const repeatIcon = $("#repeat-icon");
 
-    const art = el('art');
-    const artImg = el('artImg');
+    const seek = $("#seek");
+    const seekFill = $("#seek-fill");
+    const seekThumb = $("#seek-thumb");
+    const seekTip = $("#seek-tip");
+    const curTime = $("#cur");
+    const durTime = $("#dur");
 
-    const miniImg = el('miniImg');
-    const miniTitle = el('miniTitle');
-    const miniSub = el('miniSub');
+    const vol = $("#vol");
+    const volFill = $("#vol-fill");
+    const volThumb = $("#vol-thumb");
+    const muteBtn = $("#mute");
+    const volIcon = $("#vol-icon");
+    const toggleQueueBtn = $("#toggle-queue");
 
-    const playBtn = el('play');
-    const prevBtn = el('prev');
-    const nextBtn = el('next');
+    const miniArt = $("#mini-art");
+    const miniTitle = $("#mini-title");
+    const miniSub = $("#mini-sub");
 
-    const shuffleBtn = el('shuffle');
-    const repeatBtn = el('repeat');
-    const repeatAllIcon = el('repeatAllIcon');
-    const repeatOneIcon = el('repeatOneIcon');
+    const search = $("#search");
+    const modeLabel = $("#mode-label");
 
-    const muteBtn = el('mute');
-    const volOnIcon = el('volOn');
-    const volOffIcon = el('volOff');
-    const vslider = el('vslider');
-    const vfill = el('vfill');
+    // ---------- Init ----------
+    function buildQueue(list){
+      queueEl.innerHTML = "";
+      list.forEach((i) => {
+        const t = musicData[i];
+        const row = document.createElement("div");
+        row.className = "queue-item";
+        row.setAttribute("role","option");
+        row.setAttribute("tabindex","0");
+        row.dataset.index = i;
 
-    const seek = el('seek');
-    const seekFill = el('seekFill');
-    const seekKnob = el('seekKnob');
-    const tElapsed = el('tElapsed');
-    const tRemain = el('tRemain');
+        const th = document.createElement("div");
+        th.className = "q-thumb";
+        th.style.backgroundImage = `url('${t.posterUrl}')`;
 
-    const audio = el('audio');
+        const meta = document.createElement("div");
+        meta.className = "q-meta";
+        const tt = document.createElement("div");
+        tt.className = "q-title"; tt.textContent = t.title;
+        const sb = document.createElement("div");
+        sb.className = "q-sub"; sb.textContent = `${t.artist} • ${t.album}`;
 
-    // ---------- Runtime ----------
-    let { index, time, volume, muted, shuffle, repeat } = loadState();
-    index = clamp(index, 0, musicData.length - 1);
+        const tm = document.createElement("div");
+        tm.className = "q-time"; tm.textContent = ""; // will fill on metadata if desired
 
-    // Queue rendering
-    let filterText = '';
-    let filteredIdx = musicData.map((_, i)=>i); // indices view
+        meta.append(tt, sb);
+        row.append(th, meta, tm);
+        queueEl.append(row);
 
-    function renderList() {
-      list.innerHTML = '';
-      const q = filterText.trim().toLowerCase();
-      filteredIdx = musicData
-        .map((t, i) => ({ t, i }))
-        .filter(({t}) => !q || [t.title, t.artist, t.album].some(v => (v||'').toLowerCase().includes(q)))
-        .map(o => o.i);
-
-      if (filteredIdx.length === 0) {
-        const empty = document.createElement('div');
-        empty.style.padding = '12px';
-        empty.style.color = '#c1c1ca';
-        empty.textContent = 'No results';
-        list.appendChild(empty);
-        return;
-      }
-
-      for (const i of filteredIdx) {
-        const tr = musicData[i];
-        const row = document.createElement('div');
-        row.className = 'row' + (i === index ? ' active' : '');
-        row.setAttribute('role','option');
-        row.setAttribute('tabindex','0');
-        row.setAttribute('aria-selected', i === index ? 'true':'false');
-
-        const th = document.createElement('div');
-        th.className = 'thumb';
-        const img = document.createElement('img');
-        img.alt = `${tr.title} artwork`;
-        img.loading = 'lazy';
-        img.src = tr.posterUrl;
-        img.onerror = () => img.style.opacity = 0.2;
-        th.appendChild(img);
-
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const title = document.createElement('div');
-        title.className = 'title';
-        title.textContent = tr.title;
-        const sub = document.createElement('div');
-        sub.className = 'sub';
-        sub.textContent = `${tr.artist} • ${tr.album} • ${tr.year}`;
-        meta.appendChild(title); meta.appendChild(sub);
-
-        const playIco = document.createElement('div');
-        playIco.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-
-        row.appendChild(th); row.appendChild(meta); row.appendChild(playIco);
-
-        row.addEventListener('click', () => { setTrack(i); play(); });
-        row.addEventListener('dblclick', () => { setTrack(i); play(); });
-        row.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTrack(i); play(); }
+        row.addEventListener("click", () => {
+          setTrack(i, true);
+          play();
         });
-
-        list.appendChild(row);
-      }
-    }
-
-    // Load track into UI and audio
-    function setTrack(i, {keepTime=false} = {}) {
-      index = clamp(i, 0, musicData.length - 1);
-      const tr = musicData[index];
-
-      // Update images (lazy with preload)
-      const preload = new Image();
-      preload.onload = () => { bg.style.backgroundImage = `url("${tr.backgroundImage}")`; };
-      preload.onerror = () => { bg.style.backgroundImage = ''; };
-      preload.src = tr.backgroundImage;
-
-      artImg.src = tr.posterUrl;
-      artImg.alt = `${tr.title} cover`;
-      artImg.onerror = () => artImg.style.filter = 'grayscale(1) opacity(0.6)';
-
-      spotImg.src = tr.posterUrl;
-      spotImg.alt = `${tr.title} cover`;
-      spotTitle.textContent = tr.title;
-      spotSub.textContent = `${tr.artist} • ${tr.album} • ${tr.year}`;
-
-      miniImg.src = tr.posterUrl;
-      miniImg.alt = `${tr.title} cover`;
-      miniTitle.textContent = tr.title;
-      miniSub.textContent = `${tr.artist} — ${tr.album}`;
-
-      // Load audio
-      const shouldAutoplay = !audio.paused;
-      const prevTime = keepTime ? audio.currentTime : 0;
-
-      audio.src = tr.musicPath;
-      audio.load();
-      audio.currentTime = keepTime ? prevTime : (time && !isNaN(time) ? time : 0);
-
-      // Media Session
-      if ('mediaSession' in navigator) {
-        try {
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: tr.title,
-            artist: tr.artist,
-            album: tr.album,
-            artwork: [
-              {src: tr.posterUrl, sizes:'256x256', type:'image/jpeg'},
-              {src: tr.posterUrl, sizes:'512x512', type:'image/jpeg'}
-            ]
-          });
-        } catch {}
-      }
-
-      // Update active in list
-      for (const child of list.children) child.classList.remove('active');
-      const pos = filteredIdx.indexOf(index);
-      if (pos >= 0 && list.children[pos]) list.children[pos].classList.add('active');
-
-      saveState();
-
-      // Autoplay if we were playing
-      if (shouldAutoplay) {
-        audio.play().catch(() => {
-          // Autoplay might be blocked; keep paused state
+        row.addEventListener("keydown", (e)=>{
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setTrack(i, true); play();
+          }
         });
-      }
+      });
+      refreshQueueActive();
     }
 
-    function nextIndex() {
-      if (shuffle) {
-        let ni;
-        if (musicData.length <= 1) return index;
-        do { ni = Math.floor(Math.random() * musicData.length); } while (ni === index);
-        return ni;
+    function refreshQueueActive(){
+      $$(".queue-item", queueEl).forEach(el => el.classList.toggle("active", Number(el.dataset.index) === order[cur]));
+    }
+
+    function setTrack(indexInOrder, updateQueueSelection=false){
+      // indexInOrder is actual track index in musicData
+      const idx = indexInOrder;
+      const t = musicData[idx];
+      audio.src = t.musicPath;
+      bg.style.backgroundImage = `url('${t.backgroundImage}')`;
+      art.style.backgroundImage = `url('${t.posterUrl}')`;
+      art.classList.toggle("playing", isPlaying);
+      titleEl.textContent = t.title;
+      bylineEl.textContent = `${t.artist} • ${t.album} • ${t.year}`;
+      miniArt.style.backgroundImage = `url('${t.posterUrl}')`;
+      miniTitle.textContent = t.title;
+      miniSub.textContent = t.artist;
+
+      if (updateQueueSelection) {
+        // ensure filtered list includes idx; if filtered, set cur to its position in filtered
+        const pos = filtered.indexOf(idx);
+        if (pos !== -1) cur = pos;
+      }
+      updateTitle();
+      refreshQueueActive();
+    }
+
+    function updateTitle(){
+      document.title = `${musicData[filtered[cur]]?.title ?? "Glass Player"}`;
+    }
+
+    function updatePlayIcon(){
+      playIcon.innerHTML = isPlaying
+        ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>'
+        : '<path d="M8 5v14l11-7z"/>';
+      art.classList.toggle("playing", isPlaying);
+    }
+
+    function toggleShuffle(on = !shuffle){
+      shuffle = on;
+      shuffleBtn.classList.toggle("active", shuffle);
+      modeLabel.textContent = shuffle ? "Shuffle" : (repeatMode===2 ? "Repeat one" : repeatMode===1 ? "Repeat all" : "Discover");
+      if (shuffle){
+        // keep current track, shuffle others
+        const currentTrack = filtered[cur];
+        const rest = filtered.filter((i, k)=>k!==cur);
+        for (let i = rest.length - 1; i > 0; i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          [rest[i], rest[j]] = [rest[j], rest[i]];
+        }
+        filtered = [currentTrack, ...rest];
+        cur = 0;
       } else {
-        return (index + 1) % musicData.length;
+        filtered = order.slice();
+        // realign cur to current track
+        const idx = filtered.indexOf(musicData.indexOf(musicData[filtered[cur]])); // keep as is
       }
+      buildQueue(filtered);
+      refreshQueueActive();
     }
-    function prevIndex() {
-      if (shuffle) {
-        let pi;
-        if (musicData.length <= 1) return index;
-        do { pi = Math.floor(Math.random() * musicData.length); } while (pi === index);
-        return pi;
-      } else {
-        return (index - 1 + musicData.length) % musicData.length;
+
+    function cycleRepeat(){
+      repeatMode = (repeatMode + 1) % 3;
+      repeatBtn.classList.toggle("active", repeatMode>0);
+      repeatBtn.classList.toggle("danger", repeatMode===2);
+      repeatBtn.title = repeatMode===0 ? "Repeat off (R)" : repeatMode===1 ? "Repeat all (R)" : "Repeat one (R)";
+      modeLabel.textContent = shuffle ? "Shuffle" : (repeatMode===2 ? "Repeat one" : repeatMode===1 ? "Repeat all" : "Discover");
+      repeatIcon.innerHTML = repeatMode===2
+        ? '<path d="M7 7h6v2H7a3 3 0 0 0 0 6h2v-2H7a1 1 0 0 1 0-2h10v5l3-3-3-3v2H9a3 3 0 0 0 0 6h8v-2H9a1 1 0 0 1 0-2h10V7H7zM12 10v4h2v-4h-2z"/>'
+        : '<path d="M7 7h8v2H7a3 3 0 0 0 0 6h2v-2H7a1 1 0 0 1 0-2h10v5l3-3-3-3v2H9a3 3 0 0 0 0 6h8v-2H9a1 1 0 0 1 0-2h10V7H7z"/>';
+    }
+
+    function play(){ audio.play().then(()=>{ isPlaying=true; updatePlayIcon(); }).catch(()=>{}); }
+    function pause(){ audio.pause(); isPlaying=false; updatePlayIcon(); }
+
+    function next(){
+      if (repeatMode === 2){ // one
+        audio.currentTime = 0; play(); return;
       }
+      cur = (cur + 1) % filtered.length;
+      setTrack(filtered[cur], false);
+      play();
+    }
+    function prev(){
+      if (audio.currentTime > 2){ audio.currentTime = 0; return; }
+      cur = (cur - 1 + filtered.length) % filtered.length;
+      setTrack(filtered[cur], false);
+      play();
     }
 
-    // Playback control
-    function play() {
-      audio.play().then(()=>{
-        playBtn.classList.add('pause');
-        spotPlay.textContent = 'Pause';
-        spotlight.classList.add('active');
-      }).catch(()=>{ /* ignore */ });
-    }
-    function pause() {
-      audio.pause();
-      playBtn.classList.remove('pause');
-      spotPlay.textContent = 'Play';
-      spotlight.classList.remove('active');
-    }
-    function togglePlay() {
-      if (audio.paused) play(); else pause();
-    }
-
-    // Repeat UI update
-    function setRepeat(mode) {
-      repeat = mode; // 'off'|'all'|'one'
-      repeatBtn.setAttribute('aria-pressed', repeat !== 'off' ? 'true':'false');
-      repeatAllIcon.style.display = (repeat === 'one') ? 'none' : '';
-      repeatOneIcon.style.display = (repeat === 'one') ? '' : 'none';
-      repeatBtn.dataset.tip = `Repeat (R): ${repeat}`;
-      saveState();
-    }
-    function cycleRepeat() {
-      if (repeat === 'off') setRepeat('all');
-      else if (repeat === 'all') setRepeat('one');
-      else setRepeat('off');
-    }
-
-    // Shuffle UI
-    function setShuffle(val) {
-      shuffle = !!val;
-      shuffleBtn.setAttribute('aria-pressed', shuffle ? 'true':'false');
-      saveState();
+    // ---------- Ranges (seek/volume) ----------
+    function attachRange(el, fill, thumb, onChange, onCommit, tip){
+      let down=false;
+      const rect = ()=>el.getBoundingClientRect();
+      const percentAt = (e)=>{
+        const r = rect();
+        const x = (e.clientX ?? (e.touches?.[0]?.clientX || 0)) - r.left;
+        return clamp(x / r.width, 0, 1);
+      };
+      const setUI = p=>{
+        fill.style.width = (p*100).toFixed(2) + "%";
+        thumb.style.left = (p*100).toFixed(2) + "%";
+      };
+      const move = (e)=>{
+        if (!down) return;
+        const p = percentAt(e);
+        setUI(p);
+        if (tip){ tip.textContent = fmt(p * (audio.duration || 0)); tip.style.left = (p*100)+"%"; }
+        onChange(p);
+      };
+      const up = ()=>{
+        if (!down) return;
+        down=false; document.removeEventListener("mousemove", move);
+        document.removeEventListener("mouseup", up);
+        document.removeEventListener("touchmove", move);
+        document.removeEventListener("touchend", up);
+        onCommit();
+      };
+      el.addEventListener("mousedown", (e)=>{ down=true; move(e); document.addEventListener("mousemove", move); document.addEventListener("mouseup", up); });
+      el.addEventListener("touchstart", (e)=>{ down=true; move(e); document.addEventListener("touchmove", move, {passive:false}); document.addEventListener("touchend", up); }, {passive:false});
+      el.addEventListener("mousemove", (e)=>{ if (tip){ const p = percentAt(e); tip.textContent = fmt(p * (audio.duration || 0)); tip.style.left = (p*100)+"%"; }});
+      return setUI;
     }
 
-    // Volume
-    function setVolume(v) {
-      v = clamp(v, 0, 1);
-      audio.volume = v;
-      vfill.style.width = (v*100) + '%';
-      vslider.setAttribute('aria-valuenow', Math.round(v*100));
-      if (v === 0) {
-        audio.muted = true;
-      } else if (!muted) {
+    const setSeekUI = attachRange(
+      seek, seekFill, seekThumb,
+      p => { audio.currentTime = (audio.duration || 0) * p; },
+      ()=>{},
+      seekTip
+    );
+
+    const setVolUI = attachRange(
+      vol, volFill, volThumb,
+      p => {
         audio.muted = false;
+        audio.volume = p;
+        updateVolumeIcon();
+      },
+      ()=>{
+        try { localStorage.setItem("gp_volume", String(audio.volume)); } catch {}
       }
-      volOnIcon.style.display = audio.muted ? 'none' : '';
-      volOffIcon.style.display = audio.muted ? '' : 'none';
-      saveState();
+    );
+
+    function updateVolumeIcon(){
+      const v = audio.muted ? 0 : audio.volume;
+      volIcon.innerHTML =
+        v === 0 ? '<path d="M5 9v6h4l5 4V5L9 9H5zM19 9l-2 2m0 2l2 2" stroke="currentColor" fill="none" stroke-width="1.6" stroke-linecap="round"/>'
+      : v < .35 ? '<path d="M5 9v6h4l5 4V5L9 9H5z"/><path d="M16 12a2 2 0 0 0-2-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+      : v < .75 ? '<path d="M5 9v6h4l5 4V5L9 9H5z"/><path d="M16 12a3.5 3.5 0 0 0-3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
+      : '<path d="M5 9v6h4l5 4V5L9 9H5z"/><path d="M16 12a5 5 0 0 0-5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
+      const p = audio.muted ? 0 : audio.volume;
+      vol.setAttribute("aria-valuenow", Math.round(p*100));
+      setVolUI(p);
     }
-    function setMuted(m) {
-      audio.muted = !!m;
-      volOnIcon.style.display = audio.muted ? 'none' : '';
-      volOffIcon.style.display = audio.muted ? '' : 'none';
-      saveState();
-    }
 
-    // Seek
-    function updateSeekUI() {
-      const dur = isFinite(audio.duration) ? audio.duration : 0;
-      const cur = clamp(audio.currentTime || 0, 0, dur || 1);
-      const pct = dur ? (cur / dur) * 100 : 0;
-      seekFill.style.width = pct + '%';
-      const knobX = pct + '%';
-      seekKnob.style.left = knobX;
-      tElapsed.textContent = fmtTime(cur);
-      tRemain.textContent = '-' + fmtTime((dur || 0) - cur);
-      seek.setAttribute('aria-valuenow', Math.round(pct));
-    }
-    const rafUpdate = () => {
-      if (!audio.paused && !seek._dragging) {
-        updateSeekUI();
-        saveState();
-      }
-      requestAnimationFrame(rafUpdate);
-    };
-
-    // Pointer & touch on seek
-    const bindSlider = (trackEl, fillEl, onChange) => {
-      const onPos = (clientX) => {
-        const rect = trackEl.getBoundingClientRect();
-        const x = clamp(clientX - rect.left, 0, rect.width);
-        const pct = rect.width === 0 ? 0 : x / rect.width;
-        onChange(pct);
-      };
-      const onPointerDown = (e) => {
-        e.preventDefault();
-        trackEl._dragging = true;
-        trackEl.classList.add('dragging');
-        onPos(e.clientX || (e.touches && e.touches[0].clientX) || 0);
-        window.addEventListener('pointermove', onPointerMove);
-        window.addEventListener('pointerup', onPointerUp);
-        window.addEventListener('touchmove', onTouchMove, {passive:false});
-        window.addEventListener('touchend', onPointerUp);
-      };
-      const onPointerMove = (e) => {
-        if (!trackEl._dragging) return;
-        e.preventDefault();
-        onPos(e.clientX);
-      };
-      const onTouchMove = (e) => {
-        if (!trackEl._dragging) return;
-        e.preventDefault();
-        onPos(e.touches[0].clientX);
-      };
-      const onPointerUp = () => {
-        trackEl._dragging = false;
-        trackEl.classList.remove('dragging');
-        window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('pointerup', onPointerUp);
-        window.removeEventListener('touchmove', onTouchMove);
-        window.removeEventListener('touchend', onPointerUp);
-      };
-      trackEl.addEventListener('pointerdown', onPointerDown);
-      trackEl.addEventListener('touchstart', (e)=>{ e.preventDefault(); onPointerDown(e.touches[0]); }, {passive:false});
-      // Keyboard support
-      trackEl.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-          e.preventDefault();
-          const step = (e.key === 'ArrowLeft') ? -0.02 : 0.02;
-          const now = parseFloat(trackEl.getAttribute('aria-valuenow') || '0') / 100;
-          const pct = clamp(now + step, 0, 1);
-          onChange(pct);
-        }
-      });
-    };
-
-    // Bind seek
-    bindSlider(seek, seekFill, (pct) => {
-      const dur = isFinite(audio.duration) ? audio.duration : 0;
-      if (dur) {
-        audio.currentTime = pct * dur;
-        updateSeekUI();
-      }
+    // ---------- Wire events ----------
+    playBtn.addEventListener("click", ()=> isPlaying ? pause() : play());
+    prevBtn.addEventListener("click", prev);
+    nextBtn.addEventListener("click", next);
+    shuffleBtn.addEventListener("click", ()=> toggleShuffle());
+    repeatBtn.addEventListener("click", cycleRepeat);
+    muteBtn.addEventListener("click", ()=>{
+      audio.muted = !audio.muted;
+      updateVolumeIcon();
+    });
+    toggleQueueBtn.addEventListener("click", ()=>{
+      document.body.classList.toggle("queue-hidden");
+      const hidden = document.body.classList.contains("queue-hidden");
+      $(".panel").style.display = hidden ? "none" : "flex";
     });
 
-    // Bind volume
-    bindSlider(vslider, vfill, (pct) => {
-      setMuted(false);
-      setVolume(pct);
-    });
-
-    // Spotlight behavior: show when playing or art clicked
-    function showSpotlight() { spotlight.classList.add('active'); }
-    function hideSpotlight() { spotlight.classList.remove('active'); }
-
-    // Swipe detection on artwork
-    (function bindSwipe() {
-      let startX = 0, startY = 0, moved = false;
-      const threshold = 40;
-      const onStart = (x,y) => { startX = x; startY = y; moved=false; };
-      const onMove = (x,y) => {
-        if (Math.abs(x - startX) > 10 || Math.abs(y - startY) > 10) moved = true;
-      };
-      const onEnd = (x,y) => {
-        const dx = x - startX, dy = y - startY;
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
-          if (dx < 0) { goNext(); } else { goPrev(); }
-        } else if (!moved) {
-          // tap
-          if (audio.paused) showSpotlight(); else showSpotlight();
-        }
-      };
-      art.addEventListener('pointerdown', (e)=> onStart(e.clientX, e.clientY));
-      art.addEventListener('pointermove', (e)=> onMove(e.clientX, e.clientY));
-      art.addEventListener('pointerup', (e)=> onEnd(e.clientX, e.clientY));
-      art.addEventListener('touchstart', (e)=> onStart(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
-      art.addEventListener('touchmove', (e)=> onMove(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
-      art.addEventListener('touchend', (e)=> {/* no end coords on some browsers */});
-      art.addEventListener('click', () => { if (audio.paused) togglePlay(); else showSpotlight(); });
-      art.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showSpotlight(); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); }
-      });
-    })();
-
-    // Transport
-    function goNext() { setTrack(nextIndex()); play(); }
-    function goPrev() { setTrack(prevIndex()); play(); }
-
-    // Keyboard shortcuts (global)
-    document.addEventListener('keydown', (e) => {
-      // Ignore when typing in inputs
-      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-      const isEditable = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable);
-      if (isEditable && e.code !== 'Space') return;
-
-      switch (e.key.toLowerCase()) {
-        case ' ': // Space
-          e.preventDefault(); togglePlay(); break;
-        case 'arrowleft':
-          audio.currentTime = Math.max(0, (audio.currentTime||0) - 5); break;
-        case 'arrowright':
-          audio.currentTime = (audio.currentTime||0) + 5; break;
-        case 'arrowup':
-          setMuted(false); setVolume(clamp(audio.volume + 0.05, 0, 1)); break;
-        case 'arrowdown':
-          setVolume(clamp(audio.volume - 0.05, 0, 1)); break;
-        case 'n': goNext(); break;
-        case 'p': goPrev(); break;
-        case 's': setShuffle(!shuffle); toast(shuffle ? 'Shuffle on' : 'Shuffle off'); break;
-        case 'r': cycleRepeat(); toast('Repeat: ' + repeat); break;
-      }
-    });
-
-    // Buttons
-    playBtn.addEventListener('click', togglePlay);
-    prevBtn.addEventListener('click', goPrev);
-    nextBtn.addEventListener('click', goNext);
-    spotPlay.addEventListener('click', togglePlay);
-    spotHide.addEventListener('click', hideSpotlight);
-
-    shuffleBtn.addEventListener('click', () => { setShuffle(!shuffle); toast(shuffle ? 'Shuffle on' : 'Shuffle off'); });
-    repeatBtn.addEventListener('click', () => { cycleRepeat(); toast('Repeat: ' + repeat); });
-    muteBtn.addEventListener('click', () => { setMuted(!audio.muted); });
-
-    toggleDrawer.addEventListener('click', () => {
-      const willOpen = !drawer.classList.contains('open');
-      drawer.classList.toggle('open', willOpen);
-      drawer.setAttribute('aria-expanded', willOpen ? 'true':'false');
-      if (willOpen) search.focus();
-    });
-    closeDrawer.addEventListener('click', () => {
-      drawer.classList.remove('open');
-      drawer.setAttribute('aria-expanded','false');
-      toggleDrawer.focus();
-    });
-
-    search.addEventListener('input', () => {
-      filterText = search.value;
-      renderList();
-    });
-
-    // Options (placeholder)
-    el('options').addEventListener('click', () => {
-      toast('Glassy Player • Ready', 'info');
+    // Keyboard shortcuts
+    window.addEventListener("keydown", (e)=>{
+      if (["INPUT","TEXTAREA"].includes(document.activeElement.tagName) && e.key !== "Escape") return;
+      if (e.code === "Space"){ e.preventDefault(); isPlaying ? pause() : play(); }
+      else if (e.key.toLowerCase() === "j"){ prev(); }
+      else if (e.key.toLowerCase() === "l"){ next(); }
+      else if (e.key.toLowerCase() === "s"){ toggleShuffle(); }
+      else if (e.key.toLowerCase() === "r"){ cycleRepeat(); }
+      else if (e.key.toLowerCase() === "m"){ audio.muted = !audio.muted; updateVolumeIcon(); }
+      else if (e.key === "ArrowRight"){ audio.currentTime = clamp(audio.currentTime + 5, 0, audio.duration||0); }
+      else if (e.key === "ArrowLeft"){ audio.currentTime = clamp(audio.currentTime - 5, 0, audio.duration||0); }
+      else if (e.key === "Escape"){ search.blur(); }
     });
 
     // Audio events
-    audio.addEventListener('play', () => {
-      playBtn.classList.add('pause');
-      spotPlay.textContent = 'Pause';
-      showSpotlight();
-      saveState();
+    audio.addEventListener("play", ()=>{ isPlaying=true; updatePlayIcon(); });
+    audio.addEventListener("pause", ()=>{ isPlaying=false; updatePlayIcon(); });
+    audio.addEventListener("timeupdate", ()=>{
+      const d = audio.duration || 0;
+      const c = audio.currentTime || 0;
+      const p = d ? c/d : 0;
+      setSeekUI(p);
+      curTime.textContent = fmt(c);
+      seek.setAttribute("aria-valuenow", Math.round(p*100));
     });
-    audio.addEventListener('pause', () => {
-      playBtn.classList.remove('pause');
-      spotPlay.textContent = 'Play';
-      // On pause, return to blurred background (hide spotlight)
-      hideSpotlight();
-      saveState();
+    audio.addEventListener("loadedmetadata", ()=>{
+      durTime.textContent = fmt(audio.duration || 0);
     });
-    audio.addEventListener('loadedmetadata', () => {
-      if (time && time < audio.duration) {
-        audio.currentTime = time;
-      }
-      updateSeekUI();
-    });
-    audio.addEventListener('timeupdate', rafThrottle(updateSeekUI));
-    audio.addEventListener('ended', () => {
-      if (repeat === 'one') {
-        audio.currentTime = 0; play();
-      } else if (repeat === 'all' || shuffle) {
-        setTrack(nextIndex()); play();
-      } else {
-        // off: move to next, but stop at end of list
-        if (index < musicData.length - 1) { setTrack(index+1); play(); }
-        else { pause(); audio.currentTime = 0; updateSeekUI(); }
-      }
-    });
-    audio.addEventListener('error', () => {
-      toast('Audio failed to load. Skipping...', 'error');
-      setTrack(nextIndex()); play();
+    audio.addEventListener("ended", ()=>{
+      if (repeatMode === 2){ audio.currentTime = 0; play(); return; }
+      if (cur < filtered.length - 1){ cur++; setTrack(filtered[cur]); play(); }
+      else if (repeatMode === 1){ cur = 0; setTrack(filtered[cur]); play(); }
+      else { pause(); audio.currentTime = 0; }
     });
 
-    // Media Session API
-    if ('mediaSession' in navigator) {
+    // Search filter
+    search.addEventListener("input", ()=>{
+      const q = search.value.trim().toLowerCase();
+      if (!q){
+        filtered = order.slice();
+      } else {
+        filtered = order.filter(i=>{
+          const t = musicData[i];
+          return [t.title, t.artist, t.album, String(t.year)].some(x => String(x).toLowerCase().includes(q));
+        });
+      }
+      // ensure a track is selected
+      if (!filtered.length){ queueEl.innerHTML = '<div class="section-title" style="padding:20px">No results</div>'; return; }
+      buildQueue(filtered);
+      // keep current track if still in filtered; else jump to first
+      const curTrack = musicData[filtered[cur]]?.title;
+      if (!filtered.includes(musicData.indexOf(musicData[filtered[cur]]))){
+        cur = 0;
+        setTrack(filtered[cur]);
+      }
+    });
+
+    // ---------- Boot ----------
+    (function boot(){
+      // order is sequence of indices [0..N-1]
+      order = [...musicData.keys()];
+      filtered = order.slice();
+      buildQueue(filtered);
+      cur = 0;
+      setTrack(filtered[cur]);
+
+      // restore volume
       try {
-        navigator.mediaSession.setActionHandler('play', play);
-        navigator.mediaSession.setActionHandler('pause', pause);
-        navigator.mediaSession.setActionHandler('previoustrack', goPrev);
-        navigator.mediaSession.setActionHandler('nexttrack', goNext);
-        navigator.mediaSession.setActionHandler('seekbackward', (d)=> audio.currentTime = Math.max(0, audio.currentTime - (d.seekOffset || 10)));
-        navigator.mediaSession.setActionHandler('seekforward', (d)=> audio.currentTime = audio.currentTime + (d.seekOffset || 10));
-        navigator.mediaSession.setActionHandler('seekto', (d)=> { if (d.fastSeek && 'fastSeek' in audio) audio.fastSeek(d.seekTime); else audio.currentTime = d.seekTime; });
-      } catch {}
-    }
-
-    // Initial render
-    function init() {
-      renderList();
-      // Apply initial states
-      setShuffle(shuffle);
-      setRepeat(repeat);
-      setMuted(muted);
-      setVolume(isFinite(volume) ? volume : 0.9);
-      setTrack(index, {keepTime:true});
-      if (time > 0.5) {
-        audio.currentTime = time;
-        updateSeekUI();
+        const v = Number(localStorage.getItem("gp_volume"));
+        if (!Number.isNaN(v) && v >=0 && v <=1){
+          audio.volume = v; updateVolumeIcon();
+        } else { audio.volume = 0.8; updateVolumeIcon(); }
+      } catch {
+        audio.volume = 0.8; updateVolumeIcon();
       }
-      // Start rAF loop
-      requestAnimationFrame(rafUpdate);
-    }
-    init();
-
-    // Resize throttling (no-op placeholder to demonstrate pattern)
-    window.addEventListener('resize', rafThrottle(()=>{}));
-
-    // Visibility: persist on hide
-    document.addEventListener('visibilitychange', () => {
-      saveState();
-    });
-    window.addEventListener('beforeunload', () => saveState());
-  </script>
-</body>
-</html>
-    ];
-
-    // ---------- Utilities ----------
-    const $ = sel => document.querySelector(sel);
-    const el = id => document.getElementById(id);
-    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
-    const fmtTime = (s) => {
-      if (!isFinite(s) || s < 0) s = 0;
-      const m = Math.floor(s / 60);
-      const ss = Math.floor(s % 60).toString().padStart(2, "0");
-      return `${m}:${ss}`;
-    };
-    const rafThrottle = (fn) => {
-      let running = false;
-      return (...args) => {
-        if (running) return;
-        running = true;
-        requestAnimationFrame(() => {
-          fn(...args);
-          running = false;
-        });
-      };
-    };
-    const toast = (msg, kind="info") => {
-      const t = el('toast');
-      t.textContent = msg;
-      t.style.borderColor = kind === 'error' ? 'rgba(255,102,102,0.6)' : 'rgba(255,255,255,0.08)';
-      t.classList.add('show');
-      clearTimeout(toast._timer);
-      toast._timer = setTimeout(()=> t.classList.remove('show'), 2200);
-    };
-
-    // ---------- State & Persistence ----------
-    const LS_KEY = 'glassy-player-v1';
-    const defaults = {
-      index: 0,
-      time: 0,
-      volume: 0.9,
-      muted: false,
-      shuffle: false,
-      repeat: 'off' // 'off' | 'all' | 'one'
-    };
-    const loadState = () => {
-      try {
-        const raw = localStorage.getItem(LS_KEY);
-        if (!raw) return {...defaults};
-        const s = JSON.parse(raw);
-        return {...defaults, ...s};
-      } catch { return {...defaults}; }
-    };
-    const saveState = () => {
-      const s = { index, volume, muted: audio.muted, shuffle, repeat, time: audio.currentTime || 0 };
-      try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch {}
-    };
-
-    // ---------- Elements ----------
-    const bg = el('bg');
-    const spotlight = el('spotlight');
-    const spotImg = el('spotImg');
-    const spotTitle = el('spotTitle');
-    const spotSub = el('spotSub');
-    const spotPlay = el('spotPlay');
-    const spotHide = el('spotHide');
-
-    const drawer = el('drawer');
-    const list = el('list');
-    const search = el('search');
-    const toggleDrawer = el('toggleDrawer');
-    const closeDrawer = el('closeDrawer');
-
-    const art = el('art');
-    const artImg = el('artImg');
-
-    const miniImg = el('miniImg');
-    const miniTitle = el('miniTitle');
-    const miniSub = el('miniSub');
-
-    const playBtn = el('play');
-    const prevBtn = el('prev');
-    const nextBtn = el('next');
-
-    const shuffleBtn = el('shuffle');
-    const repeatBtn = el('repeat');
-    const repeatAllIcon = el('repeatAllIcon');
-    const repeatOneIcon = el('repeatOneIcon');
-
-    const muteBtn = el('mute');
-    const volOnIcon = el('volOn');
-    const volOffIcon = el('volOff');
-    const vslider = el('vslider');
-    const vfill = el('vfill');
-
-    const seek = el('seek');
-    const seekFill = el('seekFill');
-    const seekKnob = el('seekKnob');
-    const tElapsed = el('tElapsed');
-    const tRemain = el('tRemain');
-
-    const audio = el('audio');
-
-    // ---------- Runtime ----------
-    let { index, time, volume, muted, shuffle, repeat } = loadState();
-    index = clamp(index, 0, musicData.length - 1);
-
-    // Queue rendering
-    let filterText = '';
-    let filteredIdx = musicData.map((_, i)=>i); // indices view
-
-    function renderList() {
-      list.innerHTML = '';
-      const q = filterText.trim().toLowerCase();
-      filteredIdx = musicData
-        .map((t, i) => ({ t, i }))
-        .filter(({t}) => !q || [t.title, t.artist, t.album].some(v => (v||'').toLowerCase().includes(q)))
-        .map(o => o.i);
-
-      if (filteredIdx.length === 0) {
-        const empty = document.createElement('div');
-        empty.style.padding = '12px';
-        empty.style.color = '#c1c1ca';
-        empty.textContent = 'No results';
-        list.appendChild(empty);
-        return;
-      }
-
-      for (const i of filteredIdx) {
-        const tr = musicData[i];
-        const row = document.createElement('div');
-        row.className = 'row' + (i === index ? ' active' : '');
-        row.setAttribute('role','option');
-        row.setAttribute('tabindex','0');
-        row.setAttribute('aria-selected', i === index ? 'true':'false');
-
-        const th = document.createElement('div');
-        th.className = 'thumb';
-        const img = document.createElement('img');
-        img.alt = `${tr.title} artwork`;
-        img.loading = 'lazy';
-        img.src = tr.posterUrl;
-        img.onerror = () => img.style.opacity = 0.2;
-        th.appendChild(img);
-
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const title = document.createElement('div');
-        title.className = 'title';
-        title.textContent = tr.title;
-        const sub = document.createElement('div');
-        sub.className = 'sub';
-        sub.textContent = `${tr.artist} • ${tr.album} • ${tr.year}`;
-        meta.appendChild(title); meta.appendChild(sub);
-
-        const playIco = document.createElement('div');
-        playIco.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
-
-        row.appendChild(th); row.appendChild(meta); row.appendChild(playIco);
-
-        row.addEventListener('click', () => { setTrack(i); play(); });
-        row.addEventListener('dblclick', () => { setTrack(i); play(); });
-        row.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setTrack(i); play(); }
-        });
-
-        list.appendChild(row);
-      }
-    }
-
-    // Load track into UI and audio
-    function setTrack(i, {keepTime=false} = {}) {
-      index = clamp(i, 0, musicData.length - 1);
-      const tr = musicData[index];
-
-      // Update images (lazy with preload)
-      const preload = new Image();
-      preload.onload = () => { bg.style.backgroundImage = `url("${tr.backgroundImage}")`; };
-      preload.onerror = () => { bg.style.backgroundImage = ''; };
-      preload.src = tr.backgroundImage;
-
-      artImg.src = tr.posterUrl;
-      artImg.alt = `${tr.title} cover`;
-      artImg.onerror = () => artImg.style.filter = 'grayscale(1) opacity(0.6)';
-
-      spotImg.src = tr.posterUrl;
-      spotImg.alt = `${tr.title} cover`;
-      spotTitle.textContent = tr.title;
-      spotSub.textContent = `${tr.artist} • ${tr.album} • ${tr.year}`;
-
-      miniImg.src = tr.posterUrl;
-      miniImg.alt = `${tr.title} cover`;
-      miniTitle.textContent = tr.title;
-      miniSub.textContent = `${tr.artist} — ${tr.album}`;
-
-      // Load audio
-      const shouldAutoplay = !audio.paused;
-      const prevTime = keepTime ? audio.currentTime : 0;
-
-      audio.src = tr.musicPath;
-      audio.load();
-      audio.currentTime = keepTime ? prevTime : (time && !isNaN(time) ? time : 0);
-
-      // Media Session
-      if ('mediaSession' in navigator) {
-        try {
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: tr.title,
-            artist: tr.artist,
-            album: tr.album,
-            artwork: [
-              {src: tr.posterUrl, sizes:'256x256', type:'image/jpeg'},
-              {src: tr.posterUrl, sizes:'512x512', type:'image/jpeg'}
-            ]
-          });
-        } catch {}
-      }
-
-      // Update active in list
-      for (const child of list.children) child.classList.remove('active');
-      const pos = filteredIdx.indexOf(index);
-      if (pos >= 0 && list.children[pos]) list.children[pos].classList.add('active');
-
-      saveState();
-
-      // Autoplay if we were playing
-      if (shouldAutoplay) {
-        audio.play().catch(() => {
-          // Autoplay might be blocked; keep paused state
-        });
-      }
-    }
-
-    function nextIndex() {
-      if (shuffle) {
-        let ni;
-        if (musicData.length <= 1) return index;
-        do { ni = Math.floor(Math.random() * musicData.length); } while (ni === index);
-        return ni;
-      } else {
-        return (index + 1) % musicData.length;
-      }
-    }
-    function prevIndex() {
-      if (shuffle) {
-        let pi;
-        if (musicData.length <= 1) return index;
-        do { pi = Math.floor(Math.random() * musicData.length); } while (pi === index);
-        return pi;
-      } else {
-        return (index - 1 + musicData.length) % musicData.length;
-      }
-    }
-
-    // Playback control
-    function play() {
-      audio.play().then(()=>{
-        playBtn.classList.add('pause');
-        spotPlay.textContent = 'Pause';
-        spotlight.classList.add('active');
-      }).catch(()=>{ /* ignore */ });
-    }
-    function pause() {
-      audio.pause();
-      playBtn.classList.remove('pause');
-      spotPlay.textContent = 'Play';
-      spotlight.classList.remove('active');
-    }
-    function togglePlay() {
-      if (audio.paused) play(); else pause();
-    }
-
-    // Repeat UI update
-    function setRepeat(mode) {
-      repeat = mode; // 'off'|'all'|'one'
-      repeatBtn.setAttribute('aria-pressed', repeat !== 'off' ? 'true':'false');
-      repeatAllIcon.style.display = (repeat === 'one') ? 'none' : '';
-      repeatOneIcon.style.display = (repeat === 'one') ? '' : 'none';
-      repeatBtn.dataset.tip = `Repeat (R): ${repeat}`;
-      saveState();
-    }
-    function cycleRepeat() {
-      if (repeat === 'off') setRepeat('all');
-      else if (repeat === 'all') setRepeat('one');
-      else setRepeat('off');
-    }
-
-    // Shuffle UI
-    function setShuffle(val) {
-      shuffle = !!val;
-      shuffleBtn.setAttribute('aria-pressed', shuffle ? 'true':'false');
-      saveState();
-    }
-
-    // Volume
-    function setVolume(v) {
-      v = clamp(v, 0, 1);
-      audio.volume = v;
-      vfill.style.width = (v*100) + '%';
-      vslider.setAttribute('aria-valuenow', Math.round(v*100));
-      if (v === 0) {
-        audio.muted = true;
-      } else if (!muted) {
-        audio.muted = false;
-      }
-      volOnIcon.style.display = audio.muted ? 'none' : '';
-      volOffIcon.style.display = audio.muted ? '' : 'none';
-      saveState();
-    }
-    function setMuted(m) {
-      audio.muted = !!m;
-      volOnIcon.style.display = audio.muted ? 'none' : '';
-      volOffIcon.style.display = audio.muted ? '' : 'none';
-      saveState();
-    }
-
-    // Seek
-    function updateSeekUI() {
-      const dur = isFinite(audio.duration) ? audio.duration : 0;
-      const cur = clamp(audio.currentTime || 0, 0, dur || 1);
-      const pct = dur ? (cur / dur) * 100 : 0;
-      seekFill.style.width = pct + '%';
-      const knobX = pct + '%';
-      seekKnob.style.left = knobX;
-      tElapsed.textContent = fmtTime(cur);
-      tRemain.textContent = '-' + fmtTime((dur || 0) - cur);
-      seek.setAttribute('aria-valuenow', Math.round(pct));
-    }
-    const rafUpdate = () => {
-      if (!audio.paused && !seek._dragging) {
-        updateSeekUI();
-        saveState();
-      }
-      requestAnimationFrame(rafUpdate);
-    };
-
-    // Pointer & touch on seek
-    const bindSlider = (trackEl, fillEl, onChange) => {
-      const onPos = (clientX) => {
-        const rect = trackEl.getBoundingClientRect();
-        const x = clamp(clientX - rect.left, 0, rect.width);
-        const pct = rect.width === 0 ? 0 : x / rect.width;
-        onChange(pct);
-      };
-      const onPointerDown = (e) => {
-        e.preventDefault();
-        trackEl._dragging = true;
-        trackEl.classList.add('dragging');
-        onPos(e.clientX || (e.touches && e.touches[0].clientX) || 0);
-        window.addEventListener('pointermove', onPointerMove);
-        window.addEventListener('pointerup', onPointerUp);
-        window.addEventListener('touchmove', onTouchMove, {passive:false});
-        window.addEventListener('touchend', onPointerUp);
-      };
-      const onPointerMove = (e) => {
-        if (!trackEl._dragging) return;
-        e.preventDefault();
-        onPos(e.clientX);
-      };
-      const onTouchMove = (e) => {
-        if (!trackEl._dragging) return;
-        e.preventDefault();
-        onPos(e.touches[0].clientX);
-      };
-      const onPointerUp = () => {
-        trackEl._dragging = false;
-        trackEl.classList.remove('dragging');
-        window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('pointerup', onPointerUp);
-        window.removeEventListener('touchmove', onTouchMove);
-        window.removeEventListener('touchend', onPointerUp);
-      };
-      trackEl.addEventListener('pointerdown', onPointerDown);
-      trackEl.addEventListener('touchstart', (e)=>{ e.preventDefault(); onPointerDown(e.touches[0]); }, {passive:false});
-      // Keyboard support
-      trackEl.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-          e.preventDefault();
-          const step = (e.key === 'ArrowLeft') ? -0.02 : 0.02;
-          const now = parseFloat(trackEl.getAttribute('aria-valuenow') || '0') / 100;
-          const pct = clamp(now + step, 0, 1);
-          onChange(pct);
-        }
-      });
-    };
-
-    // Bind seek
-    bindSlider(seek, seekFill, (pct) => {
-      const dur = isFinite(audio.duration) ? audio.duration : 0;
-      if (dur) {
-        audio.currentTime = pct * dur;
-        updateSeekUI();
-      }
-    });
-
-    // Bind volume
-    bindSlider(vslider, vfill, (pct) => {
-      setMuted(false);
-      setVolume(pct);
-    });
-
-    // Spotlight behavior: show when playing or art clicked
-    function showSpotlight() { spotlight.classList.add('active'); }
-    function hideSpotlight() { spotlight.classList.remove('active'); }
-
-    // Swipe detection on artwork
-    (function bindSwipe() {
-      let startX = 0, startY = 0, moved = false;
-      const threshold = 40;
-      const onStart = (x,y) => { startX = x; startY = y; moved=false; };
-      const onMove = (x,y) => {
-        if (Math.abs(x - startX) > 10 || Math.abs(y - startY) > 10) moved = true;
-      };
-      const onEnd = (x,y) => {
-        const dx = x - startX, dy = y - startY;
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > threshold) {
-          if (dx < 0) { goNext(); } else { goPrev(); }
-        } else if (!moved) {
-          // tap
-          if (audio.paused) showSpotlight(); else showSpotlight();
-        }
-      };
-      art.addEventListener('pointerdown', (e)=> onStart(e.clientX, e.clientY));
-      art.addEventListener('pointermove', (e)=> onMove(e.clientX, e.clientY));
-      art.addEventListener('pointerup', (e)=> onEnd(e.clientX, e.clientY));
-      art.addEventListener('touchstart', (e)=> onStart(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
-      art.addEventListener('touchmove', (e)=> onMove(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
-      art.addEventListener('touchend', (e)=> {/* no end coords on some browsers */});
-      art.addEventListener('click', () => { if (audio.paused) togglePlay(); else showSpotlight(); });
-      art.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showSpotlight(); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev(); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); }
-      });
     })();
-
-    // Transport
-    function goNext() { setTrack(nextIndex()); play(); }
-    function goPrev() { setTrack(prevIndex()); play(); }
-
-    // Keyboard shortcuts (global)
-    document.addEventListener('keydown', (e) => {
-      // Ignore when typing in inputs
-      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-      const isEditable = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable);
-      if (isEditable && e.code !== 'Space') return;
-
-      switch (e.key.toLowerCase()) {
-        case ' ': // Space
-          e.preventDefault(); togglePlay(); break;
-        case 'arrowleft':
-          audio.currentTime = Math.max(0, (audio.currentTime||0) - 5); break;
-        case 'arrowright':
-          audio.currentTime = (audio.currentTime||0) + 5; break;
-        case 'arrowup':
-          setMuted(false); setVolume(clamp(audio.volume + 0.05, 0, 1)); break;
-        case 'arrowdown':
-          setVolume(clamp(audio.volume - 0.05, 0, 1)); break;
-        case 'n': goNext(); break;
-        case 'p': goPrev(); break;
-        case 's': setShuffle(!shuffle); toast(shuffle ? 'Shuffle on' : 'Shuffle off'); break;
-        case 'r': cycleRepeat(); toast('Repeat: ' + repeat); break;
-      }
-    });
-
-    // Buttons
-    playBtn.addEventListener('click', togglePlay);
-    prevBtn.addEventListener('click', goPrev);
-    nextBtn.addEventListener('click', goNext);
-    spotPlay.addEventListener('click', togglePlay);
-    spotHide.addEventListener('click', hideSpotlight);
-
-    shuffleBtn.addEventListener('click', () => { setShuffle(!shuffle); toast(shuffle ? 'Shuffle on' : 'Shuffle off'); });
-    repeatBtn.addEventListener('click', () => { cycleRepeat(); toast('Repeat: ' + repeat); });
-    muteBtn.addEventListener('click', () => { setMuted(!audio.muted); });
-
-    toggleDrawer.addEventListener('click', () => {
-      const willOpen = !drawer.classList.contains('open');
-      drawer.classList.toggle('open', willOpen);
-      drawer.setAttribute('aria-expanded', willOpen ? 'true':'false');
-      if (willOpen) search.focus();
-    });
-    closeDrawer.addEventListener('click', () => {
-      drawer.classList.remove('open');
-      drawer.setAttribute('aria-expanded','false');
-      toggleDrawer.focus();
-    });
-
-    search.addEventListener('input', () => {
-      filterText = search.value;
-      renderList();
-    });
-
-    // Options (placeholder)
-    el('options').addEventListener('click', () => {
-      toast('Glassy Player • Ready', 'info');
-    });
-
-    // Audio events
-    audio.addEventListener('play', () => {
-      playBtn.classList.add('pause');
-      spotPlay.textContent = 'Pause';
-      showSpotlight();
-      saveState();
-    });
-    audio.addEventListener('pause', () => {
-      playBtn.classList.remove('pause');
-      spotPlay.textContent = 'Play';
-      // On pause, return to blurred background (hide spotlight)
-      hideSpotlight();
-      saveState();
-    });
-    audio.addEventListener('loadedmetadata', () => {
-      if (time && time < audio.duration) {
-        audio.currentTime = time;
-      }
-      updateSeekUI();
-    });
-    audio.addEventListener('timeupdate', rafThrottle(updateSeekUI));
-    audio.addEventListener('ended', () => {
-      if (repeat === 'one') {
-        audio.currentTime = 0; play();
-      } else if (repeat === 'all' || shuffle) {
-        setTrack(nextIndex()); play();
-      } else {
-        // off: move to next, but stop at end of list
-        if (index < musicData.length - 1) { setTrack(index+1); play(); }
-        else { pause(); audio.currentTime = 0; updateSeekUI(); }
-      }
-    });
-    audio.addEventListener('error', () => {
-      toast('Audio failed to load. Skipping...', 'error');
-      setTrack(nextIndex()); play();
-    });
-
-    // Media Session API
-    if ('mediaSession' in navigator) {
-      try {
-        navigator.mediaSession.setActionHandler('play', play);
-        navigator.mediaSession.setActionHandler('pause', pause);
-        navigator.mediaSession.setActionHandler('previoustrack', goPrev);
-        navigator.mediaSession.setActionHandler('nexttrack', goNext);
-        navigator.mediaSession.setActionHandler('seekbackward', (d)=> audio.currentTime = Math.max(0, audio.currentTime - (d.seekOffset || 10)));
-        navigator.mediaSession.setActionHandler('seekforward', (d)=> audio.currentTime = audio.currentTime + (d.seekOffset || 10));
-        navigator.mediaSession.setActionHandler('seekto', (d)=> { if (d.fastSeek && 'fastSeek' in audio) audio.fastSeek(d.seekTime); else audio.currentTime = d.seekTime; });
-      } catch {}
-    }
-
-    // Initial render
-    function init() {
-      renderList();
-      // Apply initial states
-      setShuffle(shuffle);
-      setRepeat(repeat);
-      setMuted(muted);
-      setVolume(isFinite(volume) ? volume : 0.9);
-      setTrack(index, {keepTime:true});
-      if (time > 0.5) {
-        audio.currentTime = time;
-        updateSeekUI();
-      }
-      // Start rAF loop
-      requestAnimationFrame(rafUpdate);
-    }
-    init();
-
-    // Resize throttling (no-op placeholder to demonstrate pattern)
-    window.addEventListener('resize', rafThrottle(()=>{}));
-
-    // Visibility: persist on hide
-    document.addEventListener('visibilitychange', () => {
-      saveState();
-    });
-    window.addEventListener('beforeunload', () => saveState());
   </script>
 </body>
 </html>
